@@ -112,14 +112,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
     searchInput.addEventListener('input', function() {
         var query = this.value.trim().toLowerCase();
+        console.log('当前搜索词:', query);  // 调试
         if (query.length < 2) {
             resultsBox.style.display = 'none';
             return;
         }
-        // ✅ 只搜索标题，不依赖 summary
+        // 确保 articles 有数据
+        if (!articles || articles.length === 0) {
+            console.log('articles 尚未加载');
+            return;
+        }
         var matches = articles.filter(function(item) {
             return (item.title || '').toLowerCase().includes(query);
         }).slice(0, 10);
+        console.log('匹配结果数:', matches.length);  // 调试
 
         if (matches.length > 0) {
             resultsBox.innerHTML = matches.map(function(item) {
