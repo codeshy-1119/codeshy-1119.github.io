@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="chinese (simplified)">
+<head>
+    <title> &ndash; 网络综合设计与仿真实现</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://codeshy-1119.github.io/theme/css/style.min.css" />
+    <link rel="stylesheet" href="https://codeshy-1119.github.io/theme/css/dark-theme.min.css" />
+    <link rel="stylesheet" href="https://codeshy-1119.github.io/custom.css" />
+</head>
+
+<body>
+<article class="single">
+  <header>
+      
+    <h1 id="wang-luo-zong-he-she-ji-yu-fang-zhen-shi-xian">网络综合设计与仿真实现</h1>
+    <p>
+      Posted on 周二 23 六月 2026 in <a href="https://codeshy-1119.github.io/category/ji-zhu.html">技术</a>
+
+    </p>
+  </header>
+
+
+  <div>
+    <h1>项目报告</h1>
+<p><strong>课程名称：</strong> 《路由与交换技术》 
+<strong>课题名称：</strong> 网络综合设计与仿真实现  </p>
+<hr>
+<h2>目录</h2>
+<ol>
+<li><a href="#项目目的">项目目的</a></li>
+<li><a href="#项目要求">项目要求</a></li>
+<li><a href="#主要知识点">主要知识点</a></li>
+<li><a href="#项目分析">项目分析</a></li>
+<li>4.1 VLAN划分与Trunk配置</li>
+<li>4.2 VLAN间路由</li>
+<li>4.3 链路聚合</li>
+<li>4.4 NAT转换</li>
+<li>4.5 路由协议与路由重分布</li>
+<li>4.6 服务器搭建与域名访问</li>
+<li>4.7 ACL访问控制</li>
+<li>4.8 端口安全性</li>
+<li><a href="#项目规划设计">项目规划设计</a></li>
+<li>5.1 设备选型</li>
+<li>5.2 拓扑结构</li>
+<li>5.3 IP地址规划</li>
+<li><a href="#项目仿真实现">项目仿真实现</a></li>
+<li>6.1 出口路由器</li>
+<li>6.2 R1（核心路由器）</li>
+<li>6.3 R2（汇聚层路由器）</li>
+<li>6.4 S31（汇聚交换机2）</li>
+<li>6.5 S32（汇聚交换机1）</li>
+<li>6.6 S21（接入层交换机1）</li>
+<li>6.7 S22（接入层交换机2）</li>
+<li><a href="#连通性测试及服务验证">连通性测试及服务验证</a></li>
+<li>7.1 DHCP</li>
+<li>7.2 内网测试</li>
+<li>7.3 内外网互通测试（ACL测试）</li>
+<li>7.4 Web服务器测试</li>
+<li>7.5 DNS服务器</li>
+<li>7.6 FTP服务器测试</li>
+<li><a href="#遇到的主要问题和解决方法">遇到的主要问题和解决方法</a></li>
+<li><a href="#总结与反思">总结与反思</a></li>
+<li><a href="#任务分配">任务分配</a></li>
+</ol>
+<hr>
+<h2>项目目的</h2>
+<p>本项目模拟某企业内部网络可以访问互联网的网络架构，以实现所学知识的综合应用。</p>
+<hr>
+<h2>项目要求</h2>
+<ol>
+<li>对企业需求进行分析，并对需要实现的功能所采取的方案或者技术进行分析和解释。</li>
+<li>结合企业所需功能规划网络的拓扑结构，给出所选设备清单和拓扑结构图。</li>
+<li>合理规划整个网络的IP地址，PC机动态获取IP地址，服务器配置静态IP地址。</li>
+<li>在企业内网创建多个VLAN，分别代表不同的部门。</li>
+<li>整个网络拓扑由接入层、汇聚层和核心层构成。接入层选用二层交换机连接不同的VLAN，汇聚层选用三层交换机或者路由器实现不同VLAN之间的通信。核心层实现汇聚层的连接并负责内网和外网之间的互连。</li>
+<li>不同VLAN之间通过三层交换机和单臂路由实现互相通信。</li>
+<li>为了提高汇聚层的带宽，提高网络安全，汇聚层的三层交换机之间配置链路聚合。</li>
+<li>进行NAT转换使内网主机能访问外网，外网主机能访问内网Web服务器。</li>
+<li>企业内网搭建Web、DHCP和DNS服务器。PC机可以通过域名访问Web服务器。</li>
+<li>通过ACL控制某些子网对Web服务器的访问。</li>
+<li>静态路由协议和动态路由协议配置及路由重分布。</li>
+<li>配置某个端口的安全性。</li>
+<li>实现全网互联互通。</li>
+</ol>
+<hr>
+<h2>主要知识点</h2>
+<ol>
+<li>VLAN的划分以及Trunk的配置</li>
+<li>不同VLAN之间的互连</li>
+<li>端口聚合</li>
+<li>端口安全性的配置</li>
+<li>静态路由和默认路由</li>
+<li>RIP（Version 2）</li>
+<li>单区域OSPF</li>
+<li>EIGRP协议</li>
+<li>路由重分布</li>
+<li>ACL访问控制</li>
+<li>NAT地址转换</li>
+<li>服务器的配置</li>
+</ol>
+<hr>
+<h2>项目分析</h2>
+<h3>VLAN划分与Trunk配置</h3>
+<p>为隔离不同部门的广播域、提高网络安全性，在企业内网创建了多个VLAN（如VLAN 2、3、4、5、10等）。接入层交换机将不同端口划分到对应VLAN中，并在上行接口配置Trunk模式，允许多个VLAN的流量通过单条物理链路传递至汇聚层。Trunk使用802.1Q封装，有效节省了端口资源并简化了布线。</p>
+<h3>VLAN间路由</h3>
+<p>不同VLAN之间的通信由汇聚层设备完成。其中，路由器R2采用单臂路由方式，在其物理接口上划分子接口并封装802.1Q，分别配置各VLAN的网关IP，实现VLAN 2和VLAN 3的互通。而汇聚交换机S31和S32作为三层交换机，通过创建各VLAN的SVI（交换虚拟接口）并启用IP路由，实现VLAN 10、VLAN 4、VLAN 5之间的路由。这种混合使用单臂路由和三层交换的方式，既节约了设备成本，又保证了不同性能需求下的灵活路由。</p>
+<h3>链路聚合</h3>
+<p>为提高汇聚层S31与S32之间的带宽并增强冗余，在两者之间配置了链路聚合（EtherChannel）。两台交换机分别将G0/1和G0/2接口捆绑为Port-Channel 1，并设置为Trunk模式。聚合后的逻辑链路既实现了负载分担，又提供了链路备份——当其中一条物理链路故障时，流量自动切换至另一条，从而提高了网络的可靠性。</p>
+<h3>NAT转换</h3>
+<p>为实现“内网主机访问外网”和“外网主机访问内网Web服务器”两项功能，在核心路由器R1上配置了两种NAT：</p>
+<ul>
+<li>
+<p><strong>动态NAT过载（PAT）</strong>：定义公网地址池<code>pl</code>（219.220.241.110-120），利用ACL 100匹配所有私有地址段（10.0.0.0/8、172.16.0.0/12、192.168.0.0/16），并通过<code>overload</code>关键字复用公网IP。此方案可让大量内网用户共享少量公网IP上网，节约公网地址资源。</p>
+</li>
+<li>
+<p><strong>静态NAT端口映射</strong>：将内网Web服务器（10.179.1.3:80）静态映射到公网IP 219.220.241.101的80端口，使得外网用户可通过该公网IP直接访问内网的Web服务。选择静态映射而非端口触发（Port Triggering）是为了确保服务始终可达，无需内网主动发起连接。</p>
+</li>
+</ul>
+<h3>路由协议与路由重分布</h3>
+<p>项目要求同时使用静态路由和动态路由，并进行路由重分布。具体实现中：</p>
+<ul>
+<li>
+<p><strong>OSPF动态路由</strong>：在核心路由器R1、汇聚路由器R2以及汇聚交换机S31、S32上运行OSPF协议（区域0），各自宣告直连接口网段。OSPF具有收敛快、无环路、支持大型网络等优点，适用于层次化网络。</p>
+</li>
+<li>
+<p><strong>静态默认路由</strong>：在S31和S32上分别配置了指向对端的静态默认路由（S31指向10.0.0.1，S32指向172.16.179.100），确保内部设备访问外网时有明确的出口。同时，R1上也配置了默认路由指向外网下一跳。</p>
+</li>
+</ul>
+<p>由于本项目中未混合使用多种IGP（如RIP、EIGRP等），因此未涉及路由重分布。若后续扩展，可利用<code>redistribute</code>命令将静态路由或直连路由注入OSPF。</p>
+<h3>服务器搭建与域名访问</h3>
+<p>内网搭建了DHCP服务器（10.179.1.2）、Web服务器（10.179.1.3）和DNS服务器（10.179.1.4）。PC机通过DHCP自动获取IP地址，免去了手动配置的繁琐。DNS服务器负责将内部域名解析为Web服务器的内网IP，使得PC机可通过域名而非IP访问Web服务，提升了易用性。DHCP地址池的规划需注意与已有VLAN网段不重叠，避免地址冲突。</p>
+<h3>ACL访问控制</h3>
+<p>根据要求，需要通过ACL控制某些子网对Web服务器的访问。尽管报告配置片段中未直接给出具体ACL命令，但常见做法是在接近服务器的设备（如S31或R1的入方向）配置扩展ACL，拒绝特定源子网（如VLAN 2）的流量，同时允许其他子网访问Web服务器的80端口。</p>
+<h3>端口安全性</h3>
+<p>在接入层交换机S21和S22的访问端口上启用了端口安全功能。例如，S21的f0/1端口限制了最大MAC地址数为3，S22的f0/1端口配置了sticky MAC地址，并设置违规行为为restrict。这些措施可以有效防止MAC地址泛洪攻击和非法设备接入，增强了网络接入层的安全性。</p>
+<hr>
+<h2>项目规划设计</h2>
+<h3>设备选型</h3>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>型号</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>R0（出口路由器）</td>
+<td>2811</td>
+<td>连接外网与核心路由器R1，配置串口时钟，提供默认路由指向外网，并作为NAT转换后的外网网关。它仅做基本路由转发，不运行OSPF。</td>
+</tr>
+<tr>
+<td>R1（核心路由器）</td>
+<td>2811</td>
+<td>连接内网三层设备（R2、S32）及出口路由器R0。运行OSPF实现全网路由互通，配置NAPT允许内网访问外网，配置静态NAT映射，同时在外网接口应用ACL 102限制外网主动访问内网私有地址，但放行对Web服务的访问。</td>
+</tr>
+<tr>
+<td>R2（汇聚路由器）</td>
+<td>2811</td>
+<td>通过子接口（单臂路由）连接教学楼VLAN 2和VLAN 3，作为教学楼的默认网关。运行OSPF与R1交换路由，实现教学楼与宿舍、服务器等网段的互通。</td>
+</tr>
+<tr>
+<td>S31（汇聚层交换机1）</td>
+<td>2560-24PS</td>
+<td>三层交换机，连接服务器区域，配置VLAN 10 SVI作为服务器网关。运行OSPF，配置ACL 101保护服务器（允许内网所有访问Web/FTP，允许外网仅访问Web）。同时通过Trunk聚合链路与S32互联，实现服务器与其它网段的三层路由。</td>
+</tr>
+<tr>
+<td>S32（汇聚层交换机2）</td>
+<td>3560-24PS</td>
+<td>三层交换机，连接宿舍VLAN 4、VLAN 5的SVI作为宿舍网关，运行OSPF。通过Trunk聚合链路连接S31，并上联至R1。实现宿舍与其它网段的三层互通，同时可能作为DHCP中继点。</td>
+</tr>
+<tr>
+<td>S21（接入交换机1）</td>
+<td>2960-24T</td>
+<td>连接教学楼PC（VLAN 2、VLAN 3），配置端口安全，上联端口配置Trunk到R2。负责二层隔离和端口安全。</td>
+</tr>
+<tr>
+<td>S22（接入交换机2）</td>
+<td>2960-24T</td>
+<td>连接宿舍PC（VLAN 4、VLAN 5），配置端口安全，上联端口Trunk到S32（汇聚交换机2）。负责二层接入和端口安全。</td>
+</tr>
+</tbody>
+</table>
+<h3>拓扑结构</h3>
+<p><img alt="img" src="file:///C:\Users\孙恒毅\AppData\Local\Temp\ksohtml4204\wps1.jpg"></p>
+<h3>IP地址规划</h3>
+<table>
+<thead>
+<tr>
+<th>设备</th>
+<th>IP地址</th>
+<th>网关</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Pc0</td>
+<td>219.220.240.2</td>
+<td>219.220.240.1</td>
+</tr>
+<tr>
+<td>Pc1</td>
+<td>DHCP自动配置</td>
+<td>-</td>
+</tr>
+<tr>
+<td>Pc2</td>
+<td>DHCP自动配置</td>
+<td>-</td>
+</tr>
+<tr>
+<td>Pc3</td>
+<td>DHCP自动配置</td>
+<td>-</td>
+</tr>
+<tr>
+<td>Pc4</td>
+<td>DHCP自动配置</td>
+<td>-</td>
+</tr>
+<tr>
+<td>DHCP服务器</td>
+<td>10.179.1.2</td>
+<td>10.179.1.1</td>
+</tr>
+<tr>
+<td>WEB服务器</td>
+<td>10.179.1.3</td>
+<td>10.179.1.1</td>
+</tr>
+<tr>
+<td>DNS服务器</td>
+<td>10.179.1.4</td>
+<td>10.179.1.1</td>
+</tr>
+<tr>
+<td>外网DNS服务器</td>
+<td>219.220.242.200</td>
+<td>219.220.242.1</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2>项目仿真实现</h2>
+<h3>R0（出口路由器）</h3>
+<div class="highlight"><pre><span></span><code><span class="kd">interface</span><span class="w"> </span><span class="nx">s1</span><span class="o">/</span><span class="mi">3</span>
+<span class="nx">ip</span><span class="w"> </span><span class="nx">address</span><span class="w"> </span><span class="m m-Double">219.220.241.100</span><span class="w"> </span><span class="m m-Double">255.255.255.0</span>
+<span class="nx">clock</span><span class="w"> </span><span class="nx">rate</span><span class="w"> </span><span class="mi">64000</span>
+<span class="nx">no</span><span class="w"> </span><span class="nx">shutdown</span>
+<span class="kd">interface</span><span class="w"> </span><span class="nx">f0</span><span class="o">/</span><span class="mi">0</span>
+<span class="nx">ip</span><span class="w"> </span><span class="nx">address</span><span class="w"> </span><span class="m m-Double">219.220.240.1</span><span class="w"> </span><span class="m m-Double">255.255.255.0</span>
+<span class="nx">no</span><span class="w"> </span><span class="nx">shutdown</span>
+<span class="kd">interface</span><span class="w"> </span><span class="nx">fa0</span><span class="o">/</span><span class="mi">1</span>
+<span class="nx">ip</span><span class="w"> </span><span class="nx">address</span><span class="w"> </span><span class="m m-Double">219.220.242.1</span><span class="w"> </span><span class="m m-Double">255.255.255.0</span>
+<span class="nx">no</span><span class="w"> </span><span class="nx">shutdown</span>
+<span class="nx">ip</span><span class="w"> </span><span class="nx">route</span><span class="w"> </span><span class="m m-Double">0.0.0.0</span><span class="w"> </span><span class="m m-Double">0.0.0.0</span><span class="w"> </span><span class="nx">FastEthernet0</span><span class="o">/</span><span class="mi">0</span>
+<span class="nx">ip</span><span class="w"> </span><span class="nx">route</span><span class="w"> </span><span class="m m-Double">0.0.0.0</span><span class="w"> </span><span class="m m-Double">0.0.0.0</span><span class="w"> </span><span class="m m-Double">219.220.241.101</span>
+</code></pre></div>
+
+<h3>R1（核心路由器）</h3>
+<div class="highlight"><pre><span></span><code><span class="n">hostname</span><span class="w"> </span><span class="n">R1</span>
+<span class="nb nb-Type">int</span><span class="w"> </span><span class="n">f0</span><span class="o">/</span><span class="mi">0</span>
+<span class="n">ip</span><span class="w"> </span><span class="n">address</span><span class="w"> </span><span class="mf">192.168</span><span class="o">.</span><span class="mf">179.100</span><span class="w"> </span><span class="mf">255.255</span><span class="o">.</span><span class="mf">255.0</span>
+<span class="n">no</span><span class="w"> </span><span class="n">shutdown</span>
+<span class="nb nb-Type">int</span><span class="w"> </span><span class="n">f0</span><span class="o">/</span><span class="mi">1</span>
+<span class="n">ip</span><span class="w"> </span><span class="n">address</span><span class="w"> </span><span class="mf">172.16</span><span class="o">.</span><span class="mf">179.100</span><span class="w"> </span><span class="mf">255.255</span><span class="o">.</span><span class="mf">255.0</span>
+<span class="n">no</span><span class="w"> </span><span class="n">shutdown</span>
+<span class="nb nb-Type">int</span><span class="w"> </span><span class="n">s1</span><span class="o">/</span><span class="mi">3</span>
+<span class="n">ip</span><span class="w"> </span><span class="n">address</span><span class="w"> </span><span class="mf">219.220</span><span class="o">.</span><span class="mf">241.101</span><span class="w"> </span><span class="mf">255.255</span><span class="o">.</span><span class="mf">255.0</span>
+<span class="n">no</span><span class="w"> </span><span class="n">shutdown</span>
+<span class="n">router</span><span class="w"> </span><span class="n">ospf</span><span class="w"> </span><span class="mi">1</span>
+<span class="n">network</span><span class="w"> </span><span class="mf">172.16</span><span class="o">.</span><span class="mf">179.0</span><span class="w"> </span><span class="mf">0.0</span><span class="o">.</span><span class="mf">0.255</span><span class="w"> </span><span class="n">area</span><span class="w"> </span><span class="mi">0</span>
+<span class="n">network</span><span class="w"> </span><span class="mf">192.168</span><span class="o">.</span><span class="mf">179.0</span><span class="w"> </span><span class="mf">0.0</span><span class="o">.</span><span class="mf">0.255</span><span class="w"> </span><span class="n">area</span><span class="w"> </span><span class="mi">0</span>
+<span class="n">network</span><span class="w"> </span><span class="mf">219.220</span><span class="o">.</span><span class="mf">240.0</span><span class="w"> </span><span class="mf">0.0</span><span class="o">.</span><span class="mf">0.255</span><span class="w"> </span><span class="n">area</span><span class="w"> </span><span class="mi">0</span>
+<span class="n">access</span><span class="o">-</span><span class="n">list</span><span class="w"> </span><span class="mi">100</span><span class="w"> </span><span class="n">permit</span><span class="w"> </span><span class="n">ip</span><span class="w"> </span><span class="mf">10.0</span><span class="o">.</span><span class="mf">0.0</span><span class="w"> </span><span class="mf">0.255</span><span class="o">.</span><span class="mf">255.255</span><span class="w"> </span><span class="n">any</span>
+<span class="n">access</span><span class="o">-</span><span class="n">list</span><span class="w"> </span><span class="mi">100</span><span class="w"> </span><span class="n">permit</span><span class="w"> </span><span class="n">ip</span><span class="w"> </span><span class="mf">172.16</span><span class="o">.</span><span class="mf">0.0</span><span class="w"> </span><span class="mf">0.15</span><span class="o">.</span><span class="mf">255.255</span><span class="w"> </span><span class="n">any</span>
+<span class="n">access</span><span class="o">-</span><span class="n">list</span><span class="w"> </span><span class="mi">100</span><span class="w"> </span><span class="n">permit</span><span class="w"> </span><span class="n">ip</span><span class="w"> </span><span class="mf">192.168</span><span class="o">.</span><span class="mf">0.0</span><span class="w"> </span><span class="mf">0.0</span><span class="o">.</span><span class="mf">255.255</span><span class="w"> </span><span class="n">any</span>
+<span class="n">ip</span><span class="w"> </span><span class="n">nat</span><span class="w"> </span><span class="n">pool</span><span class="w"> </span><span class="n">pl</span><span class="w"> </span><span class="mf">219.220</span><span class="o">.</span><span class="mf">241.110</span><span class="w"> </span><span class="mf">219.220</span><span class="o">.</span><span class="mf">241.120</span><span class="w"> </span><span class="n">netmask</span><span class="w"> </span><span class="mf">255.255</span><span class="o">.</span><span class="mf">255.0</span>
+<span class="n">ip</span><span class="w"> </span><span class="n">nat</span><span class="w"> </span><span class="n">inside</span><span class="w"> </span><span class="n">source</span><span class="w"> </span><span class="n">list</span><span class="w"> </span><span class="mi">100</span><span class="w"> </span><span class="n">pool</span><span class="w"> </span><span class="n">pl</span><span class="w"> </span><span class="n">overload</span>
+<span class="n">ip</span><span class="w"> </span><span class="n">nat</span><span class="w"> </span><span class="n">inside</span><span class="w"> </span><span class="n">source</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="n">tcp</span><span class="w"> </span><span class="mf">10.179</span><span class="o">.</span><span class="mf">1.3</span><span class="w"> </span><span class="mi">80</span><span class="w"> </span><span class="mf">219.220</span><span class="o">.</span><span class="mf">241.101</span><span class="w"> </span><span class="mi">80</span>
+<span class="nb nb-Type">int</span><span class="w"> </span><span class="n">s1</span><span class="o">/</span><span class="mi">3</span>
+<span class="n">ip</span><span class="w"> </span><span class="n">nat</span><span class="w"> </span><span class="n">outside</span>
+<span class="nb nb-Type">int</span><span class="w"> </span><span class="n">f0</span><span class="o">/</span><span class="mi">0</span>
+<span class="n">ip</span><span class="w"> </span><span class="n">nat</span><span class="w"> </span><span class="n">inside</span>
+<span class="nb nb-Type">int</span><span class="w"> </span><span class="n">f0</span><span class="o">/</span><span class="mi">1</span>
+<span class="n">ip</span><span class="w"> </span><span class="n">nat</span><span class="w"> </span><span class="n">inside</span>
+</code></pre></div>
+
+<h3>R2（汇聚层路由器）</h3>
+<div class="highlight"><pre><span></span><code><span class="nx">hostname</span><span class="w"> </span><span class="nx">R2</span>
+<span class="nx">int</span><span class="w"> </span><span class="nx">f0</span><span class="o">/</span><span class="mi">1</span>
+<span class="nx">no</span><span class="w"> </span><span class="nx">ip</span><span class="w"> </span><span class="nx">address</span>
+<span class="nx">no</span><span class="w"> </span><span class="nx">shutdown</span>
+<span class="nx">int</span><span class="w"> </span><span class="nx">f0</span><span class="o">/</span><span class="m m-Double">1.2</span>
+<span class="nx">encapsulation</span><span class="w"> </span><span class="nx">dot1Q</span><span class="w"> </span><span class="mi">2</span>
+<span class="nx">ip</span><span class="w"> </span><span class="nx">address</span><span class="w"> </span><span class="m m-Double">192.168.2.1</span><span class="w"> </span><span class="m m-Double">255.255.255.0</span>
+<span class="nx">no</span><span class="w"> </span><span class="nx">shutdown</span>
+<span class="nx">int</span><span class="w"> </span><span class="nx">f0</span><span class="o">/</span><span class="m m-Double">1.3</span>
+<span class="nx">encapsulation</span><span class="w"> </span><span class="nx">dot1Q</span><span class="w"> </span><span class="mi">3</span>
+<span class="nx">ip</span><span class="w"> </span><span class="nx">address</span><span class="w"> </span><span class="m m-Double">192.168.3.1</span><span class="w"> </span><span class="m m-Double">255.255.255.0</span>
+<span class="nx">no</span><span class="w"> </span><span class="nx">shutdown</span>
+<span class="nx">int</span><span class="w"> </span><span class="nx">f0</span><span class="o">/</span><span class="mi">0</span>
+<span class="nx">ip</span><span class="w"> </span><span class="nx">address</span><span class="w"> </span><span class="m m-Double">192.168.179.101</span><span class="w"> </span><span class="m m-Double">255.255.255.0</span>
+<span class="nx">no</span><span class="w"> </span><span class="nx">shutdown</span>
+<span class="nx">router</span><span class="w"> </span><span class="nx">ospf</span><span class="w"> </span><span class="mi">1</span>
+<span class="nx">network</span><span class="w"> </span><span class="m m-Double">192.168.2.0</span><span class="w"> </span><span class="m m-Double">0.0.0.255</span><span class="w"> </span><span class="nx">area</span><span class="w"> </span><span class="mi">0</span>
+<span class="nx">network</span><span class="w"> </span><span class="m m-Double">192.168.3.0</span><span class="w"> </span><span class="m m-Double">0.0.0.255</span><span class="w"> </span><span class="nx">area</span><span class="w"> </span><span class="mi">0</span>
+<span class="nx">network</span><span class="w"> </span><span class="m m-Double">192.168.179.0</span><span class="w"> </span><span class="m m-Double">0.0.0.255</span><span class="w"> </span><span class="nx">area</span><span class="w"> </span><span class="mi">0</span>
+</code></pre></div>
+
+<h3>S31（汇聚交换机2）</h3>
+<div class="highlight"><pre><span></span><code><span class="nx">hostname</span><span class="w"> </span><span class="nx">S31</span>
+<span class="nx">ip</span><span class="w"> </span><span class="nx">routing</span>
+<span class="nx">vlan</span><span class="w"> </span><span class="mi">10</span>
+<span class="nx">vlan</span><span class="w"> </span><span class="mi">100</span>
+<span class="nx">int</span><span class="w"> </span><span class="nx">vlan</span><span class="w"> </span><span class="mi">100</span>
+<span class="nx">ip</span><span class="w"> </span><span class="nx">address</span><span class="w"> </span><span class="m m-Double">10.0.0.2</span><span class="w"> </span><span class="m m-Double">255.255.255.252</span>
+<span class="nx">no</span><span class="w"> </span><span class="nx">shutdown</span>
+<span class="nx">int</span><span class="w"> </span><span class="nx">vlan</span><span class="w"> </span><span class="mi">10</span>
+<span class="nx">ip</span><span class="w"> </span><span class="nx">address</span><span class="w"> </span><span class="m m-Double">10.179.1.1</span><span class="w"> </span><span class="m m-Double">255.255.255.0</span>
+<span class="nx">no</span><span class="w"> </span><span class="nx">shutdown</span>
+<span class="kd">interface</span><span class="w"> </span><span class="nx">G0</span><span class="o">/</span><span class="mi">1</span>
+<span class="nx">switchport</span><span class="w"> </span><span class="nx">trunk</span><span class="w"> </span><span class="nx">encapsulation</span><span class="w"> </span><span class="nx">dot1q</span>
+<span class="nx">switchport</span><span class="w"> </span><span class="nx">mode</span><span class="w"> </span><span class="nx">trunk</span>
+<span class="nx">channel</span><span class="o">-</span><span class="nx">group</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="nx">mode</span><span class="w"> </span><span class="nx">active</span>
+<span class="kd">interface</span><span class="w"> </span><span class="nx">G0</span><span class="o">/</span><span class="mi">2</span>
+<span class="nx">switchport</span><span class="w"> </span><span class="nx">trunk</span><span class="w"> </span><span class="nx">encapsulation</span><span class="w"> </span><span class="nx">dot1q</span>
+<span class="nx">switchport</span><span class="w"> </span><span class="nx">mode</span><span class="w"> </span><span class="nx">trunk</span>
+<span class="nx">channel</span><span class="o">-</span><span class="nx">group</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="nx">mode</span><span class="w"> </span><span class="nx">active</span>
+<span class="kd">interface</span><span class="w"> </span><span class="nx">Port</span><span class="o">-</span><span class="nx">channel1</span>
+<span class="nx">switchport</span><span class="w"> </span><span class="nx">trunk</span><span class="w"> </span><span class="nx">encapsulation</span><span class="w"> </span><span class="nx">dot1q</span>
+<span class="nx">switchport</span><span class="w"> </span><span class="nx">mode</span><span class="w"> </span><span class="nx">trunk</span>
+<span class="nx">router</span><span class="w"> </span><span class="nx">ospf</span><span class="w"> </span><span class="mi">1</span>
+<span class="nx">network</span><span class="w"> </span><span class="m m-Double">10.0.0.0</span><span class="w"> </span><span class="m m-Double">0.0.0.3</span><span class="w"> </span><span class="nx">area</span><span class="w"> </span><span class="mi">0</span>
+<span class="nx">network</span><span class="w"> </span><span class="m m-Double">10.179.1.0</span><span class="w"> </span><span class="m m-Double">0.0.0.255</span><span class="w"> </span><span class="nx">area</span><span class="w"> </span><span class="mi">0</span>
+<span class="nx">ip</span><span class="w"> </span><span class="nx">route</span><span class="w"> </span><span class="m m-Double">0.0.0.0</span><span class="w"> </span><span class="m m-Double">0.0.0.0</span><span class="w"> </span><span class="m m-Double">10.0.0.1</span>
+</code></pre></div>
+
+<h3>S32（汇聚交换机1）</h3>
+<div class="highlight"><pre><span></span><code><span class="nx">hostname</span><span class="w"> </span><span class="nx">S32</span>
+<span class="nx">ip</span><span class="w"> </span><span class="nx">routing</span>
+<span class="nx">vlan</span><span class="w"> </span><span class="mi">4</span>
+<span class="nx">vlan</span><span class="w"> </span><span class="mi">5</span>
+<span class="nx">vlan</span><span class="w"> </span><span class="mi">100</span>
+<span class="nx">int</span><span class="w"> </span><span class="nx">vlan</span><span class="w"> </span><span class="mi">4</span>
+<span class="nx">ip</span><span class="w"> </span><span class="nx">address</span><span class="w"> </span><span class="m m-Double">172.16.4.1</span><span class="w"> </span><span class="m m-Double">255.255.255.0</span>
+<span class="nx">no</span><span class="w"> </span><span class="nx">shutdown</span>
+<span class="nx">int</span><span class="w"> </span><span class="nx">vlan</span><span class="w"> </span><span class="mi">5</span>
+<span class="nx">ip</span><span class="w"> </span><span class="nx">address</span><span class="w"> </span><span class="m m-Double">172.16.5.1</span><span class="w"> </span><span class="m m-Double">255.255.255.0</span>
+<span class="nx">no</span><span class="w"> </span><span class="nx">shutdown</span>
+<span class="nx">int</span><span class="w"> </span><span class="nx">vlan</span><span class="w"> </span><span class="mi">100</span>
+<span class="nx">ip</span><span class="w"> </span><span class="nx">address</span><span class="w"> </span><span class="m m-Double">10.0.0.1</span><span class="w"> </span><span class="m m-Double">255.255.255.252</span>
+<span class="kd">interface</span><span class="w"> </span><span class="nx">G0</span><span class="o">/</span><span class="mi">1</span>
+<span class="nx">switchport</span><span class="w"> </span><span class="nx">trunk</span><span class="w"> </span><span class="nx">encapsulation</span><span class="w"> </span><span class="nx">dot1q</span>
+<span class="nx">switchport</span><span class="w"> </span><span class="nx">mode</span><span class="w"> </span><span class="nx">trunk</span>
+<span class="nx">channel</span><span class="o">-</span><span class="nx">group</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="nx">mode</span><span class="w"> </span><span class="nx">active</span>
+<span class="kd">interface</span><span class="w"> </span><span class="nx">G0</span><span class="o">/</span><span class="mi">2</span>
+<span class="nx">switchport</span><span class="w"> </span><span class="nx">trunk</span><span class="w"> </span><span class="nx">encapsulation</span><span class="w"> </span><span class="nx">dot1q</span>
+<span class="nx">switchport</span><span class="w"> </span><span class="nx">mode</span><span class="w"> </span><span class="nx">trunk</span>
+<span class="nx">channel</span><span class="o">-</span><span class="nx">group</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="nx">mode</span><span class="w"> </span><span class="nx">active</span>
+<span class="kd">interface</span><span class="w"> </span><span class="nx">Port</span><span class="o">-</span><span class="nx">channel1</span>
+<span class="nx">switchport</span><span class="w"> </span><span class="nx">trunk</span><span class="w"> </span><span class="nx">encapsulation</span><span class="w"> </span><span class="nx">dot1q</span>
+<span class="nx">switchport</span><span class="w"> </span><span class="nx">mode</span><span class="w"> </span><span class="nx">trunk</span>
+<span class="nx">int</span><span class="w"> </span><span class="nx">f0</span><span class="o">/</span><span class="mi">1</span>
+<span class="nx">no</span><span class="w"> </span><span class="nx">switchport</span>
+<span class="nx">ip</span><span class="w"> </span><span class="nx">address</span><span class="w"> </span><span class="m m-Double">172.16.179.101</span><span class="w"> </span><span class="m m-Double">255.255.255.0</span>
+<span class="nx">router</span><span class="w"> </span><span class="nx">ospf</span><span class="w"> </span><span class="mi">1</span>
+<span class="nx">network</span><span class="w"> </span><span class="m m-Double">172.16.4.0</span><span class="w"> </span><span class="m m-Double">0.0.0.255</span><span class="w"> </span><span class="nx">area</span><span class="w"> </span><span class="mi">0</span>
+<span class="nx">network</span><span class="w"> </span><span class="m m-Double">172.16.5.0</span><span class="w"> </span><span class="m m-Double">0.0.0.255</span><span class="w"> </span><span class="nx">area</span><span class="w"> </span><span class="mi">0</span>
+<span class="nx">network</span><span class="w"> </span><span class="m m-Double">172.16.179.0</span><span class="w"> </span><span class="m m-Double">0.0.0.255</span><span class="w"> </span><span class="nx">area</span><span class="w"> </span><span class="mi">0</span>
+<span class="nx">network</span><span class="w"> </span><span class="m m-Double">10.0.0.0</span><span class="w"> </span><span class="m m-Double">0.0.0.3</span><span class="w"> </span><span class="nx">area</span><span class="w"> </span><span class="mi">0</span>
+<span class="nx">ip</span><span class="w"> </span><span class="nx">route</span><span class="w"> </span><span class="m m-Double">0.0.0.0</span><span class="w"> </span><span class="m m-Double">0.0.0.0</span><span class="w"> </span><span class="m m-Double">172.16.179.100</span>
+</code></pre></div>
+
+<h3>S21（接入层交换机1）</h3>
+<div class="highlight"><pre><span></span><code>hostname S21
+int f0/1
+switchport mode access
+switchport access vlan 2
+no shutdown
+switchport port-security
+switchport port-security maximum 3
+int f0/2
+switchport mode access
+switchport access vlan 3
+no shutdown
+switchport port-security
+int f0/3
+switchport mode trunk
+switchport trunk allowed vlan all
+no shutdown
+</code></pre></div>
+
+<h3>S22（接入层交换机2）</h3>
+<div class="highlight"><pre><span></span><code><span class="nx">hostname</span><span class="w"> </span><span class="nx">S22</span>
+<span class="nx">int</span><span class="w"> </span><span class="nx">f0</span><span class="o">/</span><span class="mi">1</span>
+<span class="nx">switchport</span><span class="w"> </span><span class="nx">mode</span><span class="w"> </span><span class="nx">access</span>
+<span class="nx">switchport</span><span class="w"> </span><span class="nx">access</span><span class="w"> </span><span class="nx">vlan</span><span class="w"> </span><span class="mi">4</span>
+<span class="nx">no</span><span class="w"> </span><span class="nx">shutdown</span>
+<span class="nx">switchport</span><span class="w"> </span><span class="nx">port</span><span class="o">-</span><span class="nx">security</span>
+<span class="nx">switchport</span><span class="w"> </span><span class="nx">port</span><span class="o">-</span><span class="nx">security</span><span class="w"> </span><span class="nx">mac</span><span class="o">-</span><span class="nx">address</span><span class="w"> </span><span class="nx">sticky</span>
+<span class="nx">switchport</span><span class="w"> </span><span class="nx">port</span><span class="o">-</span><span class="nx">security</span><span class="w"> </span><span class="nx">violation</span><span class="w"> </span><span class="nx">restrict</span>
+<span class="nx">int</span><span class="w"> </span><span class="nx">f0</span><span class="o">/</span><span class="mi">2</span>
+<span class="nx">switchport</span><span class="w"> </span><span class="nx">mode</span><span class="w"> </span><span class="nx">access</span>
+<span class="nx">switchport</span><span class="w"> </span><span class="nx">access</span><span class="w"> </span><span class="nx">vlan</span><span class="w"> </span><span class="mi">5</span>
+<span class="nx">no</span><span class="w"> </span><span class="nx">shutdown</span>
+<span class="nx">switchport</span><span class="w"> </span><span class="nx">port</span><span class="o">-</span><span class="nx">security</span>
+<span class="nx">switchport</span><span class="w"> </span><span class="nx">port</span><span class="o">-</span><span class="nx">security</span><span class="w"> </span><span class="nx">maximum</span><span class="w"> </span><span class="mi">3</span>
+<span class="nx">switchport</span><span class="w"> </span><span class="nx">port</span><span class="o">-</span><span class="nx">security</span><span class="w"> </span><span class="nx">violation</span><span class="w"> </span><span class="nx">restrict</span>
+<span class="nx">int</span><span class="w"> </span><span class="nx">f0</span><span class="o">/</span><span class="mi">3</span>
+<span class="nx">switchport</span><span class="w"> </span><span class="nx">mode</span><span class="w"> </span><span class="nx">trunk</span>
+<span class="nx">switchport</span><span class="w"> </span><span class="nx">trunk</span><span class="w"> </span><span class="nx">allowed</span><span class="w"> </span><span class="nx">vlan</span><span class="w"> </span><span class="nx">all</span>
+<span class="nx">no</span><span class="w"> </span><span class="nx">shutdown</span>
+</code></pre></div>
+  </div>
+  <div class="tag-cloud">
+    <p>
+      <a href="https://codeshy-1119.github.io/tag/wang-luo.html">网络</a>
+      <a href="https://codeshy-1119.github.io/tag/fang-zhen.html">仿真</a>
+    </p>
+  </div>
+
+
+
+
+
+
+
+</article>
+
+    <footer style="text-align:center;padding:20px;background:transparent;">
+        <p>&copy; 才华恒毅的blog 2026</p>
+    </footer>
+</body>
+</html>
