@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="chinese (simplified)">
 <head>
-    <title> &ndash; 网络综合设计与仿真实现</title>
+    <title>才华恒毅的blog</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://codeshy-1119.github.io/theme/css/style.min.css" />
@@ -10,19 +10,28 @@
 </head>
 
 <body>
-<article class="single">
-  <header>
-      
-    <h1 id="wang-luo-zong-he-she-ji-yu-fang-zhen-shi-xian">网络综合设计与仿真实现</h1>
-    <p>
-      Posted on 周二 23 六月 2026 in <a href="https://codeshy-1119.github.io/category/ji-zhu.html">技术</a>
 
-    </p>
-  </header>
+<!-- ===== 全屏视频背景（固定） ===== -->
+<div id="hero">
+    <video autoplay muted loop playsinline id="bg-video">
+        <source src="https://codeshy-1119.github.io/images/blog.mp4" type="video/mp4">
+        您的浏览器不支持视频背景。
+    </video>
+</div>
 
-
-  <div>
-    <h1>项目报告</h1>
+<!-- ===== 文章内容（浮在背景上的卡片） ===== -->
+<div id="article-content">
+    <article>
+        <header>
+            <h1 class="article-title">网络综合设计与仿真实现</h1>
+            <p class="article-meta">
+                周二 23 六月 2026
+                    · <a href="https://codeshy-1119.github.io/category/ji-zhu.html">技术</a>
+                    · Tagged with
+                        <a href="https://codeshy-1119.github.io/tag/wang-luo.html">网络</a>,                        <a href="https://codeshy-1119.github.io/tag/fang-zhen.html">仿真</a>            </p>
+        </header>
+        <div class="article-body">
+            <h1>项目报告</h1>
 <p><strong>课程名称：</strong> 《路由与交换技术》 
 <strong>课题名称：</strong> 网络综合设计与仿真实现  </p>
 <hr>
@@ -414,21 +423,164 @@ no shutdown
 <span class="nx">switchport</span><span class="w"> </span><span class="nx">trunk</span><span class="w"> </span><span class="nx">allowed</span><span class="w"> </span><span class="nx">vlan</span><span class="w"> </span><span class="nx">all</span>
 <span class="nx">no</span><span class="w"> </span><span class="nx">shutdown</span>
 </code></pre></div>
-  </div>
-  <div class="tag-cloud">
-    <p>
-      <a href="https://codeshy-1119.github.io/tag/wang-luo.html">网络</a>
-      <a href="https://codeshy-1119.github.io/tag/fang-zhen.html">仿真</a>
-    </p>
-  </div>
+        </div>
+    </article>
+</div>
 
+<!-- ===== 右下角返回按钮（沿用首页风格） ===== -->
+<button id="back-home" onclick="window.location.href='https://codeshy-1119.github.io/'">🏠 返回</button>
 
+<!-- ===== 样式覆盖 ===== -->
+<style>
+    /* ===== 全局重置 ===== */
+    html, body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        overflow-y: auto;
+        background: transparent;
+    }
 
+    /* ===== 视频背景固定 ===== */
+    #hero {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        z-index: 0;
+        overflow: hidden;
+    }
+    #bg-video {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        min-width: 100%;
+        min-height: 100%;
+        width: auto;
+        height: auto;
+        object-fit: cover;
+    }
 
+    /* ===== 文章内容（毛玻璃卡片，居中） ===== */
+    #article-content {
+        position: relative;
+        z-index: 1;
+        margin-top: 10vh;
+        margin-bottom: 10vh;
+        max-width: 800px;
+        margin-left: auto;
+        margin-right: auto;
+        padding: 20px;
+    }
+    #article-content article {
+        background: rgba(255, 255, 255, 0.88);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 40px 45px;
+        box-shadow: 0 8px 40px rgba(0,0,0,0.2);
+        color: #222;
+        line-height: 1.8;
+        font-size: 1.05rem;
+    }
 
+    /* ===== 文章标题 ===== */
+    .article-title {
+        font-size: 2.2rem;
+        margin-bottom: 10px;
+        color: #1a3a2a;
+        text-align: left;
+        border-bottom: 3px solid #2a8a5a;
+        padding-bottom: 15px;
+    }
+    .article-meta {
+        font-size: 0.9rem;
+        color: #666;
+        margin-bottom: 25px;
+        text-align: left;
+    }
+    .article-meta a {
+        color: #2a7a5a;
+        text-decoration: none;
+    }
+    .article-meta a:hover {
+        text-decoration: underline;
+    }
 
+    /* ===== 文章正文 ===== */
+    .article-body {
+        text-align: left;
+    }
+    .article-body p {
+        margin-bottom: 1.2em;
+    }
+    .article-body h2, .article-body h3 {
+        margin-top: 1.8em;
+        margin-bottom: 0.6em;
+        color: #1a3a2a;
+    }
+    .article-body img {
+        max-width: 100%;
+        border-radius: 10px;
+        margin: 20px 0;
+        display: block;
+    }
+    .article-body pre, .article-body code {
+        background: #f0f0f0;
+        border-radius: 6px;
+        padding: 2px 6px;
+        font-size: 0.95rem;
+    }
+    .article-body pre {
+        padding: 16px;
+        overflow-x: auto;
+    }
 
-</article>
+    /* ===== 返回按钮 ===== */
+    #back-home {
+        position: fixed;
+        bottom: 25px;
+        right: 25px;
+        z-index: 10;
+        padding: 14px 22px;
+        background: rgba(42, 157, 143, 0.9);
+        color: #fff;
+        border: none;
+        border-radius: 40px;
+        font-size: 1.1rem;
+        font-weight: bold;
+        cursor: pointer;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        backdrop-filter: blur(4px);
+        transition: background 0.2s, transform 0.2s;
+    }
+    #back-home:hover {
+        background: rgba(42, 157, 143, 1);
+        transform: scale(1.05);
+    }
+    #back-home:active {
+        transform: scale(0.95);
+    }
+
+    /* ===== 隐藏原主题侧边栏、footer ===== */
+    .row .col-sm-3,
+    .row .col-md-3,
+    .row .col-lg-3 {
+        display: none !important;
+    }
+    .row .col-sm-9,
+    .row .col-md-9,
+    .row .col-lg-9 {
+        width: 100% !important;
+        max-width: 100% !important;
+        flex: 0 0 100% !important;
+    }
+    footer {
+        display: none !important;
+    }
+</style>
+
 
     <footer style="text-align:center;padding:20px;background:transparent;">
         <p>&copy; 才华恒毅的blog 2026</p>
