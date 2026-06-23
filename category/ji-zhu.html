@@ -85,7 +85,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
     fetch('https://codeshy-1119.github.io/search.json')
         .then(response => response.json())
-        .then(data => { articles = data; })
+        .then(data => {
+            articles = data;
+            console.log('搜索索引数据:', data);  // 调试：查看索引内容
+        })
         .catch(err => console.log('搜索索引加载失败:', err));
 
     searchInput.addEventListener('input', function() {
@@ -94,10 +97,11 @@ document.addEventListener('DOMContentLoaded', function() {
             resultsBox.style.display = 'none';
             return;
         }
+        // ✅ 只搜索标题，不依赖 summary
         var matches = articles.filter(function(item) {
-            return (item.title || '').toLowerCase().includes(query) ||
-                   (item.summary || '').toLowerCase().includes(query);
+            return (item.title || '').toLowerCase().includes(query);
         }).slice(0, 10);
+
         if (matches.length > 0) {
             resultsBox.innerHTML = matches.map(function(item) {
                 return '<a href="' + item.url + '" class="result-item">' +
@@ -215,7 +219,8 @@ document.addEventListener('DOMContentLoaded', function() {
         position: absolute;
         top: 100%;
         left: 0;
-        width: 100%;
+        right: 0;                    /* ✅ 关键：左右撑满 */
+        width: auto;                 /* ✅ 配合 left/right 自动调整 */
         background: rgba(255, 255, 255, 0.95);
         border-radius: 10px;
         margin-top: 10px;
@@ -223,6 +228,7 @@ document.addEventListener('DOMContentLoaded', function() {
         overflow-y: auto;
         display: none;
         box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+        box-sizing: border-box;      /* 确保内边距不会撑宽 */
     }
     #search-results .result-item {
         padding: 10px 20px;
