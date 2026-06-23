@@ -1,4 +1,54 @@
-<!-- ===== 文章列表（左右交替布局） ===== -->
+<!DOCTYPE html>
+<html lang="chinese (simplified)">
+<head>
+    <title> &ndash; Tag 仿真</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://codeshy-1119.github.io/theme/css/style.min.css" />
+    <link rel="stylesheet" href="https://codeshy-1119.github.io/theme/css/dark-theme.min.css" />
+    <link rel="stylesheet" href="https://codeshy-1119.github.io/custom.css" />
+</head>
+
+<body>
+
+    <!-- ===== 顶部导航栏 ===== -->
+    <nav id="navbar">
+        <div class="nav-container">
+            <div class="nav-left">
+                <a href="https://codeshy-1119.github.io/" class="nav-brand">才华恒毅的blog</a>
+            </div>
+            <div class="nav-right">
+                <a href="https://codeshy-1119.github.io/" class="nav-link">首页</a>
+                <a href="https://codeshy-1119.github.io/archives.html" class="nav-link">归档</a>
+                <a href="https://codeshy-1119.github.io/categories.html" class="nav-link">分类</a>
+                <a href="https://codeshy-1119.github.io/tags.html" class="nav-link">标签</a>
+                <a href="https://codeshy-1119.github.io/author/cai-hua-heng-yi.html" class="nav-link">关于</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ===== 页面内容（子模板填充） ===== -->
+
+<!-- ===== 全屏视频背景（固定） ===== -->
+<div id="hero">
+    <video autoplay muted loop playsinline id="bg-video">
+        <source src="https://codeshy-1119.github.io/images/blog.mp4" type="video/mp4">
+        您的浏览器不支持视频背景。
+    </video>
+</div>
+
+<!-- ===== 标题 + 搜索框（固定，居中偏上） ===== -->
+<div id="header-fixed">
+    <div class="hero-content">
+        <h1 class="hero-title">才华恒毅的blog</h1>
+        <div class="search-container">
+            <input type="text" id="search-input" placeholder="搜索文章..." />
+            <div id="search-results"></div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== 文章列表（左右交替图文卡片） ===== -->
 <div id="content">
     <div class="container">
             <article class="article-card card-left">
@@ -13,14 +63,12 @@
                                     <a href="https://codeshy-1119.github.io/tag/wang-luo.html">网络</a>,                                    <a href="https://codeshy-1119.github.io/tag/fang-zhen.html">仿真</a>                        </p>
                     </header>
                     <div class="summary">
-                        <p>Image: /images/ 网络综合设计与仿真实现/封面.png</p>
+                        <p>Image: /images/ 网络综合设计与仿真实现2026.6.23/封面.png</p>
 <h1>项目报告</h1>
 <p><strong>课程名称：</strong> 《路由与交换技术》 
 <strong>课题名称：</strong> 网络综合设计与仿真实现  </p>
 <hr>
-<h2>目录</h2>
-<ol>
-<li><a href="#项目目的">项目 …</a></li></ol>
+<h2>目 …</h2>
                     </div>
                     <a href="https://codeshy-1119.github.io/wang-luo-zong-he-she-ji-yu-fang-zhen-shi-xian.html" class="read-more">阅读全文 →</a>
                 </div>
@@ -31,3 +79,497 @@
             </article>
     </div>
 </div>
+
+<!-- ===== 右下角控制按钮 ===== -->
+<button id="toggle-drawer">📖 文章</button>
+
+<!-- ===== 搜索脚本 ===== -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var searchInput = document.getElementById('search-input');
+    var resultsBox = document.getElementById('search-results');
+    var articles = [];
+    
+    fetch('https://codeshy-1119.github.io/search.json')
+        .then(response => response.json())
+        .then(data => { articles = data; })
+        .catch(err => console.log('搜索索引加载失败:', err));
+    
+    searchInput.addEventListener('input', function() {
+        var query = this.value.trim().toLowerCase();
+        if (query.length < 2) {
+            resultsBox.style.display = 'none';
+            return;
+        }
+        var matches = articles.filter(function(item) {
+            return (item.title || '').toLowerCase().includes(query) ||
+                   (item.summary || '').toLowerCase().includes(query);
+        }).slice(0, 10);
+        if (matches.length > 0) {
+            resultsBox.innerHTML = matches.map(function(item) {
+                return '<a href="' + item.url + '" class="result-item">' +
+                    '<strong>' + item.title + '</strong><br>' +
+                    '<small>' + (item.summary || '').substring(0, 80) + '...</small></a>';
+            }).join('');
+            resultsBox.style.display = 'block';
+        } else {
+            resultsBox.innerHTML = '<div class="result-item" style="color:#999;">未找到相关文章</div>';
+            resultsBox.style.display = 'block';
+        }
+    });
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.search-container')) resultsBox.style.display = 'none';
+    });
+
+    // ===== 抽屉控制 =====
+    var drawer = document.getElementById('content-drawer');
+    var btn = document.getElementById('toggle-drawer');
+    var header = document.getElementById('header-fixed');
+    var isOpen = false;
+
+    btn.addEventListener('click', function() {
+        isOpen = !isOpen;
+        drawer.classList.toggle('open', isOpen);
+        header.classList.toggle('shift-up', isOpen);
+        btn.textContent = isOpen ? '✕ 收起' : '📖 文章';
+    });
+});
+</script>
+
+<!-- ===== 样式覆盖 ===== -->
+<style>
+    /* ===== 全局重置 ===== */
+    html, body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        overflow-y: auto;
+        background: transparent;
+    }
+
+    /* ===== 视频背景固定 ===== */
+    #hero {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        z-index: 0;
+        overflow: hidden;
+    }
+    #bg-video {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        min-width: 100%;
+        min-height: 100%;
+        width: auto;
+        height: auto;
+        object-fit: cover;
+    }
+
+    /* ===== 标题 + 搜索框 ===== */
+    #header-fixed {
+        position: fixed;
+        top: 25%;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 2;
+        width: 90%;
+        max-width: 600px;
+        pointer-events: none;
+        transition: top 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    #header-fixed.shift-up {
+        top: calc(25% - 70px);
+    }
+    #header-fixed .hero-content {
+        pointer-events: auto;
+        text-align: center;
+        color: #fff;
+        padding: 20px;
+        background: transparent;
+        text-shadow: 0 2px 10px rgba(0,0,0,0.8);
+    }
+    .hero-title {
+        font-size: 3rem;
+        margin-bottom: 20px;
+        text-shadow: 2px 2px 8px rgba(0,0,0,0.8);
+    }
+
+    /* ===== 搜索框 ===== */
+    .search-container {
+        position: relative;
+        width: 100%;
+    }
+    #search-input {
+        width: 100%;
+        padding: 12px 20px;
+        font-size: 1.1rem;
+        border: none;
+        border-radius: 30px;
+        background: rgba(255, 255, 255, 0.55);
+        backdrop-filter: blur(10px);
+        outline: none;
+        color: #333;
+    }
+    #search-input:focus {
+        background: rgba(255, 255, 255, 0.8);
+        box-shadow: 0 0 20px rgba(255,255,255,0.3);
+    }
+    #search-results {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 10px;
+        margin-top: 10px;
+        max-height: 300px;
+        overflow-y: auto;
+        display: none;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    }
+    #search-results .result-item {
+        padding: 10px 20px;
+        border-bottom: 1px solid #eee;
+        color: #333;
+        text-decoration: none;
+        display: block;
+    }
+    #search-results .result-item:hover {
+        background: #f0f0f0;
+    }
+
+    /* ===== 文章卡片（左右交替布局） ===== */
+    #content {
+        position: relative;
+        z-index: 1;
+        margin-top: 70vh;
+        padding: 20px 20px 80px 20px;
+        min-height: 100vh;
+        box-sizing: border-box;
+    }
+    #content .container {
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+
+    .article-card {
+        display: flex;
+        align-items: stretch;
+        background: rgba(255, 255, 255, 0.88);
+        backdrop-filter: blur(8px);
+        border-radius: 16px;
+        overflow: hidden;
+        margin-bottom: 30px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        transition: transform 0.2s, box-shadow 0.2s;
+        min-height: 180px;
+    }
+    .article-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+    }
+
+    .card-text {
+        flex: 1.2;
+        padding: 28px 32px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+    .card-text h2 {
+        margin: 0 0 6px 0;
+    }
+    .card-text h2 a {
+        color: #1a3a2a;
+        text-decoration: none;
+        font-size: 1.3rem;
+    }
+    .card-text h2 a:hover {
+        color: #2a7a5a;
+        text-decoration: underline;
+    }
+    .post-meta {
+        font-size: 0.85rem;
+        color: #777;
+        margin-bottom: 10px;
+    }
+    .post-meta a {
+        color: #2a7a5a;
+        text-decoration: none;
+    }
+    .post-meta a:hover {
+        text-decoration: underline;
+    }
+    .summary {
+        color: #444;
+        font-size: 0.95rem;
+        line-height: 1.6;
+        flex: 1;
+    }
+    .read-more {
+        display: inline-block;
+        margin-top: 12px;
+        color: #2a7a5a;
+        font-weight: 600;
+        text-decoration: none;
+    }
+    .read-more:hover {
+        text-decoration: underline;
+    }
+
+    .card-image {
+        flex: 1;
+        min-height: 160px;
+        background: #e8ece8;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+    }
+    .card-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    .placeholder-img {
+        font-size: 4rem;
+        opacity: 0.25;
+    }
+
+    /* 左右交替 */
+    .article-card.card-left .card-image {
+        order: 2;
+    }
+    .article-card.card-left .card-text {
+        order: 1;
+    }
+    .article-card.card-right .card-image {
+        order: 1;
+    }
+    .article-card.card-right .card-text {
+        order: 2;
+    }
+
+    /* ===== 底部抽屉（文章弹出层） ===== */
+    #content-drawer {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 65vh;
+        z-index: 3;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(8px);
+        padding: 30px 20px 20px 20px;
+        box-sizing: border-box;
+        border-radius: 20px 20px 0 0;
+        box-shadow: 0 -4px 20px rgba(0,0,0,0.2);
+        overflow-y: auto;
+        transform: translateY(100%);
+        transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    #content-drawer.open {
+        transform: translateY(0);
+    }
+    #content-drawer .container {
+        max-width: 900px;
+        margin: 0 auto;
+    }
+    #content-drawer article {
+        background: rgba(255, 255, 255, 0.6);
+        border-radius: 12px;
+        padding: 20px 25px;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+    #content-drawer article h2 a {
+        color: #2a7a5a;
+        text-decoration: none;
+    }
+    #content-drawer article h2 a:hover {
+        color: #1a5a3a;
+    }
+
+    /* ===== 右下角按钮 ===== */
+    #toggle-drawer {
+        position: fixed;
+        bottom: 25px;
+        right: 25px;
+        z-index: 10;
+        padding: 14px 22px;
+        background: rgba(42, 157, 143, 0.9);
+        color: #fff;
+        border: none;
+        border-radius: 40px;
+        font-size: 1.1rem;
+        font-weight: bold;
+        cursor: pointer;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        backdrop-filter: blur(4px);
+        transition: background 0.2s, transform 0.2s;
+    }
+    #toggle-drawer:hover {
+        background: rgba(42, 157, 143, 1);
+        transform: scale(1.05);
+    }
+    #toggle-drawer:active {
+        transform: scale(0.95);
+    }
+
+    /* ===== 移动端适配 ===== */
+    @media (max-width: 700px) {
+        .article-card {
+            flex-direction: column;
+        }
+        .article-card.card-left .card-image,
+        .article-card.card-right .card-image {
+            order: 0;
+            min-height: 140px;
+        }
+        .article-card.card-left .card-text,
+        .article-card.card-right .card-text {
+            order: 1;
+        }
+        .card-text {
+            padding: 20px 22px;
+        }
+        .card-text h2 a {
+            font-size: 1.1rem;
+        }
+        .hero-title {
+            font-size: 2.2rem;
+        }
+        #header-fixed {
+            top: 18%;
+        }
+        #content {
+            margin-top: 50vh;
+        }
+    }
+
+    /* ===== 隐藏原主题侧边栏、footer ===== */
+    .row .col-sm-3,
+    .row .col-md-3,
+    .row .col-lg-3 {
+        display: none !important;
+    }
+    .row .col-sm-9,
+    .row .col-md-9,
+    .row .col-lg-9 {
+        width: 100% !important;
+        max-width: 100% !important;
+        flex: 0 0 100% !important;
+    }
+    footer {
+        display: none !important;
+    }
+</style>
+
+
+    <!-- ===== 底部版权信息（可选） ===== -->
+    <footer style="text-align:center;padding:20px;background:transparent;color:#fff;text-shadow:0 2px 6px rgba(0,0,0,0.5);position:relative;z-index:1;">
+        <p>&copy; 才华恒毅的blog 2026</p>
+    </footer>
+
+    <!-- ===== 导航栏样式 ===== -->
+    <style>
+        /* ===== 导航栏（毛玻璃，固定在顶部） ===== */
+        #navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 100;
+            padding: 12px 20px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            box-shadow: 0 2px 20px rgba(0,0,0,0.15);
+            box-sizing: border-box;
+            transition: background 0.3s;
+        }
+        #navbar:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        .nav-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px 16px;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+        }
+        .nav-brand {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #fff;
+            text-decoration: none;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.6);
+            letter-spacing: 0.5px;
+        }
+        .nav-brand:hover {
+            color: #d4edda;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 6px 14px;
+            flex-wrap: wrap;
+        }
+        .nav-link {
+            color: rgba(255,255,255,0.85);
+            text-decoration: none;
+            font-size: 0.95rem;
+            padding: 6px 12px;
+            border-radius: 30px;
+            transition: background 0.2s, color 0.2s, transform 0.15s;
+            text-shadow: 0 1px 6px rgba(0,0,0,0.4);
+        }
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+            transform: scale(1.04);
+        }
+        /* 当前页面高亮（可选，需要配合模板变量） */
+        .nav-link.active {
+            background: rgba(255, 255, 255, 0.25);
+            color: #fff;
+        }
+
+        /* ===== 移动端适配 ===== */
+        @media (max-width: 640px) {
+            #navbar {
+                padding: 10px 14px;
+            }
+            .nav-brand {
+                font-size: 1.05rem;
+            }
+            .nav-link {
+                font-size: 0.8rem;
+                padding: 4px 10px;
+            }
+            .nav-right {
+                gap: 4px 8px;
+            }
+        }
+
+        /* ===== 给页面内容留出顶部空间（避免被导航栏遮挡） ===== */
+        body {
+            padding-top: 70px;
+        }
+    </style>
+
+</body>
+</html>
