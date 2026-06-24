@@ -60,7 +60,7 @@
                     </div>
             </div>
 
-            <!-- 时间节点（居中） -->
+            <!-- 时间节点（居中）—— 仅显示年份标签 -->
             <div class="timeline-node">
                 <div class="timeline-dot">
                     <span class="dot-year">2026</span>
@@ -76,7 +76,7 @@
             <div class="timeline-card-wrapper left-card empty-card">
             </div>
 
-            <!-- 时间节点（居中） -->
+            <!-- 时间节点（居中）—— 仅显示年份标签 -->
             <div class="timeline-node">
                 <div class="timeline-dot">
                     <span class="dot-year">2026</span>
@@ -162,79 +162,64 @@
         padding: 0 20px;
     }
 
+    /* ===== 时间线（竖线）===== */
+    #timeline::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 50%;
+        width: 3px;
+        background: rgba(255, 255, 255, 0.3);
+        transform: translateX(-50%);
+        border-radius: 2px;
+    }
+
     /* ===== 每一行：grid 三列布局 ===== */
     .timeline-row {
         display: grid;
-        grid-template-columns: 1fr 80px 1fr;
+        grid-template-columns: 1fr auto 1fr;
         align-items: center;
         margin-bottom: 40px;
         position: relative;
     }
 
-    /* ===== 时间节点（居中） ===== */
+    /* ===== 节点容器：仅居中，无任何装饰 ===== */
     .timeline-node {
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
         position: relative;
-    }
-    /* 时间线（竖线）通过伪元素实现，从第一个节点到最后一个 */
-    .timeline-node::before {
-        content: '';
-        position: absolute;
-        top: -40px;
-        bottom: -40px;
-        left: 50%;
-        width: 4px;
-        background: rgba(255, 255, 255, 0.3);
-        transform: translateX(-50%);
-        z-index: -1;
-    }
-    /* 第一个节点上方不显示线条，最后一个节点下方不显示？我们可以用容器伪类控制，但为了简单，我们直接对整个 timeline 容器添加伪类 */
-    /* 这里我们可以改用背景线性渐变或单独画线。为了简便，我们用一个独立元素画线，之前的方法更易控制。 */
-    /* 我们改用之前的方法：绝对定位一个 line */
-    /* 下面我们将 .timeline-line 作为单独元素，或者使用一个全高度的线 */
-
-    /* 重新定义：我们使用伪元素画线，但需要控制起点和终点，这里用绝对定位 line 更简单 */
-    /* 我们添加一个 .timeline-line 作为子元素，绝对定位在中间 */
-
-    /* ===== 时间节点样式 ===== */
-    .timeline-dot {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        background: rgba(42, 138, 90, 0.35);   /* 半透明白绿色 */
-        backdrop-filter: blur(6px);             /* 毛玻璃效果 */
-        border: 2px solid rgba(255, 255, 255, 0.5);
-        box-shadow: 0 0 30px rgba(42, 138, 90, 0.15);
-        position: relative;
         z-index: 2;
+        padding: 0 20px;
+    }
+
+    /* ===== 年份标签：半透明毛玻璃，像糖葫芦 ===== */
+    .dot-year {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: rgba(255, 255, 255, 0.95);
+        background: rgba(0, 0, 0, 0.25);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        padding: 6px 24px;
+        border-radius: 40px;
+        letter-spacing: 2px;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        box-shadow: 0 0 30px rgba(0, 0, 0, 0.05);
+        white-space: nowrap;
         transition: all 0.3s ease;
     }
-    .timeline-dot:hover {
-        background: rgba(42, 138, 90, 0.6);
-        transform: scale(1.1);
-    }
-    .dot-year {
-        font-size: 0.7rem;
-        color: rgba(255, 255, 255, 0.7);
-        background: rgba(0, 0, 0, 0.25);
-        backdrop-filter: blur(2px);
-        padding: 2px 10px;
-        border-radius: 12px;
-        margin-top: 6px;
-        font-weight: 400;
+    .dot-year:hover {
+        background: rgba(0, 0, 0, 0.4);
+        transform: scale(1.05);
     }
 
     /* ===== 卡片容器 ===== */
     .timeline-card-wrapper {
         display: flex;
-        justify-content: flex-start;
+        align-items: center;
     }
     .left-card {
         justify-content: flex-end;
@@ -245,7 +230,7 @@
         padding-left: 20px;
     }
     .empty-card {
-        visibility: hidden; /* 隐藏空卡片占位 */
+        visibility: hidden;
     }
 
     /* ===== 卡片样式（与首页一致） ===== */
@@ -339,23 +324,6 @@
         opacity: 0.25;
     }
 
-    /* ===== 时间线（贯穿所有行的竖线） ===== */
-    /* 我们使用一个绝对定位的元素放在 #timeline 中 */
-    #timeline {
-        position: relative;
-    }
-    #timeline::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        left: 50%;
-        width: 4px;
-        background: rgba(255, 255, 255, 0.4);
-        transform: translateX(-50%);
-        border-radius: 2px;
-    }
-
     /* ===== 返回按钮 ===== */
     #back-home {
         position: fixed;
@@ -385,15 +353,13 @@
     /* ===== 响应式 ===== */
     @media (max-width: 820px) {
         .timeline-row {
-            grid-template-columns: 1fr 40px 1fr;
-        }
-        .timeline-dot {
-            width: 40px;
-            height: 40px;
+            grid-template-columns: 1fr 50px 1fr;
+            gap: 0;
         }
         .dot-year {
-            font-size: 0.6rem;
-            padding: 1px 6px;
+            font-size: 0.9rem;
+            padding: 4px 14px;
+            letter-spacing: 1px;
         }
         .article-card {
             height: auto;
@@ -416,15 +382,11 @@
     @media (max-width: 600px) {
         .timeline-row {
             grid-template-columns: 1fr 30px 1fr;
-            gap: 0;
-        }
-        .timeline-dot {
-            width: 30px;
-            height: 30px;
         }
         .dot-year {
-            font-size: 0.5rem;
-            padding: 1px 4px;
+            font-size: 0.7rem;
+            padding: 3px 10px;
+            letter-spacing: 0.5px;
         }
         .article-card {
             min-height: 140px;
