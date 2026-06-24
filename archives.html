@@ -29,7 +29,7 @@
 
     <!-- ===== 页面内容（子模板填充） ===== -->
 
-<!-- ===== 全屏视频背景 ===== -->
+<!-- ===== 视频背景 ===== -->
 <div id="hero">
     <video autoplay muted loop playsinline id="bg-video">
         <source src="https://codeshy-1119.github.io/images/blog.mp4" type="video/mp4">
@@ -37,71 +37,70 @@
     </video>
 </div>
 
-<!-- ===== 归档标题 ===== -->
+<!-- ===== 标题 ===== -->
 <div id="archives-header">
     <h1 class="archives-title">📜 时间轴</h1>
     <p class="archives-subtitle">按时间顺序浏览所有文章</p>
 </div>
 
-<!-- ===== 时间轴 ===== -->
+<!-- ===== 时间轴容器 ===== -->
 <div id="timeline">
-    <div class="timeline-line"></div>
-        <div class="timeline-item item-left">
-            <!-- 时间节点 -->
-            <div class="timeline-dot">
-                <span class="dot-year">2026</span>
-            </div>
-            <!-- 文章卡片 -->
-            <div class="timeline-card">
-                <div class="article-card card-left">
-                    <div class="card-text">
-                        <header>
+        <div class="timeline-row">
+            <!-- 左侧卡片（奇数显示） -->
+            <div class="timeline-card-wrapper left-card ">
+                    <div class="article-card">
+                        <div class="card-text">
                             <h2><a href="https://codeshy-1119.github.io/wang-luo-zong-he-she-ji-yu-fang-zhen-shi-xian.html">网络综合设计与仿真实现</a></h2>
-                            <p class="post-meta">
-                                周二 23 六月 2026
-                                    · <a href="https://codeshy-1119.github.io/category/ji-zhu.html">技术</a>
-                                    · Tagged with
-                                        <a href="https://codeshy-1119.github.io/tag/wang-luo.html">网络</a>,                                        <a href="https://codeshy-1119.github.io/tag/fang-zhen.html">仿真</a>                            </p>
-                        </header>
-                        <a href="https://codeshy-1119.github.io/wang-luo-zong-he-she-ji-yu-fang-zhen-shi-xian.html" class="read-more">阅读全文 →</a>
+                            <p class="post-meta">周二 23 六月 2026 · <a href="https://codeshy-1119.github.io/category/ji-zhu.html">技术</a></p>
+                            <a href="https://codeshy-1119.github.io/wang-luo-zong-he-she-ji-yu-fang-zhen-shi-xian.html" class="read-more">阅读全文 →</a>
+                        </div>
+                        <div class="card-image">
+                                <img src="https://codeshy-1119.github.io/images/blog-cover.png" alt="网络综合设计与仿真实现">
+                        </div>
                     </div>
-                    <div class="card-image">
-                            <img src="https://codeshy-1119.github.io/images/blog-cover.png" alt="网络综合设计与仿真实现">
-                    </div>
+            </div>
+
+            <!-- 时间节点（居中） -->
+            <div class="timeline-node">
+                <div class="timeline-dot">
+                    <span class="dot-year">2026</span>
                 </div>
+            </div>
+
+            <!-- 右侧卡片（偶数显示） -->
+            <div class="timeline-card-wrapper right-card empty-card">
             </div>
         </div>
-        <div class="timeline-item item-right">
-            <!-- 时间节点 -->
-            <div class="timeline-dot">
-                <span class="dot-year">2026</span>
+        <div class="timeline-row">
+            <!-- 左侧卡片（奇数显示） -->
+            <div class="timeline-card-wrapper left-card empty-card">
             </div>
-            <!-- 文章卡片 -->
-            <div class="timeline-card">
-                <div class="article-card card-right">
-                    <div class="card-text">
-                        <header>
-                            <h2><a href="https://codeshy-1119.github.io/my-first-post.html">My First Post</a></h2>
-                            <p class="post-meta">
-                                周二 23 六月 2026
-                                    · <a href="https://codeshy-1119.github.io/category/essay.html">Essay</a>
-                                    · Tagged with
-                                        <a href="https://codeshy-1119.github.io/tag/python.html">python</a>,                                        <a href="https://codeshy-1119.github.io/tag/pelican.html">pelican</a>                            </p>
-                        </header>
-                        <a href="https://codeshy-1119.github.io/my-first-post.html" class="read-more">阅读全文 →</a>
-                    </div>
-                    <div class="card-image">
-                            <div class="placeholder-img">📷</div>
-                    </div>
+
+            <!-- 时间节点（居中） -->
+            <div class="timeline-node">
+                <div class="timeline-dot">
+                    <span class="dot-year">2026</span>
                 </div>
+            </div>
+
+            <!-- 右侧卡片（偶数显示） -->
+            <div class="timeline-card-wrapper right-card ">
+                    <div class="article-card">
+                        <div class="card-text">
+                            <h2><a href="https://codeshy-1119.github.io/my-first-post.html">My First Post</a></h2>
+                            <p class="post-meta">周二 23 六月 2026 · <a href="https://codeshy-1119.github.io/category/essay.html">Essay</a></p>
+                            <a href="https://codeshy-1119.github.io/my-first-post.html" class="read-more">阅读全文 →</a>
+                        </div>
+                        <div class="card-image">
+                                <div class="placeholder-img">📷</div>
+                        </div>
+                    </div>
             </div>
         </div>
 </div>
 
-<!-- ===== 返回首页按钮 ===== -->
 <button id="back-home" onclick="window.location.href='https://codeshy-1119.github.io/'">🏠 返回首页</button>
 
-<!-- ===== 样式覆盖 ===== -->
 <style>
     /* ===== 全局重置 ===== */
     html, body {
@@ -134,7 +133,7 @@
         object-fit: cover;
     }
 
-    /* ===== 归档标题 ===== */
+    /* ===== 标题 ===== */
     #archives-header {
         position: relative;
         z-index: 1;
@@ -163,75 +162,83 @@
         padding: 0 20px;
     }
 
-    /* ===== 时间轴线 ===== */
-    .timeline-line {
-        position: absolute;
-        left: 50%;
-        top: 0;
-        bottom: 0;
-        width: 4px;
-        background: rgba(255, 255, 255, 0.4);
-        transform: translateX(-50%);
-        border-radius: 2px;
-    }
-
-    /* ===== 每个时间项 ===== */
-    .timeline-item {
-        display: flex;
-        align-items: stretch;
+    /* ===== 每一行：grid 三列布局 ===== */
+    .timeline-row {
+        display: grid;
+        grid-template-columns: 1fr 80px 1fr;
+        align-items: center;
         margin-bottom: 40px;
         position: relative;
     }
-    .timeline-item.item-left {
-        flex-direction: row;
-    }
-    .timeline-item.item-right {
-        flex-direction: row-reverse;
-    }
 
-    /* ===== 时间节点（圆点 + 年份） ===== */
-    .timeline-dot {
-        flex: 0 0 80px;
+    /* ===== 时间节点（居中） ===== */
+    .timeline-node {
         display: flex;
         flex-direction: column;
         align-items: center;
-        justify-content: flex-start;
-        padding-top: 10px;
+        justify-content: center;
+        position: relative;
+    }
+    /* 时间线（竖线）通过伪元素实现，从第一个节点到最后一个 */
+    .timeline-node::before {
+        content: '';
+        position: absolute;
+        top: -40px;
+        bottom: -40px;
+        left: 50%;
+        width: 4px;
+        background: rgba(255, 255, 255, 0.3);
+        transform: translateX(-50%);
+        z-index: -1;
+    }
+    /* 第一个节点上方不显示线条，最后一个节点下方不显示？我们可以用容器伪类控制，但为了简单，我们直接对整个 timeline 容器添加伪类 */
+    /* 这里我们可以改用背景线性渐变或单独画线。为了简便，我们用一个独立元素画线，之前的方法更易控制。 */
+    /* 我们改用之前的方法：绝对定位一个 line */
+    /* 下面我们将 .timeline-line 作为单独元素，或者使用一个全高度的线 */
+
+    /* 重新定义：我们使用伪元素画线，但需要控制起点和终点，这里用绝对定位 line 更简单 */
+    /* 我们添加一个 .timeline-line 作为子元素，绝对定位在中间 */
+
+    /* ===== 时间节点样式 ===== */
+    .timeline-dot {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: #2a8a5a;
+        border: 3px solid rgba(255,255,255,0.8);
+        box-shadow: 0 0 20px rgba(42,138,90,0.4);
         position: relative;
         z-index: 2;
     }
-    .timeline-dot::before {
-        content: '';
-        width: 16px;
-        height: 16px;
-        background: #2a8a5a;
-        border: 3px solid rgba(255, 255, 255, 0.8);
-        border-radius: 50%;
-        display: block;
-        box-shadow: 0 0 20px rgba(42, 138, 90, 0.4);
-    }
     .dot-year {
-        font-size: 0.7rem;
-        color: rgba(255, 255, 255, 0.7);
-        margin-top: 6px;
+        font-size: 0.75rem;
+        color: #fff;
         font-weight: 600;
         letter-spacing: 0.5px;
-        background: rgba(0,0,0,0.3);
-        padding: 2px 10px;
-        border-radius: 12px;
+        background: rgba(0,0,0,0.2);
+        padding: 2px 8px;
+        border-radius: 10px;
     }
 
-    /* ===== 文章卡片容器 ===== */
-    .timeline-card {
-        flex: 1;
-        max-width: 45%;
-        padding: 0 20px;
+    /* ===== 卡片容器 ===== */
+    .timeline-card-wrapper {
+        display: flex;
+        justify-content: flex-start;
     }
-    .timeline-item.item-left .timeline-card {
-        text-align: right;
+    .left-card {
+        justify-content: flex-end;
+        padding-right: 20px;
     }
-    .timeline-item.item-right .timeline-card {
-        text-align: left;
+    .right-card {
+        justify-content: flex-start;
+        padding-left: 20px;
+    }
+    .empty-card {
+        visibility: hidden; /* 隐藏空卡片占位 */
     }
 
     /* ===== 卡片样式（与首页一致） ===== */
@@ -245,6 +252,8 @@
         box-shadow: 0 4px 20px rgba(0,0,0,0.12);
         transition: transform 0.25s, box-shadow 0.25s;
         height: 180px;
+        max-width: 100%;
+        width: 100%;
     }
     .article-card:hover {
         transform: translateY(-4px) scale(1.01);
@@ -323,18 +332,21 @@
         opacity: 0.25;
     }
 
-    /* ===== 左右交替（卡片内部） ===== */
-    .article-card.card-left .card-image {
-        order: 2;
+    /* ===== 时间线（贯穿所有行的竖线） ===== */
+    /* 我们使用一个绝对定位的元素放在 #timeline 中 */
+    #timeline {
+        position: relative;
     }
-    .article-card.card-left .card-text {
-        order: 1;
-    }
-    .article-card.card-right .card-image {
-        order: 1;
-    }
-    .article-card.card-right .card-text {
-        order: 2;
+    #timeline::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 50%;
+        width: 4px;
+        background: rgba(255, 255, 255, 0.4);
+        transform: translateX(-50%);
+        border-radius: 2px;
     }
 
     /* ===== 返回按钮 ===== */
@@ -365,80 +377,71 @@
 
     /* ===== 响应式 ===== */
     @media (max-width: 820px) {
-        .timeline-item {
-            flex-direction: column !important;
-            align-items: center;
-            margin-bottom: 30px;
-        }
-        .timeline-line {
-            left: 20px;
+        .timeline-row {
+            grid-template-columns: 1fr 40px 1fr;
         }
         .timeline-dot {
-            flex: 0 0 auto;
-            flex-direction: row;
-            gap: 12px;
-            padding: 0 0 10px 0;
-            width: 100%;
-            justify-content: flex-start;
-            padding-left: 10px;
-        }
-        .timeline-dot::before {
-            width: 14px;
-            height: 14px;
+            width: 40px;
+            height: 40px;
         }
         .dot-year {
-            font-size: 0.8rem;
-            margin-top: 0;
-        }
-        .timeline-card {
-            max-width: 90%;
-            padding: 0;
-            width: 100%;
-        }
-        .timeline-item.item-left .timeline-card,
-        .timeline-item.item-right .timeline-card {
-            text-align: left;
+            font-size: 0.6rem;
+            padding: 1px 6px;
         }
         .article-card {
             height: auto;
-            min-height: 160px;
             flex-direction: column;
         }
-        .article-card.card-left .card-image,
-        .article-card.card-right .card-image {
-            order: 0;
+        .card-image {
             height: 140px;
-        }
-        .article-card.card-left .card-text,
-        .article-card.card-right .card-text {
-            order: 1;
-        }
-        .card-text {
-            padding: 14px 18px;
         }
         .card-text h2 a {
             font-size: 1rem;
         }
-        .archives-title {
-            font-size: 2rem;
+        .left-card {
+            padding-right: 10px;
+        }
+        .right-card {
+            padding-left: 10px;
         }
     }
 
-    @media (max-width: 480px) {
-        .timeline-card {
-            max-width: 95%;
+    @media (max-width: 600px) {
+        .timeline-row {
+            grid-template-columns: 1fr 30px 1fr;
+            gap: 0;
+        }
+        .timeline-dot {
+            width: 30px;
+            height: 30px;
+        }
+        .dot-year {
+            font-size: 0.5rem;
+            padding: 1px 4px;
+        }
+        .article-card {
+            min-height: 140px;
         }
         .card-image {
-            height: 120px;
+            height: 100px;
         }
         .card-text {
             padding: 12px 14px;
         }
         .card-text h2 a {
-            font-size: 0.95rem;
+            font-size: 0.9rem;
         }
         .post-meta {
-            font-size: 0.7rem;
+            font-size: 0.65rem;
+        }
+        .read-more {
+            font-size: 0.8rem;
+        }
+        .left-card {
+            padding-right: 6px;
+        }
+        .right-card {
+            padding-left: 6px;
         }
         #back-home {
             bottom: 15px;
