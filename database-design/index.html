@@ -809,37 +809,7 @@
 <h2>系统架构设计</h2>
 <h3>5.1 MVC 架构</h3>
 <p>本项目采用经典的 MVC（Model-View-Controller）设计模式，实现业务逻辑、界面展示和控制的分离。</p>
-<div class="highlight"><pre><span></span><code>┌─────────────────────────────────────────────────────────────┐
-│                        Main.py                              │
-│                    (程序启动入口)                             │
-├─────────────────────────────────────────────────────────────┤
-│                                                             │
-│  ┌─────────────┐  ┌─────────────┐  ┌─────────────────────┐  │
-│  │   Models    │  │   Views     │  │    Controllers      │  │
-│  │  (数据层)    │  │  (界面层)    │  │    (业务逻辑层)       │  │ 
-│  │             │  │             │  │                     │  │
-│  │ UserModel   │  │ LoginWindow │  │ AuthController      │  │
-│  │ Material    │  │ MainWindow  │  │ MaterialController  │  │
-│  │ Department  │  │ UserMain    │  │ StockController     │  │
-│  │ FundModel   │  │ Material    │  │ FundController      │  │
-│  │ StockModel  │  │ Management  │  │ ReportController    │  │
-│  │ PlanModel   │  │ ...         │  │ ...                 │  │
-│  └──────┬──────┘  └──────┬──────┘  └──────────┬──────────┘  │
-│         │                │                     │            │
-│         └────────────────┼─────────────────────┘            │
-│                          │                                  │
-│                 ┌────────┴────────┐                         │
-│                 │    DBConfig     │                         │
-│                 │    数据库连接     │                         │
-│                 └────────┬────────┘                         │
-│                          │                                  │
-│                 ┌────────┴────────┐                         │
-│                 │  SQL Server     │                         │
-│                 │   2008 R2       │                         │
-│                 └─────────────────┘                         │
-└─────────────────────────────────────────────────────────────┘
-</code></pre></div>
-
+<p><img alt="MVC" src="/posts/database-design/MVC.png"></p>
 <h3>5.2 数据库连接层设计</h3>
 <p><code>config/db_config.py</code> 负责统一管理数据库连接，采用 <code>pyodbc</code> 驱动，支持 SQL Server 身份验证。</p>
 <div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">pyodbc</span>
