@@ -8,7 +8,8 @@
   {
     "title": "My First Post",
     "url": "/fist-blog/",
-    "summary": "Welcome to my blog!"
+    "summary": "Welcome to my blog!",
+    "image": "/posts/fist-blog/封面.png"
   },
   {
     "title": "物资管理信息系统 - 数据库课程设计完整报告",
