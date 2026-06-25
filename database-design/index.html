@@ -1,0 +1,1578 @@
+<!DOCTYPE html>
+<html lang="chinese (simplified)">
+<head>
+    <title>才华恒毅的blog</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="http://127.0.0.1:8000/theme/css/style.min.css" />
+    <link rel="stylesheet" href="http://127.0.0.1:8000/theme/css/dark-theme.min.css" />
+    <link rel="stylesheet" href="http://127.0.0.1:8000/custom.css" />
+</head>
+
+<body>
+
+    <!-- ===== 顶部导航栏 ===== -->
+    <nav id="navbar">
+        <div class="nav-container">
+            <div class="nav-left">
+                <a href="http://127.0.0.1:8000/" class="nav-brand">才华恒毅的blog</a>
+            </div>
+            <div class="nav-right">
+                <a href="http://127.0.0.1:8000/" class="nav-link">首页</a>
+                <a href="http://127.0.0.1:8000/archives.html" class="nav-link">归档</a>
+                <a href="http://127.0.0.1:8000/categories.html" class="nav-link">分类</a>
+                <a href="http://127.0.0.1:8000/tags.html" class="nav-link">标签</a>
+                <a href="http://127.0.0.1:8000/author/cai-hua-heng-yi.html" class="nav-link">关于</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ===== 页面内容（子模板填充） ===== -->
+
+<!-- ===== 全屏视频背景（固定） ===== -->
+<div id="hero">
+    <video autoplay muted loop playsinline id="bg-video">
+        <source src="http://127.0.0.1:8000/images/blog.mp4" type="video/mp4">
+        您的浏览器不支持视频背景。
+    </video>
+</div>
+
+<!-- ===== 文章内容（浮在背景上的卡片） ===== -->
+<div id="article-content">
+    <article>
+        <header>
+            <h1 class="article-title">物资管理信息系统 - 数据库课程设计完整报告</h1>
+            <p class="article-meta">
+                周四 25 六月 2026
+                    · <a href="http://127.0.0.1:8000/category/ji-zhu.html">技术</a>
+                    · Tagged with
+                        <a href="http://127.0.0.1:8000/tag/shu-ju-ku.html">数据库</a>,                        <a href="http://127.0.0.1:8000/tag/ke-cheng-she-ji.html">课程设计</a>,                        <a href="http://127.0.0.1:8000/tag/sql.html">SQL</a>,                        <a href="http://127.0.0.1:8000/tag/pyqt5.html">PyQt5</a>,                        <a href="http://127.0.0.1:8000/tag/python.html">Python</a>            </p>
+        </header>
+        <div class="article-body">
+            <hr>
+<h1>物资管理信息系统 - 数据库课程设计完整报告</h1>
+<blockquote>
+<p>一个基于 Python + PyQt5 + SQL Server 2008 R2 的物资管理信息系统</p>
+<p><strong>作者</strong>：孙恒毅 | <strong>项目地址</strong>：<a href="https://github.com/codeshy-1119/MaterialManagementSystem">GitHub</a></p>
+</blockquote>
+<hr>
+<h2>目录</h2>
+<ul>
+<li><a href="#项目概述">项目概述</a></li>
+<li><a href="#技术栈与开发环境">技术栈与开发环境</a></li>
+<li><a href="#系统需求分析">系统需求分析</a></li>
+<li><a href="#数据库设计">数据库设计</a></li>
+<li><a href="#系统架构设计">系统架构设计</a></li>
+<li><a href="#功能模块实现">功能模块实现</a></li>
+<li><a href="#界面展示">界面展示</a></li>
+<li><a href="#项目目录结构">项目目录结构</a></li>
+<li><a href="#开发过程中遇到的问题与解决方案">开发过程中遇到的问题与解决方案</a></li>
+<li><a href="#总结与心得">总结与心得</a></li>
+<li><a href="#附录">附录</a></li>
+</ul>
+<hr>
+<h2>项目概述</h2>
+<h3>1.1 项目背景</h3>
+<p>物资管理是企业日常运营中的核心环节。传统的手工管理方式存在效率低、易出错、信息不透明等问题。本系统旨在通过信息化手段，实现对物资的入库、出库、库存、资金等全流程管理，提高管理效率和准确性。</p>
+<h3>1.2 系统目标</h3>
+<ul>
+<li>实现物资信息的集中化管理</li>
+<li>实现入库、出库操作的自动化库存更新</li>
+<li>实现资金下拨与入账的闭环管理</li>
+<li>支持管理员与普通用户的分级权限管理</li>
+<li>提供多维度报表统计与分析功能</li>
+</ul>
+<h3>1.3 系统角色</h3>
+<table>
+<thead>
+<tr>
+<th>角色</th>
+<th>职责</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>管理员</strong></td>
+<td>物资管理、入库/出库管理、资金管理、计划管理、参数维护、用户管理、报表查看</td>
+</tr>
+<tr>
+<td><strong>普通用户</strong></td>
+<td>物资查询、资金查询、密码修改</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2>技术栈与开发环境</h2>
+<table>
+<thead>
+<tr>
+<th>分类</th>
+<th>技术/工具</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>操作系统</strong></td>
+<td>Windows 10/11</td>
+</tr>
+<tr>
+<td><strong>编程语言</strong></td>
+<td>Python 3.10</td>
+</tr>
+<tr>
+<td><strong>GUI 框架</strong></td>
+<td>PyQt5 5.15.9</td>
+</tr>
+<tr>
+<td><strong>数据库</strong></td>
+<td>SQL Server 2008 R2</td>
+</tr>
+<tr>
+<td><strong>数据库连接</strong></td>
+<td>pyodbc</td>
+</tr>
+<tr>
+<td><strong>图标库</strong></td>
+<td>qtawesome (FontAwesome)</td>
+</tr>
+<tr>
+<td><strong>版本控制</strong></td>
+<td>Git + GitHub</td>
+</tr>
+<tr>
+<td><strong>开发工具</strong></td>
+<td>PyCharm 2023+ / VS Code</td>
+</tr>
+<tr>
+<td><strong>数据库建模</strong></td>
+<td>PowerDesigner (E-R 图设计)</td>
+</tr>
+</tbody>
+</table>
+<h3>安装依赖</h3>
+<div class="highlight"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span>pyodbc<span class="w"> </span>PyQt5<span class="w"> </span>PyQt5-tools<span class="w"> </span>qtawesome<span class="w"> </span>-i<span class="w"> </span>https://pypi.tuna.tsinghua.edu.cn/simple
+</code></pre></div>
+
+<hr>
+<h2>系统需求分析</h2>
+<h3>3.1 功能模块图</h3>
+<div class="highlight"><pre><span></span><code>物资管理信息系统
+│
+├── 用户模块
+│   ├── 登录（身份验证）
+│   ├── 注册
+│   └── 密码修改
+│
+├── 管理员模块
+│   ├── 物资管理（增删改查）
+│   ├── 入库管理
+│   ├── 出库管理
+│   ├── 资金管理（入账/下拨/盘点）
+│   ├── 计划管理（需求/库存/采购）
+│   ├── 报表管理（资金/物资/部门）
+│   ├── 参数维护（物资/部门）
+│   └── 用户管理
+│
+└── 普通用户模块
+    ├── 物资查询
+    ├── 资金查询
+    └── 密码修改
+</code></pre></div>
+
+<h3>3.2 权限设计</h3>
+<table>
+<thead>
+<tr>
+<th>功能</th>
+<th style="text-align: center;">管理员</th>
+<th style="text-align: center;">普通用户</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>登录/注册</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">✅</td>
+</tr>
+<tr>
+<td>物资管理</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">❌</td>
+</tr>
+<tr>
+<td>入库管理</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">❌</td>
+</tr>
+<tr>
+<td>出库管理</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">❌</td>
+</tr>
+<tr>
+<td>资金管理</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">❌</td>
+</tr>
+<tr>
+<td>计划管理</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">❌</td>
+</tr>
+<tr>
+<td>报表管理</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">❌</td>
+</tr>
+<tr>
+<td>参数维护</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">❌</td>
+</tr>
+<tr>
+<td>用户管理</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">❌</td>
+</tr>
+<tr>
+<td>物资查询</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">✅</td>
+</tr>
+<tr>
+<td>资金查询</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">✅</td>
+</tr>
+<tr>
+<td>密码修改</td>
+<td style="text-align: center;">✅</td>
+<td style="text-align: center;">✅</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2>数据库设计</h2>
+<h3>4.1 E-R 图</h3>
+<p><img alt="E-R图" src="/posts/database-design/E-R图.png"></p>
+<h3>4.2 表结构设计</h3>
+<h4>4.2.1 Users（用户信息表）</h4>
+<table>
+<thead>
+<tr>
+<th>字段名</th>
+<th>数据类型</th>
+<th>约束</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>UserID</td>
+<td>INT</td>
+<td>PRIMARY KEY, IDENTITY</td>
+<td>用户编号</td>
+</tr>
+<tr>
+<td>Username</td>
+<td>NVARCHAR(50)</td>
+<td>UNIQUE, NOT NULL</td>
+<td>用户名</td>
+</tr>
+<tr>
+<td>Password</td>
+<td>NVARCHAR(50)</td>
+<td>NOT NULL</td>
+<td>密码</td>
+</tr>
+<tr>
+<td>UserRole</td>
+<td>NVARCHAR(20)</td>
+<td>DEFAULT '普通用户'</td>
+<td>用户身份</td>
+</tr>
+<tr>
+<td>CreateDate</td>
+<td>DATETIME</td>
+<td>DEFAULT GETDATE()</td>
+<td>注册日期</td>
+</tr>
+</tbody>
+</table>
+<h4>4.2.2 Departments（部门信息表）</h4>
+<table>
+<thead>
+<tr>
+<th>字段名</th>
+<th>数据类型</th>
+<th>约束</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>DeptID</td>
+<td>INT</td>
+<td>PRIMARY KEY, IDENTITY</td>
+<td>部门编号</td>
+</tr>
+<tr>
+<td>DeptName</td>
+<td>NVARCHAR(50)</td>
+<td>NOT NULL</td>
+<td>部门名称</td>
+</tr>
+<tr>
+<td>FundAmount</td>
+<td>DECIMAL(18,2)</td>
+<td>DEFAULT 0</td>
+<td>资金数额</td>
+</tr>
+<tr>
+<td>Remark</td>
+<td>NVARCHAR(200)</td>
+<td></td>
+<td>备注</td>
+</tr>
+</tbody>
+</table>
+<h4>4.2.3 Materials（物资表）</h4>
+<table>
+<thead>
+<tr>
+<th>字段名</th>
+<th>数据类型</th>
+<th>约束</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MaterialID</td>
+<td>INT</td>
+<td>PRIMARY KEY, IDENTITY</td>
+<td>物资编号</td>
+</tr>
+<tr>
+<td>MaterialName</td>
+<td>NVARCHAR(100)</td>
+<td>NOT NULL</td>
+<td>物资名称</td>
+</tr>
+<tr>
+<td>UnitPrice</td>
+<td>DECIMAL(18,2)</td>
+<td>DEFAULT 0</td>
+<td>单价</td>
+</tr>
+<tr>
+<td>Unit</td>
+<td>NVARCHAR(20)</td>
+<td></td>
+<td>单位</td>
+</tr>
+<tr>
+<td>Supplier</td>
+<td>NVARCHAR(100)</td>
+<td></td>
+<td>供应商</td>
+</tr>
+<tr>
+<td>Description</td>
+<td>NVARCHAR(500)</td>
+<td></td>
+<td>物资描述</td>
+</tr>
+<tr>
+<td>StockQuantity</td>
+<td>INT</td>
+<td>DEFAULT 0</td>
+<td>库存数量</td>
+</tr>
+</tbody>
+</table>
+<h4>4.2.4 MaterialRequests（物资需求表）</h4>
+<table>
+<thead>
+<tr>
+<th>字段名</th>
+<th>数据类型</th>
+<th>约束</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>RequestID</td>
+<td>INT</td>
+<td>PRIMARY KEY, IDENTITY</td>
+<td>需求编号</td>
+</tr>
+<tr>
+<td>DeptID</td>
+<td>INT</td>
+<td>FOREIGN KEY → Departments</td>
+<td>需求部门</td>
+</tr>
+<tr>
+<td>MaterialID</td>
+<td>INT</td>
+<td>FOREIGN KEY → Materials</td>
+<td>需求物资</td>
+</tr>
+<tr>
+<td>RequestQuantity</td>
+<td>INT</td>
+<td>NOT NULL</td>
+<td>需求数量</td>
+</tr>
+<tr>
+<td>RequestDate</td>
+<td>DATETIME</td>
+<td>DEFAULT GETDATE()</td>
+<td>需求日期</td>
+</tr>
+<tr>
+<td>Status</td>
+<td>NVARCHAR(20)</td>
+<td>DEFAULT '待审批'</td>
+<td>状态</td>
+</tr>
+</tbody>
+</table>
+<h4>4.2.5 StockPlans（库存计划表）</h4>
+<table>
+<thead>
+<tr>
+<th>字段名</th>
+<th>数据类型</th>
+<th>约束</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PlanID</td>
+<td>INT</td>
+<td>PRIMARY KEY, IDENTITY</td>
+<td>计划编号</td>
+</tr>
+<tr>
+<td>MaterialID</td>
+<td>INT</td>
+<td>FOREIGN KEY → Materials</td>
+<td>物资编号</td>
+</tr>
+<tr>
+<td>PlannedQuantity</td>
+<td>INT</td>
+<td>NOT NULL</td>
+<td>计划库存量</td>
+</tr>
+<tr>
+<td>PlanDate</td>
+<td>DATETIME</td>
+<td>DEFAULT GETDATE()</td>
+<td>计划日期</td>
+</tr>
+</tbody>
+</table>
+<h4>4.2.6 PurchasePlans（采购计划表）</h4>
+<table>
+<thead>
+<tr>
+<th>字段名</th>
+<th>数据类型</th>
+<th>约束</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PurchaseID</td>
+<td>INT</td>
+<td>PRIMARY KEY, IDENTITY</td>
+<td>采购编号</td>
+</tr>
+<tr>
+<td>MaterialID</td>
+<td>INT</td>
+<td>FOREIGN KEY → Materials</td>
+<td>物资编号</td>
+</tr>
+<tr>
+<td>PurchaseDate</td>
+<td>DATETIME</td>
+<td>DEFAULT GETDATE()</td>
+<td>采购日期</td>
+</tr>
+<tr>
+<td>PurchaseQuantity</td>
+<td>INT</td>
+<td>NOT NULL</td>
+<td>采购数量</td>
+</tr>
+<tr>
+<td>PurchasePrice</td>
+<td>DECIMAL(18,2)</td>
+<td></td>
+<td>采购单价</td>
+</tr>
+</tbody>
+</table>
+<h4>4.2.7 StockIn（物资入库表）</h4>
+<table>
+<thead>
+<tr>
+<th>字段名</th>
+<th>数据类型</th>
+<th>约束</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>InID</td>
+<td>INT</td>
+<td>PRIMARY KEY, IDENTITY</td>
+<td>入库编号</td>
+</tr>
+<tr>
+<td>MaterialID</td>
+<td>INT</td>
+<td>FOREIGN KEY → Materials</td>
+<td>物资编号</td>
+</tr>
+<tr>
+<td>InQuantity</td>
+<td>INT</td>
+<td>NOT NULL</td>
+<td>入库数量</td>
+</tr>
+<tr>
+<td>InTime</td>
+<td>DATETIME</td>
+<td>DEFAULT GETDATE()</td>
+<td>入库时间</td>
+</tr>
+<tr>
+<td>Operator</td>
+<td>NVARCHAR(50)</td>
+<td></td>
+<td>操作人</td>
+</tr>
+</tbody>
+</table>
+<h4>4.2.8 StockOut（物资出库表）</h4>
+<table>
+<thead>
+<tr>
+<th>字段名</th>
+<th>数据类型</th>
+<th>约束</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>OutID</td>
+<td>INT</td>
+<td>PRIMARY KEY, IDENTITY</td>
+<td>出库编号</td>
+</tr>
+<tr>
+<td>MaterialID</td>
+<td>INT</td>
+<td>FOREIGN KEY → Materials</td>
+<td>物资编号</td>
+</tr>
+<tr>
+<td>DeptID</td>
+<td>INT</td>
+<td>FOREIGN KEY → Departments</td>
+<td>领用部门</td>
+</tr>
+<tr>
+<td>OutQuantity</td>
+<td>INT</td>
+<td>NOT NULL</td>
+<td>出库数量</td>
+</tr>
+<tr>
+<td>OutTime</td>
+<td>DATETIME</td>
+<td>DEFAULT GETDATE()</td>
+<td>出库时间</td>
+</tr>
+<tr>
+<td>Operator</td>
+<td>NVARCHAR(50)</td>
+<td></td>
+<td>操作人</td>
+</tr>
+</tbody>
+</table>
+<h4>4.2.9 FundAllocations（资金下拨表）</h4>
+<table>
+<thead>
+<tr>
+<th>字段名</th>
+<th>数据类型</th>
+<th>约束</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AllocationID</td>
+<td>INT</td>
+<td>PRIMARY KEY, IDENTITY</td>
+<td>下拨编号</td>
+</tr>
+<tr>
+<td>DeptID</td>
+<td>INT</td>
+<td>FOREIGN KEY → Departments</td>
+<td>部门编号</td>
+</tr>
+<tr>
+<td>Amount</td>
+<td>DECIMAL(18,2)</td>
+<td>NOT NULL</td>
+<td>下拨金额</td>
+</tr>
+<tr>
+<td>AllocationDate</td>
+<td>DATETIME</td>
+<td>DEFAULT GETDATE()</td>
+<td>下拨日期</td>
+</tr>
+<tr>
+<td>Purpose</td>
+<td>NVARCHAR(200)</td>
+<td></td>
+<td>用途</td>
+</tr>
+</tbody>
+</table>
+<h4>4.2.10 FundIncomes（资金入账表）</h4>
+<table>
+<thead>
+<tr>
+<th>字段名</th>
+<th>数据类型</th>
+<th>约束</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>IncomeID</td>
+<td>INT</td>
+<td>PRIMARY KEY, IDENTITY</td>
+<td>入账编号</td>
+</tr>
+<tr>
+<td>Source</td>
+<td>NVARCHAR(100)</td>
+<td>NOT NULL</td>
+<td>资金来源</td>
+</tr>
+<tr>
+<td>Amount</td>
+<td>DECIMAL(18,2)</td>
+<td>NOT NULL</td>
+<td>入账金额</td>
+</tr>
+<tr>
+<td>IncomeDate</td>
+<td>DATETIME</td>
+<td>DEFAULT GETDATE()</td>
+<td>入账日期</td>
+</tr>
+</tbody>
+</table>
+<h4>4.2.11 FundSummary（资金汇总表）</h4>
+<table>
+<thead>
+<tr>
+<th>字段名</th>
+<th>数据类型</th>
+<th>约束</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SummaryID</td>
+<td>INT</td>
+<td>PRIMARY KEY, IDENTITY</td>
+<td>汇总编号</td>
+</tr>
+<tr>
+<td>FlowDate</td>
+<td>DATETIME</td>
+<td>NOT NULL</td>
+<td>流动日期</td>
+</tr>
+<tr>
+<td>FlowDirection</td>
+<td>NVARCHAR(20)</td>
+<td>NOT NULL</td>
+<td>资金流向</td>
+</tr>
+<tr>
+<td>FlowAmount</td>
+<td>DECIMAL(18,2)</td>
+<td>NOT NULL</td>
+<td>流动金额</td>
+</tr>
+<tr>
+<td>SourcePurpose</td>
+<td>NVARCHAR(200)</td>
+<td></td>
+<td>来源/用途</td>
+</tr>
+</tbody>
+</table>
+<h3>4.3 表间关联关系</h3>
+<table>
+<thead>
+<tr>
+<th>从表</th>
+<th>→</th>
+<th>主表</th>
+<th>关联字段</th>
+<th>业务含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FundAllocations</td>
+<td>→</td>
+<td>Departments</td>
+<td>DeptID</td>
+<td>资金下拨给部门</td>
+</tr>
+<tr>
+<td>MaterialRequests</td>
+<td>→</td>
+<td>Departments</td>
+<td>DeptID</td>
+<td>部门提交需求</td>
+</tr>
+<tr>
+<td>StockOut</td>
+<td>→</td>
+<td>Departments</td>
+<td>DeptID</td>
+<td>部门领用物资</td>
+</tr>
+<tr>
+<td>MaterialRequests</td>
+<td>→</td>
+<td>Materials</td>
+<td>MaterialID</td>
+<td>需求针对物资</td>
+</tr>
+<tr>
+<td>StockPlans</td>
+<td>→</td>
+<td>Materials</td>
+<td>MaterialID</td>
+<td>计划针对物资</td>
+</tr>
+<tr>
+<td>PurchasePlans</td>
+<td>→</td>
+<td>Materials</td>
+<td>MaterialID</td>
+<td>采购针对物资</td>
+</tr>
+<tr>
+<td>StockIn</td>
+<td>→</td>
+<td>Materials</td>
+<td>MaterialID</td>
+<td>物资入库</td>
+</tr>
+<tr>
+<td>StockOut</td>
+<td>→</td>
+<td>Materials</td>
+<td>MaterialID</td>
+<td>物资出库</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2>系统架构设计</h2>
+<h3>5.1 MVC 架构</h3>
+<p>本项目采用经典的 MVC（Model-View-Controller）设计模式，实现业务逻辑、界面展示和控制的分离。</p>
+<div class="highlight"><pre><span></span><code>┌─────────────────────────────────────────────────────────────┐
+│                        Main.py                              │
+│                    (程序启动入口)                             │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────────────┐  │
+│  │   Models    │  │   Views     │  │    Controllers      │  │
+│  │  (数据层)    │  │  (界面层)    │  │    (业务逻辑层)       │  │ 
+│  │             │  │             │  │                     │  │
+│  │ UserModel   │  │ LoginWindow │  │ AuthController      │  │
+│  │ Material    │  │ MainWindow  │  │ MaterialController  │  │
+│  │ Department  │  │ UserMain    │  │ StockController     │  │
+│  │ FundModel   │  │ Material    │  │ FundController      │  │
+│  │ StockModel  │  │ Management  │  │ ReportController    │  │
+│  │ PlanModel   │  │ ...         │  │ ...                 │  │
+│  └──────┬──────┘  └──────┬──────┘  └──────────┬──────────┘  │
+│         │                │                     │            │
+│         └────────────────┼─────────────────────┘            │
+│                          │                                  │
+│                 ┌────────┴────────┐                         │
+│                 │    DBConfig     │                         │
+│                 │    数据库连接     │                         │
+│                 └────────┬────────┘                         │
+│                          │                                  │
+│                 ┌────────┴────────┐                         │
+│                 │  SQL Server     │                         │
+│                 │   2008 R2       │                         │
+│                 └─────────────────┘                         │
+└─────────────────────────────────────────────────────────────┘
+</code></pre></div>
+
+<h3>5.2 数据库连接层设计</h3>
+<p><code>config/db_config.py</code> 负责统一管理数据库连接，采用 <code>pyodbc</code> 驱动，支持 SQL Server 身份验证。</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">pyodbc</span>
+
+<span class="k">class</span> <span class="nc">DBConfig</span><span class="p">:</span>
+    <span class="n">SERVER</span> <span class="o">=</span> <span class="s1">&#39;127.0.0.1&#39;</span>
+    <span class="n">DATABASE</span> <span class="o">=</span> <span class="s1">&#39;物资管理系统&#39;</span>
+    <span class="n">UID</span> <span class="o">=</span> <span class="s1">&#39;sa&#39;</span>
+    <span class="n">PWD</span> <span class="o">=</span> <span class="s1">&#39;123456&#39;</span>
+    <span class="n">DRIVER</span> <span class="o">=</span> <span class="s1">&#39;{SQL Server Native Client 10.0}&#39;</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">get_connection</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="n">conn_str</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;DRIVER=</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="n">DRIVER</span><span class="si">}</span><span class="s2">;&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;SERVER=</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="n">SERVER</span><span class="si">}</span><span class="s2">;&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;DATABASE=</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="n">DATABASE</span><span class="si">}</span><span class="s2">;&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;UID=</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="n">UID</span><span class="si">}</span><span class="s2">;&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;PWD=</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="n">PWD</span><span class="si">}</span><span class="s2">;&quot;</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">pyodbc</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">conn_str</span><span class="p">)</span>
+</code></pre></div>
+
+<hr>
+<h2>功能模块实现</h2>
+<h3>6.1 用户认证模块</h3>
+<h4>登录界面 (<code>views/login_window.py</code>)</h4>
+<p>登录界面是系统的入口，支持用户名/密码登录和用户注册。</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">LoginWindow</span><span class="p">(</span><span class="n">QWidget</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">handle_login</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">username</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">username_input</span><span class="o">.</span><span class="n">text</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="n">password</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">password_input</span><span class="o">.</span><span class="n">text</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+        <span class="n">user</span> <span class="o">=</span> <span class="n">UserModel</span><span class="o">.</span><span class="n">login</span><span class="p">(</span><span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">user</span><span class="p">:</span>
+            <span class="c1"># 根据角色跳转不同主窗口</span>
+            <span class="k">if</span> <span class="n">user</span><span class="p">[</span><span class="s1">&#39;UserRole&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;管理员&#39;</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">main_window</span> <span class="o">=</span> <span class="n">MainWindow</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">main_window</span> <span class="o">=</span> <span class="n">UserMainWindow</span><span class="p">(</span><span class="n">user</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">main_window</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">hide</span><span class="p">()</span>
+</code></pre></div>
+
+<h4>用户模型 (<code>models/user_model.py</code>)</h4>
+<div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">UserModel</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">table_name</span> <span class="o">=</span> <span class="s1">&#39;Users&#39;</span>
+    <span class="n">primary_key</span> <span class="o">=</span> <span class="s1">&#39;UserID&#39;</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">login</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">):</span>
+        <span class="n">sql</span> <span class="o">=</span> <span class="s2">&quot;SELECT * FROM Users WHERE Username = ? AND Password = ?&quot;</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">execute_query</span><span class="p">(</span><span class="n">sql</span><span class="p">,</span> <span class="p">(</span><span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">results</span> <span class="k">else</span> <span class="kc">None</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">register</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">,</span> <span class="n">role</span><span class="o">=</span><span class="s1">&#39;普通用户&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">username_exists</span><span class="p">(</span><span class="n">username</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="n">sql</span> <span class="o">=</span> <span class="s2">&quot;INSERT INTO Users (Username, Password, UserRole) VALUES (?, ?, ?)&quot;</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">execute_non_query</span><span class="p">(</span><span class="n">sql</span><span class="p">,</span> <span class="p">(</span><span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">,</span> <span class="n">role</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mi">0</span>
+</code></pre></div>
+
+<h3>6.2 物资管理模块</h3>
+<h4>物资模型 (<code>models/material_model.py</code>)</h4>
+<div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">MaterialModel</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">table_name</span> <span class="o">=</span> <span class="s1">&#39;Materials&#39;</span>
+    <span class="n">primary_key</span> <span class="o">=</span> <span class="s1">&#39;MaterialID&#39;</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">search_by_name</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">keyword</span><span class="p">):</span>
+        <span class="n">sql</span> <span class="o">=</span> <span class="s2">&quot;SELECT * FROM Materials WHERE MaterialName LIKE ?&quot;</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">execute_query</span><span class="p">(</span><span class="n">sql</span><span class="p">,</span> <span class="p">(</span><span class="sa">f</span><span class="s1">&#39;%</span><span class="si">{</span><span class="n">keyword</span><span class="si">}</span><span class="s1">%&#39;</span><span class="p">,))</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">update_stock</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">material_id</span><span class="p">,</span> <span class="n">quantity_change</span><span class="p">):</span>
+        <span class="n">material</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">get_by_id</span><span class="p">(</span><span class="n">material_id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">material</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="n">new_quantity</span> <span class="o">=</span> <span class="n">material</span><span class="p">[</span><span class="s1">&#39;StockQuantity&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">quantity_change</span>
+        <span class="k">if</span> <span class="n">new_quantity</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="n">sql</span> <span class="o">=</span> <span class="s2">&quot;UPDATE Materials SET StockQuantity = ? WHERE MaterialID = ?&quot;</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">execute_non_query</span><span class="p">(</span><span class="n">sql</span><span class="p">,</span> <span class="p">(</span><span class="n">new_quantity</span><span class="p">,</span> <span class="n">material_id</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mi">0</span>
+</code></pre></div>
+
+<h4>物资管理界面 (<code>views/admin/material_management_view.py</code>)</h4>
+<p>主要功能：
+- 物资列表展示（表格）
+- 搜索物资（按名称模糊搜索）
+- 添加物资
+- 修改物资（双击行触发）
+- 删除物资</p>
+<h3>6.3 入库管理模块</h3>
+<h4>入库模型 (<code>models/stock_model.py</code> - StockInModel)</h4>
+<div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">StockInModel</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">table_name</span> <span class="o">=</span> <span class="s1">&#39;StockIn&#39;</span>
+    <span class="n">primary_key</span> <span class="o">=</span> <span class="s1">&#39;InID&#39;</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">add_stock_in</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">material_id</span><span class="p">,</span> <span class="n">quantity</span><span class="p">,</span> <span class="n">operator</span><span class="p">,</span> <span class="n">in_time</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="c1"># 事务处理：插入入库记录 + 更新库存</span>
+        <span class="n">conn</span> <span class="o">=</span> <span class="n">BaseModel</span><span class="o">.</span><span class="n">get_connection</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">cursor</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+            <span class="n">sql_in</span> <span class="o">=</span> <span class="s2">&quot;INSERT INTO StockIn (MaterialID, InQuantity, Operator) VALUES (?, ?, ?)&quot;</span>
+            <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">sql_in</span><span class="p">,</span> <span class="p">(</span><span class="n">material_id</span><span class="p">,</span> <span class="n">quantity</span><span class="p">,</span> <span class="n">operator</span><span class="p">))</span>
+            <span class="n">sql_update</span> <span class="o">=</span> <span class="s2">&quot;UPDATE Materials SET StockQuantity = StockQuantity + ? WHERE MaterialID = ?&quot;</span>
+            <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">sql_update</span><span class="p">,</span> <span class="p">(</span><span class="n">quantity</span><span class="p">,</span> <span class="n">material_id</span><span class="p">))</span>
+            <span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="n">conn</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</code></pre></div>
+
+<h3>6.4 出库管理模块</h3>
+<h4>出库模型 (<code>models/stock_model.py</code> - StockOutModel)</h4>
+<div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">StockOutModel</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">table_name</span> <span class="o">=</span> <span class="s1">&#39;StockOut&#39;</span>
+    <span class="n">primary_key</span> <span class="o">=</span> <span class="s1">&#39;OutID&#39;</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">add_stock_out</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">material_id</span><span class="p">,</span> <span class="n">dept_id</span><span class="p">,</span> <span class="n">quantity</span><span class="p">,</span> <span class="n">operator</span><span class="p">):</span>
+        <span class="c1"># 先检查库存是否充足</span>
+        <span class="n">material</span> <span class="o">=</span> <span class="n">MaterialModel</span><span class="o">.</span><span class="n">get_by_id</span><span class="p">(</span><span class="n">material_id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">material</span> <span class="ow">or</span> <span class="n">material</span><span class="p">[</span><span class="s1">&#39;StockQuantity&#39;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">quantity</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="c1"># 事务处理：插入出库记录 + 扣减库存</span>
+        <span class="n">conn</span> <span class="o">=</span> <span class="n">BaseModel</span><span class="o">.</span><span class="n">get_connection</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">cursor</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+            <span class="n">sql_out</span> <span class="o">=</span> <span class="s2">&quot;INSERT INTO StockOut (MaterialID, DeptID, OutQuantity, Operator) VALUES (?, ?, ?, ?)&quot;</span>
+            <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">sql_out</span><span class="p">,</span> <span class="p">(</span><span class="n">material_id</span><span class="p">,</span> <span class="n">dept_id</span><span class="p">,</span> <span class="n">quantity</span><span class="p">,</span> <span class="n">operator</span><span class="p">))</span>
+            <span class="n">sql_update</span> <span class="o">=</span> <span class="s2">&quot;UPDATE Materials SET StockQuantity = StockQuantity - ? WHERE MaterialID = ?&quot;</span>
+            <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">sql_update</span><span class="p">,</span> <span class="p">(</span><span class="n">quantity</span><span class="p">,</span> <span class="n">material_id</span><span class="p">))</span>
+            <span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="n">conn</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</code></pre></div>
+
+<h3>6.5 资金管理模块</h3>
+<h4>资金模型 (<code>models/fund_model.py</code>)</h4>
+<div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">FundAllocationModel</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">table_name</span> <span class="o">=</span> <span class="s1">&#39;FundAllocations&#39;</span>
+    <span class="n">primary_key</span> <span class="o">=</span> <span class="s1">&#39;AllocationID&#39;</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">add_allocation</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">dept_id</span><span class="p">,</span> <span class="n">amount</span><span class="p">,</span> <span class="n">purpose</span><span class="p">):</span>
+        <span class="c1"># 插入下拨记录 + 更新部门资金</span>
+        <span class="n">conn</span> <span class="o">=</span> <span class="n">BaseModel</span><span class="o">.</span><span class="n">get_connection</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">cursor</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+            <span class="n">sql</span> <span class="o">=</span> <span class="s2">&quot;INSERT INTO FundAllocations (DeptID, Amount, Purpose) VALUES (?, ?, ?)&quot;</span>
+            <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">sql</span><span class="p">,</span> <span class="p">(</span><span class="n">dept_id</span><span class="p">,</span> <span class="n">amount</span><span class="p">,</span> <span class="n">purpose</span><span class="p">))</span>
+            <span class="n">sql_update</span> <span class="o">=</span> <span class="s2">&quot;UPDATE Departments SET FundAmount = FundAmount + ? WHERE DeptID = ?&quot;</span>
+            <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">sql_update</span><span class="p">,</span> <span class="p">(</span><span class="n">amount</span><span class="p">,</span> <span class="n">dept_id</span><span class="p">))</span>
+            <span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="n">conn</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</code></pre></div>
+
+<h3>6.6 报表管理模块</h3>
+<h4>报表模型 (<code>models/report_model.py</code>)</h4>
+<div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">ReportModel</span><span class="p">:</span>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">get_fund_summary</span><span class="p">():</span>
+        <span class="n">sql</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            SELECT IncomeDate AS FlowDate, &#39;收入&#39; AS FlowDirection, </span>
+<span class="s2">                   Amount AS FlowAmount, Source AS SourcePurpose</span>
+<span class="s2">            FROM FundIncomes</span>
+<span class="s2">            UNION ALL</span>
+<span class="s2">            SELECT AllocationDate AS FlowDate, &#39;支出&#39; AS FlowDirection,</span>
+<span class="s2">                   -Amount AS FlowAmount, Purpose AS SourcePurpose</span>
+<span class="s2">            FROM FundAllocations</span>
+<span class="s2">            ORDER BY FlowDate DESC</span>
+<span class="s2">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">BaseModel</span><span class="o">.</span><span class="n">execute_query</span><span class="p">(</span><span class="n">sql</span><span class="p">)</span>
+</code></pre></div>
+
+<h3>6.7 计划管理模块</h3>
+<h4>计划模型 (<code>models/plan_model.py</code>)</h4>
+<div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">MaterialRequestModel</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">table_name</span> <span class="o">=</span> <span class="s1">&#39;MaterialRequests&#39;</span>
+    <span class="n">primary_key</span> <span class="o">=</span> <span class="s1">&#39;RequestID&#39;</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">approve_request</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">request_id</span><span class="p">):</span>
+        <span class="n">sql</span> <span class="o">=</span> <span class="s2">&quot;UPDATE MaterialRequests SET Status = &#39;已审批&#39; WHERE RequestID = ?&quot;</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">execute_non_query</span><span class="p">(</span><span class="n">sql</span><span class="p">,</span> <span class="p">(</span><span class="n">request_id</span><span class="p">,))</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">get_pending_requests</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+        <span class="n">sql</span> <span class="o">=</span> <span class="s2">&quot;SELECT * FROM MaterialRequests WHERE Status = &#39;待审批&#39;&quot;</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">execute_query</span><span class="p">(</span><span class="n">sql</span><span class="p">)</span>
+</code></pre></div>
+
+<h3>6.8 普通用户模块</h3>
+<h4>普通用户主窗口 (<code>views/user_main_window.py</code>)</h4>
+<p>普通用户的功能被限制为只读操作：
+- 物资查询（仅查看，不能增删改）
+- 资金查询（查看部门资金和下拨记录）
+- 密码修改（修改自己的登录密码）</p>
+<hr>
+<h2>界面展示</h2>
+<h3>7.1 登录界面</h3>
+<p><img alt="登录界面" src="/posts/database-design/登录界面.png"></p>
+<h3>7.2 管理员主界面</h3>
+<p><img alt="管理员主界面" src="/posts/database-design/管理员主界面.png"></p>
+<h3>7.3 物资管理界面</h3>
+<p><img alt="物资管理界面" src="/posts/database-design/物资管理界面.png"></p>
+<h3>7.4 入库管理界面</h3>
+<p><img alt="入库管理界面" src="/posts/database-design/入库管理界面.png"></p>
+<h3>7.5 资金管理界面</h3>
+<p><img alt="资金管理界面" src="/posts/database-design/资金管理界面.png"></p>
+<h3>7.6 报表管理界面</h3>
+<p><img alt="报表管理界面" src="/posts/database-design/报表管理界面.png"></p>
+<h3>7.7 普通用户界面</h3>
+<p><img alt="普通用户界面" src="/posts/database-design/普通用户界面.png"></p>
+<hr>
+<h2>项目目录结构</h2>
+<div class="highlight"><pre><span></span><code>MaterialManagementSystem/
+│
+├── main.py                              # 程序入口
+├── requirements.txt                     # 依赖包清单
+├── .gitignore                           # Git 忽略文件
+│
+├── config/                              # 配置层
+│   └── db_config.py                     # 数据库连接配置
+│
+├── models/                              # 数据模型层
+│   ├── base_model.py                    # 基础模型类
+│   ├── user_model.py                    # 用户模型
+│   ├── material_model.py                # 物资模型
+│   ├── department_model.py              # 部门模型
+│   ├── stock_model.py                   # 入库/出库模型
+│   ├── fund_model.py                    # 资金模型
+│   ├── plan_model.py                    # 计划模型
+│   └── report_model.py                  # 报表模型
+│
+├── views/                               # 视图层
+│   ├── login_window.py                  # 登录窗口
+│   ├── main_window.py                   # 管理员主窗口
+│   ├── user_main_window.py              # 普通用户主窗口
+│   │
+│   ├── admin/                           # 管理员功能界面
+│   │   ├── material_management_view.py  # 物资管理
+│   │   ├── stock_in_view.py             # 入库管理
+│   │   ├── stock_out_view.py            # 出库管理
+│   │   ├── fund_management_view.py      # 资金管理
+│   │   ├── plan_management_view.py      # 计划管理
+│   │   ├── report_view.py               # 报表管理
+│   │   ├── param_maintain_view.py       # 参数维护
+│   │   └── user_management_view.py      # 用户管理
+│   │
+│   └── user/                            # 普通用户功能界面
+│       ├── material_query_view.py       # 物资查询
+│       ├── fund_query_view.py           # 资金查询
+│       └── password_change_view.py      # 密码修改
+│
+├── sql/                                 # SQL 脚本
+│   ├── 01_create_database.sql           # 建表脚本
+│   ├── 02_insert_test_data.sql          # 测试数据
+│   └── 03_queries.sql                   # 复杂查询
+│
+└── docs/                                # 文档素材
+    ├── screenshots/                     # 界面截图
+    └── powerdesigner/                   # E-R 图源文件
+</code></pre></div>
+
+<hr>
+<h2>开发过程中遇到的问题与解决方案</h2>
+<h3>问题 1：PyQt5 无法启动 - "no Qt platform plugin"</h3>
+<p><strong>现象</strong>：</p>
+<div class="highlight"><pre><span></span><code>This application failed to start because no Qt platform plugin could be initialized.
+</code></pre></div>
+
+<p><strong>原因</strong>：PyQt5 找不到 Qt 插件路径，通常是因为插件路径未正确设置。</p>
+<p><strong>解决方案</strong>：在 <code>main.py</code> 中手动设置环境变量。</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">os</span>
+<span class="c1"># 自动定位 PyQt5 的 plugins 目录</span>
+<span class="n">pyqt5_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">PyQt5</span><span class="o">.</span><span class="vm">__file__</span><span class="p">)</span>
+<span class="n">plugin_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">pyqt5_path</span><span class="p">,</span> <span class="s1">&#39;Qt5&#39;</span><span class="p">,</span> <span class="s1">&#39;plugins&#39;</span><span class="p">)</span>
+<span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;QT_QPA_PLATFORM_PLUGIN_PATH&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">plugin_path</span>
+</code></pre></div>
+
+<h3>问题 2：SQL Server 连接失败 - "Adaptive Server connection failed"</h3>
+<p><strong>现象</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="nv">DB</span><span class="o">-</span><span class="nv">Lib</span><span class="w"> </span><span class="nv">error</span><span class="w"> </span><span class="nv">message</span><span class="w"> </span><span class="mi">20009</span>:<span class="w"> </span><span class="nv">Unable</span><span class="w"> </span><span class="nv">to</span><span class="w"> </span><span class="k">connect</span>:<span class="w"> </span><span class="nv">Adaptive</span><span class="w"> </span><span class="nv">Server</span><span class="w"> </span><span class="nv">is</span><span class="w"> </span><span class="nv">unavailable</span>
+</code></pre></div>
+
+<p><strong>原因</strong>：
+- SQL Server 未启用 TCP/IP 协议
+- TCP/IP 端口未正确配置
+- SQL Server Browser 服务未启动（非必需，但对于固定端口可绕过）</p>
+<p><strong>解决方案</strong>：
+1. 在 SQL Server 配置管理器中启用 TCP/IP 协议
+2. 启用 IP1（<code>127.0.0.1</code>），设置 <code>TCP 端口 = 1433</code>
+3. 重启 SQL Server 服务
+4. 使用 <code>服务器名,端口号</code> 格式连接</p>
+<h3>问题 3：Windows 身份验证失败 - "该登录名来自不受信任的域"</h3>
+<p><strong>现象</strong>：</p>
+<div class="highlight"><pre><span></span><code>登录失败。该登录名来自不受信任的域，不能与 Windows 身份验证一起使用。
+</code></pre></div>
+
+<p><strong>原因</strong>：SQL Server 配置为仅允许域账户，本地账户不被信任。</p>
+<p><strong>解决方案</strong>：启用 SQL Server 身份验证，使用 <code>sa</code> 账户登录。</p>
+<h3>问题 4：PyQt5 安装到用户目录导致插件路径不一致</h3>
+<p><strong>现象</strong>：PyQt5 被安装到 <code>C:\Users\用户名\AppData\Roaming\Python\</code>，而非系统 Python 目录。</p>
+<p><strong>原因</strong>：系统 Python 目录无写入权限，pip 自动降级到用户目录。</p>
+<p><strong>解决方案</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">PyQt5</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="n">pyqt5_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">PyQt5</span><span class="o">.</span><span class="vm">__file__</span><span class="p">)</span>
+<span class="n">plugin_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">pyqt5_path</span><span class="p">,</span> <span class="s1">&#39;Qt5&#39;</span><span class="p">,</span> <span class="s1">&#39;plugins&#39;</span><span class="p">)</span>
+<span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;QT_QPA_PLATFORM_PLUGIN_PATH&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">plugin_path</span>
+</code></pre></div>
+
+<h3>问题 5：报表模块因 None 值导致格式化错误</h3>
+<p><strong>现象</strong>：</p>
+<div class="highlight"><pre><span></span><code>unsupported format string passed to NoneType.__format__
+</code></pre></div>
+
+<p><strong>原因</strong>：数据库查询结果中存在 <code>None</code> 值，<code>f"{value:.2f}"</code> 格式化时出错。</p>
+<p><strong>解决方案</strong>：在显示前做空值判断。</p>
+<div class="highlight"><pre><span></span><code><span class="n">amount</span> <span class="o">=</span> <span class="n">record</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;FlowAmount&#39;</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">amount</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="n">amount</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">amount_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">amount</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span>
+</code></pre></div>
+
+<hr>
+<h2>总结与心得</h2>
+<h3>8.1 项目总结</h3>
+<p>本次课程设计完成了一个功能完整的物资管理信息系统，涵盖了从需求分析、数据库设计、系统开发到测试部署的全流程。系统实现了以下核心功能：</p>
+<ul>
+<li>✅ 用户登录/注册与权限管理</li>
+<li>✅ 物资信息的增删改查</li>
+<li>✅ 入库与出库的自动化库存更新</li>
+<li>✅ 资金下拨与入账管理</li>
+<li>✅ 需求计划、库存计划、采购计划管理</li>
+<li>✅ 多维度报表统计与分析</li>
+<li>✅ 管理员与普通用户的差异化界面</li>
+</ul>
+<h3>8.2 技术心得</h3>
+<ol>
+<li>
+<p><strong>MVC 架构的优势</strong>：分层设计使代码结构清晰，便于维护和扩展。模型层负责数据操作，视图层负责界面展示，控制器层负责业务逻辑，三者各司其职。</p>
+</li>
+<li>
+<p><strong>事务处理的重要性</strong>：入库和出库操作涉及多条 SQL 语句（插入记录 + 更新库存），必须使用事务保证数据一致性。<code>conn.commit()</code> 和 <code>conn.rollback()</code> 的配合使用是关键。</p>
+</li>
+<li>
+<p><strong>参数化查询的必要性</strong>：使用 <code>?</code> 占位符配合参数元组执行 SQL 查询，可以有效防止 SQL 注入攻击。</p>
+</li>
+<li>
+<p><strong>数据库连接管理的规范性</strong>：统一在 <code>db_config.py</code> 中管理连接配置，所有模型通过 <code>BaseModel</code> 获取连接，避免代码重复。</p>
+</li>
+</ol>
+<h3>8.3 经验教训</h3>
+<ol>
+<li>
+<p><strong>环境配置要细致</strong>：PyQt5 的插件路径、SQL Server 的 TCP/IP 配置、sa 账户的启用等细节问题需要逐一排查。</p>
+</li>
+<li>
+<p><strong>异常处理要全面</strong>：数据库操作可能因各种原因失败（连接断开、数据异常、约束冲突等），需要在代码中做好异常捕获和友好提示。</p>
+</li>
+<li>
+<p><strong>界面与业务分离</strong>：一开始如果能把界面代码和业务逻辑分开，后期的功能添加和修改会轻松很多。</p>
+</li>
+</ol>
+<h3>8.4 未来扩展方向</h3>
+<ul>
+<li>增加 Excel 导入导出功能</li>
+<li>增加库存预警提醒</li>
+<li>增加数据备份与恢复功能</li>
+<li>增加日志审计功能</li>
+<li>使用 Web 框架（如 Django/Flask）改造为 Web 应用</li>
+</ul>
+<hr>
+<h2>附录</h2>
+<h3>A. 建表 SQL</h3>
+<div class="highlight"><pre><span></span><code><span class="c1">-- 创建数据库</span>
+<span class="k">CREATE</span><span class="w"> </span><span class="k">DATABASE</span><span class="w"> </span><span class="err">物资管理系统</span><span class="p">;</span>
+<span class="k">GO</span>
+
+<span class="n">USE</span><span class="w"> </span><span class="err">物资管理系统</span><span class="p">;</span>
+<span class="k">GO</span>
+
+<span class="c1">-- Users 用户表</span>
+<span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">Users</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="n">UserID</span><span class="w"> </span><span class="nb">INT</span><span class="w"> </span><span class="k">IDENTITY</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="p">,</span>
+<span class="w">    </span><span class="n">Username</span><span class="w"> </span><span class="n">NVARCHAR</span><span class="p">(</span><span class="mi">50</span><span class="p">)</span><span class="w"> </span><span class="k">UNIQUE</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="p">,</span>
+<span class="w">    </span><span class="n">Password</span><span class="w"> </span><span class="n">NVARCHAR</span><span class="p">(</span><span class="mi">50</span><span class="p">)</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="p">,</span>
+<span class="w">    </span><span class="n">UserRole</span><span class="w"> </span><span class="n">NVARCHAR</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="s1">&#39;普通用户&#39;</span><span class="p">,</span>
+<span class="w">    </span><span class="n">CreateDate</span><span class="w"> </span><span class="n">DATETIME</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="n">GETDATE</span><span class="p">()</span>
+<span class="p">);</span>
+
+<span class="c1">-- Departments 部门表</span>
+<span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">Departments</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="n">DeptID</span><span class="w"> </span><span class="nb">INT</span><span class="w"> </span><span class="k">IDENTITY</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="p">,</span>
+<span class="w">    </span><span class="n">DeptName</span><span class="w"> </span><span class="n">NVARCHAR</span><span class="p">(</span><span class="mi">50</span><span class="p">)</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="p">,</span>
+<span class="w">    </span><span class="n">FundAmount</span><span class="w"> </span><span class="nb">DECIMAL</span><span class="p">(</span><span class="mi">18</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">    </span><span class="n">Remark</span><span class="w"> </span><span class="n">NVARCHAR</span><span class="p">(</span><span class="mi">200</span><span class="p">)</span>
+<span class="p">);</span>
+
+<span class="c1">-- Materials 物资表</span>
+<span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">Materials</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="n">MaterialID</span><span class="w"> </span><span class="nb">INT</span><span class="w"> </span><span class="k">IDENTITY</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="p">,</span>
+<span class="w">    </span><span class="n">MaterialName</span><span class="w"> </span><span class="n">NVARCHAR</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="p">,</span>
+<span class="w">    </span><span class="n">UnitPrice</span><span class="w"> </span><span class="nb">DECIMAL</span><span class="p">(</span><span class="mi">18</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">    </span><span class="n">Unit</span><span class="w"> </span><span class="n">NVARCHAR</span><span class="p">(</span><span class="mi">20</span><span class="p">),</span>
+<span class="w">    </span><span class="n">Supplier</span><span class="w"> </span><span class="n">NVARCHAR</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span>
+<span class="w">    </span><span class="n">Description</span><span class="w"> </span><span class="n">NVARCHAR</span><span class="p">(</span><span class="mi">500</span><span class="p">),</span>
+<span class="w">    </span><span class="n">StockQuantity</span><span class="w"> </span><span class="nb">INT</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="mi">0</span>
+<span class="p">);</span>
+
+<span class="c1">-- 其他表结构请参考项目 sql/01_create_database.sql 文件</span>
+</code></pre></div>
+
+<h3>B. 测试数据</h3>
+<div class="highlight"><pre><span></span><code><span class="c1">-- 默认管理员账号</span>
+<span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">Users</span><span class="w"> </span><span class="p">(</span><span class="n">Username</span><span class="p">,</span><span class="w"> </span><span class="n">Password</span><span class="p">,</span><span class="w"> </span><span class="n">UserRole</span><span class="p">)</span><span class="w"> </span><span class="k">VALUES</span>
+<span class="p">(</span><span class="s1">&#39;admin&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;123456&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;管理员&#39;</span><span class="p">);</span>
+
+<span class="c1">-- 测试物资</span>
+<span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="n">Materials</span><span class="w"> </span><span class="p">(</span><span class="n">MaterialName</span><span class="p">,</span><span class="w"> </span><span class="n">UnitPrice</span><span class="p">,</span><span class="w"> </span><span class="n">Unit</span><span class="p">,</span><span class="w"> </span><span class="n">Supplier</span><span class="p">,</span><span class="w"> </span><span class="n">StockQuantity</span><span class="p">)</span><span class="w"> </span><span class="k">VALUES</span>
+<span class="p">(</span><span class="s1">&#39;笔记本电脑&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">5000</span><span class="p">.</span><span class="mi">00</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;台&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;联想&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="p">),</span>
+<span class="p">(</span><span class="s1">&#39;台式电脑&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">3500</span><span class="p">.</span><span class="mi">00</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;台&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;联想&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">15</span><span class="p">),</span>
+<span class="p">(</span><span class="s1">&#39;A4纸&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">25</span><span class="p">.</span><span class="mi">00</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;箱&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;晨光&#39;</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="p">);</span>
+
+<span class="c1">-- 完整测试数据请参考项目 sql/02_insert_test_data.sql 文件</span>
+</code></pre></div>
+
+<h3>C. 版本记录</h3>
+<table>
+<thead>
+<tr>
+<th>版本</th>
+<th>日期</th>
+<th>更新内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>v1.0</td>
+<td>2026-06</td>
+<td>初始版本，完成全部核心功能</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2>参考资料</h2>
+<ol>
+<li>数据库课程设计任务书</li>
+<li>Python 官方文档：https://docs.python.org/3/</li>
+<li>PyQt5 文档：https://doc.qt.io/qt-5/</li>
+<li>pyodbc 文档：https://github.com/mkleehammer/pyodbc</li>
+<li>Microsoft SQL Server 2008 R2 文档</li>
+</ol>
+<hr>
+<p><strong>感谢阅读！如果对项目有疑问或建议，欢迎在 GitHub 上提交 Issue。</strong></p>
+<p><strong>项目地址</strong>：https://github.com/codeshy-1119/MaterialManagementSystem</p>
+        </div>
+    </article>
+</div>
+
+<!-- ===== 右下角返回按钮（沿用首页风格） ===== -->
+<button id="back-home" onclick="window.location.href='http://127.0.0.1:8000/'">🏠 返回</button>
+
+<!-- ===== 样式覆盖 ===== -->
+<style>
+    /* ===== 全局重置 ===== */
+    html, body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        overflow-y: auto;
+        background: transparent;
+    }
+
+    /* ===== 视频背景固定 ===== */
+    #hero {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        z-index: 0;
+        overflow: hidden;
+    }
+    #bg-video {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        min-width: 100%;
+        min-height: 100%;
+        width: auto;
+        height: auto;
+        object-fit: cover;
+    }
+
+    /* ===== 文章内容（毛玻璃卡片，居中） ===== */
+    #article-content {
+        position: relative;
+        z-index: 1;
+        margin-top: 10vh;
+        margin-bottom: 10vh;
+        max-width: 800px;
+        margin-left: auto;
+        margin-right: auto;
+        padding: 20px;
+    }
+    #article-content article {
+        background: rgba(255, 255, 255, 0.88);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 40px 45px;
+        box-shadow: 0 8px 40px rgba(0,0,0,0.2);
+        color: #222;
+        line-height: 1.8;
+        font-size: 1.05rem;
+    }
+
+    /* ===== 文章标题 ===== */
+    .article-title {
+        font-size: 2.2rem;
+        margin-bottom: 10px;
+        color: #1a3a2a;
+        text-align: left;
+        border-bottom: 3px solid #2a8a5a;
+        padding-bottom: 15px;
+    }
+    .article-meta {
+        font-size: 0.9rem;
+        color: #666;
+        margin-bottom: 25px;
+        text-align: left;
+    }
+    .article-meta a {
+        color: #2a7a5a;
+        text-decoration: none;
+    }
+    .article-meta a:hover {
+        text-decoration: underline;
+    }
+
+    /* ===== 文章正文 ===== */
+    .article-body {
+        text-align: left;
+    }
+    .article-body p {
+        margin-bottom: 1.2em;
+    }
+    .article-body h2, .article-body h3 {
+        margin-top: 1.8em;
+        margin-bottom: 0.6em;
+        color: #1a3a2a;
+    }
+    .article-body img {
+        max-width: 100%;
+        border-radius: 10px;
+        margin: 20px 0;
+        display: block;
+    }
+    .article-body pre, .article-body code {
+        background: #f0f0f0;
+        border-radius: 6px;
+        padding: 2px 6px;
+        font-size: 0.95rem;
+    }
+    .article-body pre {
+        padding: 16px;
+        overflow-x: auto;
+    }
+
+    /* ===== 返回按钮 ===== */
+    #back-home {
+        position: fixed;
+        bottom: 25px;
+        right: 25px;
+        z-index: 10;
+        padding: 14px 22px;
+        background: rgba(42, 157, 143, 0.9);
+        color: #fff;
+        border: none;
+        border-radius: 40px;
+        font-size: 1.1rem;
+        font-weight: bold;
+        cursor: pointer;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        backdrop-filter: blur(4px);
+        transition: background 0.2s, transform 0.2s;
+    }
+    #back-home:hover {
+        background: rgba(42, 157, 143, 1);
+        transform: scale(1.05);
+    }
+    #back-home:active {
+        transform: scale(0.95);
+    }
+
+    /* ===== 隐藏原主题侧边栏、footer ===== */
+    .row .col-sm-3,
+    .row .col-md-3,
+    .row .col-lg-3 {
+        display: none !important;
+    }
+    .row .col-sm-9,
+    .row .col-md-9,
+    .row .col-lg-9 {
+        width: 100% !important;
+        max-width: 100% !important;
+        flex: 0 0 100% !important;
+    }
+    footer {
+        display: none !important;
+    }
+</style>
+
+
+    <!-- ===== 底部版权信息（可选） ===== -->
+    <footer style="text-align:center;padding:20px;background:transparent;color:#fff;text-shadow:0 2px 6px rgba(0,0,0,0.5);position:relative;z-index:1;">
+        <p>&copy; 才华恒毅的blog 2026</p>
+    </footer>
+
+    <!-- ===== 导航栏样式 ===== -->
+    <style>
+        /* ===== 导航栏（毛玻璃，固定在顶部） ===== */
+        #navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 100;
+            padding: 12px 20px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            box-shadow: 0 2px 20px rgba(0,0,0,0.15);
+            box-sizing: border-box;
+            transition: background 0.3s;
+        }
+        #navbar:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        .nav-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px 16px;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+        }
+        .nav-brand {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #fff;
+            text-decoration: none;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.6);
+            letter-spacing: 0.5px;
+        }
+        .nav-brand:hover {
+            color: #d4edda;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 6px 14px;
+            flex-wrap: wrap;
+        }
+        .nav-link {
+            color: rgba(255,255,255,0.85);
+            text-decoration: none;
+            font-size: 0.95rem;
+            padding: 6px 12px;
+            border-radius: 30px;
+            transition: background 0.2s, color 0.2s, transform 0.15s;
+            text-shadow: 0 1px 6px rgba(0,0,0,0.4);
+        }
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+            transform: scale(1.04);
+        }
+        /* 当前页面高亮（可选，需要配合模板变量） */
+        .nav-link.active {
+            background: rgba(255, 255, 255, 0.25);
+            color: #fff;
+        }
+
+        /* ===== 移动端适配 ===== */
+        @media (max-width: 640px) {
+            #navbar {
+                padding: 10px 14px;
+            }
+            .nav-brand {
+                font-size: 1.05rem;
+            }
+            .nav-link {
+                font-size: 0.8rem;
+                padding: 4px 10px;
+            }
+            .nav-right {
+                gap: 4px 8px;
+            }
+        }
+
+        /* ===== 给页面内容留出顶部空间（避免被导航栏遮挡） ===== */
+        body {
+            padding-top: 70px;
+        }
+    </style>
+
+</body>
+</html>
