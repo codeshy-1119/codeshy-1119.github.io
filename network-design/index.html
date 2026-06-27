@@ -595,21 +595,21 @@ no shutdown
 
         /* ===== 导航栏（固定在顶部） ===== */
         #navbar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            z-index: 100;
-            padding: 12px 20px;
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            box-shadow: 0 2px 20px rgba(0,0,0,0.15);
-            box-sizing: border-box;
-            transition: background 0.3s;
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            z-index: 1000 !important;
+            padding: 12px 20px !important;
+            background: rgba(255, 255, 255, 0.15) !important;
+            backdrop-filter: blur(12px) !important;
+            -webkit-backdrop-filter: blur(12px) !important;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.15) !important;
+            box-sizing: border-box !important;
+            transition: background 0.3s !important;
         }
         #navbar:hover {
-            background: rgba(255, 255, 255, 0.25);
+            background: rgba(255, 255, 255, 0.25) !important;
         }
 
         .nav-container {
@@ -665,7 +665,7 @@ no shutdown
 
         @media (max-width: 640px) {
             #navbar {
-                padding: 10px 14px;
+                padding: 10px 14px !important;
             }
             .nav-brand {
                 font-size: 1.05rem;
@@ -681,9 +681,9 @@ no shutdown
 
         /* ===== 给页面内容留出顶部空间 ===== */
         body {
-            padding-top: 70px;
-            margin: 0;
-            background: transparent;
+            padding-top: 70px !important;
+            margin: 0 !important;
+            background: transparent !important;
         }
 
         /* ===== 确保所有内容层级在视频之上 ===== */
@@ -702,9 +702,18 @@ no shutdown
             z-index: 1;
         }
 
-        /* ===== 覆盖原主题的 body 背景 ===== */
-        body {
-            background: transparent !important;
+        /* ===== 修复右下角所有按钮的固定位置 ===== */
+        #back-home,
+        #toggle-drawer {
+            position: fixed !important;
+            bottom: 25px !important;
+            right: 25px !important;
+            z-index: 100 !important;
+        }
+
+        /* ===== 页面滚动时保持背景稳定 ===== */
+        html, body {
+            overflow-y: auto;
         }
     </style>
 
@@ -714,15 +723,12 @@ no shutdown
             var video = document.getElementById('bg-video');
             if (!video) return;
 
-            // ===== 在这里配置你的视频列表（可自行增删） =====
             var videoList = [
                 '/images/blog.mp4',
                 '/images/forest.mp4',
                 '/images/ocean.mp4'
-                // 添加更多视频，格式：'/images/xxx.mp4'
             ];
 
-            // 过滤掉不存在的视频（可选，避免404）
             var availableVideos = [];
             var checkCount = 0;
             if (videoList.length === 0) {
