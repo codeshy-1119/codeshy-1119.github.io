@@ -11,6 +11,11 @@
 
 <body>
 
+    <!-- ===== 全局随机视频背景 ===== -->
+    <div id="global-hero">
+        <video autoplay muted loop playsinline id="bg-video"></video>
+    </div>
+
     <!-- ===== 顶部导航栏 ===== -->
     <nav id="navbar">
         <div class="nav-container">
@@ -29,30 +34,19 @@
 
     <!-- ===== 页面内容（子模板填充） ===== -->
 
-<!-- ===== 全屏视频背景 ===== -->
-<div id="hero">
-    <video autoplay muted loop playsinline id="bg-video">
-        <source src="https://codeshy-1119.github.io/images/blog.mp4" type="video/mp4">
-        您的浏览器不支持视频背景。
-    </video>
-</div>
-
 <!-- ===== 作者信息卡片 ===== -->
 <div id="author-section">
     <div class="author-card">
-        <!-- 头像 -->
         <div class="avatar-wrapper">
             <img src="https://codeshy-1119.github.io/images/头像.jpg" alt="作者头像" class="avatar">
         </div>
 
-        <!-- 作者信息 -->
         <h1 class="author-name">才华恒毅</h1>
         <p class="author-bio">
             🌱 热爱技术，喜欢分享<br>
             这里是我的个人博客，记录学习和生活
         </p>
 
-        <!-- 社交链接 -->
         <div class="social-links">
             <a href="https://github.com/codeshy-1119" target="_blank" class="social-btn github">GitHub</a>
             <a href="https://twitter.com/ak_dqf" target="_blank" class="social-btn twitter">Twitter</a>
@@ -61,7 +55,6 @@
             <a href="mailto:hys15642@gmail.com" class="social-btn email">Email</a>
         </div>
 
-        <!-- 文章统计 -->
         <div class="stats">
             <span>📝 共 3 篇文章</span>
             <span>📅 始于 2026</span>
@@ -74,7 +67,6 @@
     <div class="container">
         <h2 class="list-title">📖 全部文章</h2>
             <article class="article-card card-left">
-                <!-- 文字信息 -->
                 <div class="card-text">
                     <header>
                         <h2><a href="https://codeshy-1119.github.io/database-design/">物资管理信息系统 - 数据库课程设计完整报告</a></h2>
@@ -86,13 +78,11 @@
                     </header>
                     <a href="https://codeshy-1119.github.io/database-design/" class="read-more">阅读全文 →</a>
                 </div>
-                <!-- 图片 -->
                 <div class="card-image">
                         <img src="https://codeshy-1119.github.io/posts/database-design/封面.png" alt="物资管理信息系统 - 数据库课程设计完整报告">
                 </div>
             </article>
             <article class="article-card card-right">
-                <!-- 文字信息 -->
                 <div class="card-text">
                     <header>
                         <h2><a href="https://codeshy-1119.github.io/network-design/">网络综合设计与仿真实现</a></h2>
@@ -104,13 +94,11 @@
                     </header>
                     <a href="https://codeshy-1119.github.io/network-design/" class="read-more">阅读全文 →</a>
                 </div>
-                <!-- 图片 -->
                 <div class="card-image">
                         <img src="https://codeshy-1119.github.io/posts/network-design/封面.png" alt="网络综合设计与仿真实现">
                 </div>
             </article>
             <article class="article-card card-left">
-                <!-- 文字信息 -->
                 <div class="card-text">
                     <header>
                         <h2><a href="https://codeshy-1119.github.io/fist-blog/">My First Post</a></h2>
@@ -122,7 +110,6 @@
                     </header>
                     <a href="https://codeshy-1119.github.io/fist-blog/" class="read-more">阅读全文 →</a>
                 </div>
-                <!-- 图片 -->
                 <div class="card-image">
                         <img src="https://codeshy-1119.github.io/posts/fist-blog/封面.png" alt="My First Post">
                 </div>
@@ -130,10 +117,8 @@
     </div>
 </div>
 
-<!-- ===== 返回首页按钮 ===== -->
 <button id="back-home" onclick="window.location.href='https://codeshy-1119.github.io/'">🏠 返回首页</button>
 
-<!-- ===== 样式覆盖 ===== -->
 <style>
     /* ===== 全局重置 ===== */
     html, body {
@@ -142,28 +127,6 @@
         height: 100%;
         overflow-y: auto;
         background: transparent;
-    }
-
-    /* ===== 视频背景 ===== */
-    #hero {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        z-index: 0;
-        overflow: hidden;
-    }
-    #bg-video {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        min-width: 100%;
-        min-height: 100%;
-        width: auto;
-        height: auto;
-        object-fit: cover;
     }
 
     /* ===== 作者卡片 ===== */
@@ -274,7 +237,6 @@
         margin: 0 auto;
     }
 
-    /* ===== 卡片样式（与首页完全一致） ===== */
     .article-card {
         display: flex;
         align-items: stretch;
@@ -372,7 +334,6 @@
         order: 2;
     }
 
-    /* ===== 返回按钮 ===== */
     #back-home {
         position: fixed;
         bottom: 25px;
@@ -398,7 +359,6 @@
         transform: scale(0.95);
     }
 
-    /* ===== 移动端适配 ===== */
     @media (max-width: 700px) {
         .article-card {
             flex-direction: column;
@@ -447,13 +407,35 @@
 </style>
 
 
-    <!-- ===== 底部版权信息（可选） ===== -->
+    <!-- ===== 底部版权信息 ===== -->
     <footer style="text-align:center;padding:20px;background:transparent;color:#fff;text-shadow:0 2px 6px rgba(0,0,0,0.5);position:relative;z-index:1;">
         <p>&copy; 才华恒毅的blog 2026</p>
     </footer>
 
-    <!-- ===== 导航栏样式 ===== -->
     <style>
+        /* ===== 全局视频背景层 ===== */
+        #global-hero {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
+            overflow: hidden;
+            pointer-events: none; /* 让鼠标事件穿透，方便点击导航栏和内容 */
+        }
+        #global-hero video {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            object-fit: cover;
+        }
+
         /* ===== 导航栏（毛玻璃，固定在顶部） ===== */
         #navbar {
             position: fixed;
@@ -519,13 +501,11 @@
             color: #fff;
             transform: scale(1.04);
         }
-        /* 当前页面高亮（可选，需要配合模板变量） */
         .nav-link.active {
             background: rgba(255, 255, 255, 0.25);
             color: #fff;
         }
 
-        /* ===== 移动端适配 ===== */
         @media (max-width: 640px) {
             #navbar {
                 padding: 10px 14px;
@@ -542,11 +522,85 @@
             }
         }
 
-        /* ===== 给页面内容留出顶部空间（避免被导航栏遮挡） ===== */
+        /* ===== 给页面内容留出顶部空间 ===== */
         body {
             padding-top: 70px;
+            margin: 0;
+            background: transparent;
+        }
+
+        /* ===== 确保所有内容层级在视频之上 ===== */
+        #navbar,
+        #archives-header,
+        #timeline,
+        #article-content,
+        #author-section,
+        #article-list,
+        #back-home,
+        footer {
+            position: relative;
+            z-index: 1;
         }
     </style>
+
+    <!-- ===== 随机视频切换脚本 ===== -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var video = document.getElementById('bg-video');
+            if (!video) return;
+
+            // ===== 在这里配置你的视频列表（可自行增删） =====
+            // 路径相对于站点根目录（即 output/ 目录）
+            var videoList = [
+                '/images/blog.mp4',
+                '/images/forest.mp4',
+                '/images/ocean.mp4'
+                // 添加更多视频，格式：'/images/xxx.mp4'
+            ];
+
+            // 过滤掉不存在的视频（可选，避免404）
+            var availableVideos = [];
+            var checkCount = 0;
+            videoList.forEach(function(src) {
+                var testVideo = document.createElement('video');
+                testVideo.src = src;
+                testVideo.onloadeddata = function() {
+                    availableVideos.push(src);
+                    checkCount++;
+                    if (checkCount === videoList.length) {
+                        applyRandomVideo();
+                    }
+                };
+                testVideo.onerror = function() {
+                    checkCount++;
+                    if (checkCount === videoList.length) {
+                        applyRandomVideo();
+                    }
+                };
+            });
+
+            // 如果所有视频都加载失败，使用默认
+            function applyRandomVideo() {
+                if (availableVideos.length === 0) {
+                    // 如果没有可用视频，默认使用第一个（即使可能404）
+                    availableVideos = videoList.slice(0, 1);
+                }
+                var randomIndex = Math.floor(Math.random() * availableVideos.length);
+                var selected = availableVideos[randomIndex];
+                video.src = selected;
+                video.load();
+                video.play().catch(function(e) {
+                    // 自动播放被拦截时静默
+                    console.log('视频自动播放被拦截');
+                });
+            }
+
+            // 如果 videoList 为空，添加默认视频
+            if (videoList.length === 0) {
+                videoList.push('/images/blog.mp4');
+            }
+        });
+    </script>
 
 </body>
 </html>

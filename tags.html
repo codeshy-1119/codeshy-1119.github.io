@@ -11,6 +11,11 @@
 
 <body>
 
+    <!-- ===== 全局随机视频背景 ===== -->
+    <div id="global-hero">
+        <video autoplay muted loop playsinline id="bg-video"></video>
+    </div>
+
     <!-- ===== 顶部导航栏 ===== -->
     <nav id="navbar">
         <div class="nav-container">
@@ -45,13 +50,35 @@
   </div>
 </article>
 
-    <!-- ===== 底部版权信息（可选） ===== -->
+    <!-- ===== 底部版权信息 ===== -->
     <footer style="text-align:center;padding:20px;background:transparent;color:#fff;text-shadow:0 2px 6px rgba(0,0,0,0.5);position:relative;z-index:1;">
         <p>&copy; 才华恒毅的blog 2026</p>
     </footer>
 
-    <!-- ===== 导航栏样式 ===== -->
     <style>
+        /* ===== 全局视频背景层 ===== */
+        #global-hero {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
+            overflow: hidden;
+            pointer-events: none; /* 让鼠标事件穿透，方便点击导航栏和内容 */
+        }
+        #global-hero video {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            object-fit: cover;
+        }
+
         /* ===== 导航栏（毛玻璃，固定在顶部） ===== */
         #navbar {
             position: fixed;
@@ -117,13 +144,11 @@
             color: #fff;
             transform: scale(1.04);
         }
-        /* 当前页面高亮（可选，需要配合模板变量） */
         .nav-link.active {
             background: rgba(255, 255, 255, 0.25);
             color: #fff;
         }
 
-        /* ===== 移动端适配 ===== */
         @media (max-width: 640px) {
             #navbar {
                 padding: 10px 14px;
@@ -140,11 +165,85 @@
             }
         }
 
-        /* ===== 给页面内容留出顶部空间（避免被导航栏遮挡） ===== */
+        /* ===== 给页面内容留出顶部空间 ===== */
         body {
             padding-top: 70px;
+            margin: 0;
+            background: transparent;
+        }
+
+        /* ===== 确保所有内容层级在视频之上 ===== */
+        #navbar,
+        #archives-header,
+        #timeline,
+        #article-content,
+        #author-section,
+        #article-list,
+        #back-home,
+        footer {
+            position: relative;
+            z-index: 1;
         }
     </style>
+
+    <!-- ===== 随机视频切换脚本 ===== -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var video = document.getElementById('bg-video');
+            if (!video) return;
+
+            // ===== 在这里配置你的视频列表（可自行增删） =====
+            // 路径相对于站点根目录（即 output/ 目录）
+            var videoList = [
+                '/images/blog.mp4',
+                '/images/forest.mp4',
+                '/images/ocean.mp4'
+                // 添加更多视频，格式：'/images/xxx.mp4'
+            ];
+
+            // 过滤掉不存在的视频（可选，避免404）
+            var availableVideos = [];
+            var checkCount = 0;
+            videoList.forEach(function(src) {
+                var testVideo = document.createElement('video');
+                testVideo.src = src;
+                testVideo.onloadeddata = function() {
+                    availableVideos.push(src);
+                    checkCount++;
+                    if (checkCount === videoList.length) {
+                        applyRandomVideo();
+                    }
+                };
+                testVideo.onerror = function() {
+                    checkCount++;
+                    if (checkCount === videoList.length) {
+                        applyRandomVideo();
+                    }
+                };
+            });
+
+            // 如果所有视频都加载失败，使用默认
+            function applyRandomVideo() {
+                if (availableVideos.length === 0) {
+                    // 如果没有可用视频，默认使用第一个（即使可能404）
+                    availableVideos = videoList.slice(0, 1);
+                }
+                var randomIndex = Math.floor(Math.random() * availableVideos.length);
+                var selected = availableVideos[randomIndex];
+                video.src = selected;
+                video.load();
+                video.play().catch(function(e) {
+                    // 自动播放被拦截时静默
+                    console.log('视频自动播放被拦截');
+                });
+            }
+
+            // 如果 videoList 为空，添加默认视频
+            if (videoList.length === 0) {
+                videoList.push('/images/blog.mp4');
+            }
+        });
+    </script>
 
 </body>
 </html>

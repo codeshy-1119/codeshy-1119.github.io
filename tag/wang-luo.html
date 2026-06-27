@@ -11,6 +11,11 @@
 
 <body>
 
+    <!-- ===== 全局随机视频背景 ===== -->
+    <div id="global-hero">
+        <video autoplay muted loop playsinline id="bg-video"></video>
+    </div>
+
     <!-- ===== 顶部导航栏 ===== -->
     <nav id="navbar">
         <div class="nav-container">
@@ -28,14 +33,6 @@
     </nav>
 
     <!-- ===== 页面内容（子模板填充） ===== -->
-
-<!-- ===== 全屏视频背景 ===== -->
-<div id="hero">
-    <video autoplay muted loop playsinline id="bg-video">
-        <source src="https://codeshy-1119.github.io/images/blog.mp4" type="video/mp4">
-        您的浏览器不支持视频背景。
-    </video>
-</div>
 
 <!-- ===== 标题 + 搜索框 ===== -->
 <div id="header-fixed">
@@ -62,7 +59,7 @@
                                 · Tagged with
                                     <a href="https://codeshy-1119.github.io/tag/wang-luo.html">网络</a>,                                    <a href="https://codeshy-1119.github.io/tag/fang-zhen.html">仿真</a>                        </p>
                     </header>
-                    <!-- ✅ 已移除 summary 摘要，只显示标题、日期、标签 -->
+                    <!-- 只显示标题、日期、标签 -->
                     <a href="https://codeshy-1119.github.io/network-design/" class="read-more">阅读全文 →</a>
                 </div>
                 <!-- 图片 -->
@@ -87,18 +84,17 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(response => response.json())
         .then(data => {
             articles = data;
-            console.log('搜索索引数据:', data);  // 调试：查看索引内容
+            console.log('搜索索引数据:', data);
         })
         .catch(err => console.log('搜索索引加载失败:', err));
 
     searchInput.addEventListener('input', function() {
         var query = this.value.trim().toLowerCase();
-        console.log('当前搜索词:', query);  // 调试
+        console.log('当前搜索词:', query);
         if (query.length < 2) {
             resultsBox.style.display = 'none';
             return;
         }
-        // 确保 articles 有数据
         if (!articles || articles.length === 0) {
             console.log('articles 尚未加载');
             return;
@@ -106,7 +102,7 @@ document.addEventListener('DOMContentLoaded', function() {
         var matches = articles.filter(function(item) {
             return (item.title || '').toLowerCase().includes(query);
         }).slice(0, 10);
-        console.log('匹配结果数:', matches.length);  // 调试
+        console.log('匹配结果数:', matches.length);
 
         if (matches.length > 0) {
             resultsBox.innerHTML = matches.map(function(item) {
@@ -148,28 +144,6 @@ document.addEventListener('DOMContentLoaded', function() {
         height: 100%;
         overflow-y: auto;
         background: transparent;
-    }
-
-    /* ===== 视频背景 ===== */
-    #hero {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        z-index: 0;
-        overflow: hidden;
-    }
-    #bg-video {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        min-width: 100%;
-        min-height: 100%;
-        width: auto;
-        height: auto;
-        object-fit: cover;
     }
 
     /* ===== 标题 + 搜索框 ===== */
@@ -223,12 +197,11 @@ document.addEventListener('DOMContentLoaded', function() {
         box-shadow: 0 0 20px rgba(255,255,255,0.3);
     }
 
-    /* ✅ 修复：下拉框宽度与输入框完全一致 */
     #search-results {
         position: absolute;
         top: 100%;
         left: 0;
-        width: 100% !important;          /* 强制宽度 100% */
+        width: 100% !important;
         min-width: 100% !important;
         background: rgba(255, 255, 255, 0.95);
         border-radius: 10px;
@@ -276,7 +249,7 @@ document.addEventListener('DOMContentLoaded', function() {
         margin: 0 auto;
     }
 
-    /* ===== ✅ 文章卡片：统一尺寸 ===== */
+    /* ===== 文章卡片：统一尺寸 ===== */
     .article-card {
         display: flex;
         align-items: stretch;
@@ -286,14 +259,13 @@ document.addEventListener('DOMContentLoaded', function() {
         margin-bottom: 30px;
         box-shadow: 0 4px 20px rgba(0,0,0,0.08);
         transition: transform 0.2s, box-shadow 0.2s;
-        height: 200px; /* ✅ 固定高度，所有卡片统一 */
+        height: 200px;
     }
     .article-card:hover {
         transform: translateY(-4px);
         box-shadow: 0 8px 30px rgba(0,0,0,0.15);
     }
 
-    /* ===== 文字区域 ===== */
     .card-text {
         flex: 1.2;
         padding: 20px 28px;
@@ -345,11 +317,10 @@ document.addEventListener('DOMContentLoaded', function() {
         text-decoration: underline;
     }
 
-    /* ===== ✅ 图片区域：统一尺寸，cover 裁剪 ===== */
     .card-image {
         flex: 1;
         min-width: 0;
-        height: 200px; /* ✅ 与卡片高度一致 */
+        height: 200px;
         background: #e8ece8;
         display: flex;
         align-items: center;
@@ -359,14 +330,13 @@ document.addEventListener('DOMContentLoaded', function() {
     .card-image img {
         width: 100%;
         height: 100%;
-        object-fit: cover; /* ✅ 裁剪并填满，保持比例 */
+        object-fit: cover;
     }
     .placeholder-img {
         font-size: 4rem;
         opacity: 0.25;
     }
 
-    /* ===== 左右交替 ===== */
     .article-card.card-left .card-image {
         order: 2;
     }
@@ -464,13 +434,35 @@ document.addEventListener('DOMContentLoaded', function() {
 </style>
 
 
-    <!-- ===== 底部版权信息（可选） ===== -->
+    <!-- ===== 底部版权信息 ===== -->
     <footer style="text-align:center;padding:20px;background:transparent;color:#fff;text-shadow:0 2px 6px rgba(0,0,0,0.5);position:relative;z-index:1;">
         <p>&copy; 才华恒毅的blog 2026</p>
     </footer>
 
-    <!-- ===== 导航栏样式 ===== -->
     <style>
+        /* ===== 全局视频背景层 ===== */
+        #global-hero {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
+            overflow: hidden;
+            pointer-events: none; /* 让鼠标事件穿透，方便点击导航栏和内容 */
+        }
+        #global-hero video {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            object-fit: cover;
+        }
+
         /* ===== 导航栏（毛玻璃，固定在顶部） ===== */
         #navbar {
             position: fixed;
@@ -536,13 +528,11 @@ document.addEventListener('DOMContentLoaded', function() {
             color: #fff;
             transform: scale(1.04);
         }
-        /* 当前页面高亮（可选，需要配合模板变量） */
         .nav-link.active {
             background: rgba(255, 255, 255, 0.25);
             color: #fff;
         }
 
-        /* ===== 移动端适配 ===== */
         @media (max-width: 640px) {
             #navbar {
                 padding: 10px 14px;
@@ -559,11 +549,85 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
 
-        /* ===== 给页面内容留出顶部空间（避免被导航栏遮挡） ===== */
+        /* ===== 给页面内容留出顶部空间 ===== */
         body {
             padding-top: 70px;
+            margin: 0;
+            background: transparent;
+        }
+
+        /* ===== 确保所有内容层级在视频之上 ===== */
+        #navbar,
+        #archives-header,
+        #timeline,
+        #article-content,
+        #author-section,
+        #article-list,
+        #back-home,
+        footer {
+            position: relative;
+            z-index: 1;
         }
     </style>
+
+    <!-- ===== 随机视频切换脚本 ===== -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var video = document.getElementById('bg-video');
+            if (!video) return;
+
+            // ===== 在这里配置你的视频列表（可自行增删） =====
+            // 路径相对于站点根目录（即 output/ 目录）
+            var videoList = [
+                '/images/blog.mp4',
+                '/images/forest.mp4',
+                '/images/ocean.mp4'
+                // 添加更多视频，格式：'/images/xxx.mp4'
+            ];
+
+            // 过滤掉不存在的视频（可选，避免404）
+            var availableVideos = [];
+            var checkCount = 0;
+            videoList.forEach(function(src) {
+                var testVideo = document.createElement('video');
+                testVideo.src = src;
+                testVideo.onloadeddata = function() {
+                    availableVideos.push(src);
+                    checkCount++;
+                    if (checkCount === videoList.length) {
+                        applyRandomVideo();
+                    }
+                };
+                testVideo.onerror = function() {
+                    checkCount++;
+                    if (checkCount === videoList.length) {
+                        applyRandomVideo();
+                    }
+                };
+            });
+
+            // 如果所有视频都加载失败，使用默认
+            function applyRandomVideo() {
+                if (availableVideos.length === 0) {
+                    // 如果没有可用视频，默认使用第一个（即使可能404）
+                    availableVideos = videoList.slice(0, 1);
+                }
+                var randomIndex = Math.floor(Math.random() * availableVideos.length);
+                var selected = availableVideos[randomIndex];
+                video.src = selected;
+                video.load();
+                video.play().catch(function(e) {
+                    // 自动播放被拦截时静默
+                    console.log('视频自动播放被拦截');
+                });
+            }
+
+            // 如果 videoList 为空，添加默认视频
+            if (videoList.length === 0) {
+                videoList.push('/images/blog.mp4');
+            }
+        });
+    </script>
 
 </body>
 </html>
