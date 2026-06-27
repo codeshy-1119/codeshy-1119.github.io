@@ -16,7 +16,7 @@
         <video autoplay muted loop playsinline id="bg-video"></video>
     </div>
 
-    <!-- ===== 顶部导航栏 ===== -->
+    <!-- ===== 顶部导航栏（固定） ===== -->
     <nav id="navbar">
         <div class="nav-container">
             <div class="nav-left">
@@ -198,7 +198,7 @@
             height: 100vh;
             z-index: 0;
             overflow: hidden;
-            pointer-events: none; /* 让鼠标事件穿透，方便点击导航栏和内容 */
+            pointer-events: none;
         }
         #global-hero video {
             position: absolute;
@@ -212,7 +212,7 @@
             object-fit: cover;
         }
 
-        /* ===== 导航栏（毛玻璃，固定在顶部） ===== */
+        /* ===== 导航栏（固定在顶部） ===== */
         #navbar {
             position: fixed;
             top: 0;
@@ -307,15 +307,23 @@
 
         /* ===== 确保所有内容层级在视频之上 ===== */
         #navbar,
+        #header-fixed,
+        #content-drawer,
         #archives-header,
         #timeline,
         #article-content,
         #author-section,
         #article-list,
         #back-home,
+        #toggle-drawer,
         footer {
             position: relative;
             z-index: 1;
+        }
+
+        /* ===== 覆盖原主题的 body 背景 ===== */
+        body {
+            background: transparent !important;
         }
     </style>
 
@@ -326,17 +334,19 @@
             if (!video) return;
 
             // ===== 在这里配置你的视频列表（可自行增删） =====
-            // 路径相对于站点根目录（即 output/ 目录）
             var videoList = [
                 '/images/blog.mp4',
-                '/images/blog1.mp4',
-                '/images/blog2.mp4'
+                '/images/forest.mp4',
+                '/images/ocean.mp4'
                 // 添加更多视频，格式：'/images/xxx.mp4'
             ];
 
             // 过滤掉不存在的视频（可选，避免404）
             var availableVideos = [];
             var checkCount = 0;
+            if (videoList.length === 0) {
+                videoList.push('/images/blog.mp4');
+            }
             videoList.forEach(function(src) {
                 var testVideo = document.createElement('video');
                 testVideo.src = src;
@@ -355,10 +365,8 @@
                 };
             });
 
-            // 如果所有视频都加载失败，使用默认
             function applyRandomVideo() {
                 if (availableVideos.length === 0) {
-                    // 如果没有可用视频，默认使用第一个（即使可能404）
                     availableVideos = videoList.slice(0, 1);
                 }
                 var randomIndex = Math.floor(Math.random() * availableVideos.length);
@@ -366,14 +374,8 @@
                 video.src = selected;
                 video.load();
                 video.play().catch(function(e) {
-                    // 自动播放被拦截时静默
                     console.log('视频自动播放被拦截');
                 });
-            }
-
-            // 如果 videoList 为空，添加默认视频
-            if (videoList.length === 0) {
-                videoList.push('/images/blog.mp4');
             }
         });
     </script>
