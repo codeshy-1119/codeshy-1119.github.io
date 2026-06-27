@@ -276,11 +276,11 @@ document.addEventListener('DOMContentLoaded', function() {
         border-radius: 20px 20px 0 0;
         box-shadow: 0 -4px 20px rgba(0,0,0,0.2);
         overflow-y: auto;
-        transform: translateY(100%);
+        transform: translateY(100%) !important;  /* 默认完全隐藏 */
         transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     }
     #content-drawer.open {
-        transform: translateY(0);
+        transform: translateY(0) !important;  /* 滑出 */
     }
     #content-drawer .container {
         max-width: 1000px;
