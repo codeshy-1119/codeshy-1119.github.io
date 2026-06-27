@@ -49,7 +49,6 @@
 <div id="content-drawer">
     <div class="container">
             <article class="article-card card-left">
-                <!-- 文字信息 -->
                 <div class="card-text">
                     <header>
                         <h2><a href="https://codeshy-1119.github.io/database-design/">物资管理信息系统 - 数据库课程设计完整报告</a></h2>
@@ -59,16 +58,13 @@
                                 · Tagged with
                                     <a href="https://codeshy-1119.github.io/tag/shu-ju-ku.html">数据库</a>,                                    <a href="https://codeshy-1119.github.io/tag/ke-cheng-she-ji.html">课程设计</a>,                                    <a href="https://codeshy-1119.github.io/tag/sql.html">SQL</a>,                                    <a href="https://codeshy-1119.github.io/tag/pyqt5.html">PyQt5</a>,                                    <a href="https://codeshy-1119.github.io/tag/python.html">Python</a>                        </p>
                     </header>
-                    <!-- 只显示标题、日期、标签 -->
                     <a href="https://codeshy-1119.github.io/database-design/" class="read-more">阅读全文 →</a>
                 </div>
-                <!-- 图片 -->
                 <div class="card-image">
                         <img src="https://codeshy-1119.github.io/posts/database-design/封面.png" alt="物资管理信息系统 - 数据库课程设计完整报告">
                 </div>
             </article>
             <article class="article-card card-right">
-                <!-- 文字信息 -->
                 <div class="card-text">
                     <header>
                         <h2><a href="https://codeshy-1119.github.io/fist-blog/">My First Post</a></h2>
@@ -78,10 +74,8 @@
                                 · Tagged with
                                     <a href="https://codeshy-1119.github.io/tag/python.html">python</a>,                                    <a href="https://codeshy-1119.github.io/tag/pelican.html">pelican</a>                        </p>
                     </header>
-                    <!-- 只显示标题、日期、标签 -->
                     <a href="https://codeshy-1119.github.io/fist-blog/" class="read-more">阅读全文 →</a>
                 </div>
-                <!-- 图片 -->
                 <div class="card-image">
                         <img src="https://codeshy-1119.github.io/posts/fist-blog/封面.png" alt="My First Post">
                 </div>
@@ -89,10 +83,8 @@
     </div>
 </div>
 
-<!-- ===== 右下角按钮 ===== -->
 <button id="toggle-drawer">📖 文章</button>
 
-<!-- ===== 搜索脚本和抽屉控制 ===== -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     var searchInput = document.getElementById('search-input');
@@ -109,7 +101,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     searchInput.addEventListener('input', function() {
         var query = this.value.trim().toLowerCase();
-        console.log('当前搜索词:', query);
         if (query.length < 2) {
             resultsBox.style.display = 'none';
             return;
@@ -121,8 +112,6 @@ document.addEventListener('DOMContentLoaded', function() {
         var matches = articles.filter(function(item) {
             return (item.title || '').toLowerCase().includes(query);
         }).slice(0, 10);
-        console.log('匹配结果数:', matches.length);
-
         if (matches.length > 0) {
             resultsBox.innerHTML = matches.map(function(item) {
                 return '<a href="' + item.url + '" class="result-item">' +
@@ -139,7 +128,6 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!e.target.closest('.search-container')) resultsBox.style.display = 'none';
     });
 
-    // ===== 抽屉控制 =====
     var drawer = document.getElementById('content-drawer');
     var btn = document.getElementById('toggle-drawer');
     var header = document.getElementById('header-fixed');
@@ -154,9 +142,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
-<!-- ===== 样式覆盖 ===== -->
 <style>
-    /* ===== 全局重置 ===== */
     html, body {
         margin: 0;
         padding: 0;
@@ -165,7 +151,6 @@ document.addEventListener('DOMContentLoaded', function() {
         background: transparent;
     }
 
-    /* ===== 标题 + 搜索框 ===== */
     #header-fixed {
         position: fixed;
         top: 25%;
@@ -194,7 +179,6 @@ document.addEventListener('DOMContentLoaded', function() {
         text-shadow: 2px 2px 8px rgba(0,0,0,0.8);
     }
 
-    /* ===== 搜索框 ===== */
     .search-container {
         position: relative;
         width: 100%;
@@ -242,7 +226,6 @@ document.addEventListener('DOMContentLoaded', function() {
         background: #f0f0f0;
     }
 
-    /* ===== 文章抽屉 ===== */
     #content-drawer {
         position: fixed;
         bottom: 0;
@@ -257,18 +240,17 @@ document.addEventListener('DOMContentLoaded', function() {
         border-radius: 20px 20px 0 0;
         box-shadow: 0 -4px 20px rgba(0,0,0,0.2);
         overflow-y: auto;
-        transform: translateY(100%) !important;  /* 默认完全隐藏 */
+        transform: translateY(100%) !important;
         transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     }
     #content-drawer.open {
-        transform: translateY(0) !important;  /* 滑出 */
+        transform: translateY(0) !important;
     }
     #content-drawer .container {
         max-width: 1000px;
         margin: 0 auto;
     }
 
-    /* ===== 文章卡片：统一尺寸 ===== */
     .article-card {
         display: flex;
         align-items: stretch;
@@ -369,7 +351,6 @@ document.addEventListener('DOMContentLoaded', function() {
         order: 2;
     }
 
-    /* ===== 右下角按钮 ===== */
     #toggle-drawer {
         position: fixed;
         bottom: 25px;
@@ -395,7 +376,6 @@ document.addEventListener('DOMContentLoaded', function() {
         transform: scale(0.95);
     }
 
-    /* ===== 移动端适配 ===== */
     @media (max-width: 700px) {
         .article-card {
             flex-direction: column;
@@ -434,7 +414,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    /* ===== 强制首页导航栏固定（仅对首页生效） ===== */
+    /* ===== 强制首页导航栏固定 ===== */
     #navbar {
         position: fixed !important;
         top: 0 !important;
@@ -451,6 +431,15 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     #navbar:hover {
         background: rgba(255, 255, 255, 0.25) !important;
+    }
+
+    /* ===== 超强覆盖：强制抽屉完全隐藏（即使 base.html 有样式） ===== */
+    html body #content-drawer {
+        transform: translateY(100%) !important;
+        transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    }
+    html body #content-drawer.open {
+        transform: translateY(0) !important;
     }
 
     /* ===== 隐藏原主题侧边栏、footer ===== */
