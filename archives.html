@@ -53,9 +53,9 @@
                         </div>
                         <div class="card-image">
                                 <img src="https://codeshy-1119.github.io/posts/database-design/封面.png" alt="物资管理信息系统 - 数据库课程设计完整报告">
-                            <!-- 年份标签：在图片下方，一半在图片内一半在外 -->
-                            <div class="year-label">2026</div>
                         </div>
+                        <!-- 年份标签放在卡片内部，但位于图片下方 -->
+                        <div class="year-label">2026</div>
                     </div>
             </div>
 
@@ -84,8 +84,8 @@
                         </div>
                         <div class="card-image">
                                 <img src="https://codeshy-1119.github.io/posts/network-design/封面.png" alt="网络综合设计与仿真实现">
-                            <div class="year-label">2026</div>
                         </div>
+                        <div class="year-label">2026</div>
                     </div>
             </div>
         </div>
@@ -100,9 +100,9 @@
                         </div>
                         <div class="card-image">
                                 <img src="https://codeshy-1119.github.io/posts/fist-blog/封面.png" alt="My First Post">
-                            <!-- 年份标签：在图片下方，一半在图片内一半在外 -->
-                            <div class="year-label">2026</div>
                         </div>
+                        <!-- 年份标签放在卡片内部，但位于图片下方 -->
+                        <div class="year-label">2026</div>
                     </div>
             </div>
 
@@ -220,7 +220,7 @@
         background: rgba(255, 255, 255, 0.88);
         backdrop-filter: blur(8px);
         border-radius: 16px;
-        overflow: hidden;
+        overflow: visible;  /* 改为 visible，让年份标签可以溢出 */
         box-shadow: 0 4px 20px rgba(0,0,0,0.12);
         transition: transform 0.25s, box-shadow 0.25s;
         height: 180px;
@@ -296,14 +296,14 @@
         text-decoration: underline;
     }
 
-    /* ===== 图片区域（相对定位，用于放置年份标签） ===== */
+    /* ===== 图片区域（允许年份标签溢出） ===== */
     .card-image {
         flex: 1;
         min-width: 0;
         height: 180px;
         background: #e8ece8;
         position: relative;
-        overflow: hidden;
+        overflow: hidden;  /* 图片裁剪保留，但年份标签在外面 */
         display: flex;
         align-items: center;
         justify-content: center;
@@ -318,10 +318,10 @@
         opacity: 0.25;
     }
 
-    /* ===== 年份标签：在图片下方，一半在图片内一半在外 ===== */
+    /* ===== 年份标签：放在卡片层级，不被图片裁剪 ===== */
     .year-label {
         position: absolute;
-        bottom: -18px;          /* 一半在图片内一半在外 */
+        bottom: -18px;
         left: 50%;
         transform: translateX(-50%);
         font-size: 4.2rem;
@@ -332,12 +332,30 @@
         background: transparent;
         line-height: 1;
         padding: 0 10px;
-        z-index: 3;
+        z-index: 5;
         pointer-events: none;
         white-space: nowrap;
         transition: transform 0.3s ease;
     }
+    /* 左侧卡片：年份标签在卡片右侧（图片在左时，年份在右下方） */
+    .left-card .year-label {
+        left: auto;
+        right: 5%;
+        transform: translateX(50%);
+    }
+    /* 右侧卡片：年份标签在卡片左侧（图片在右时，年份在左下方） */
+    .right-card .year-label {
+        left: 5%;
+        transform: translateX(-50%);
+    }
+
     .article-card:hover .year-label {
+        transform: translateX(-50%) scale(1.04);
+    }
+    .left-card .article-card:hover .year-label {
+        transform: translateX(50%) scale(1.04);
+    }
+    .right-card .article-card:hover .year-label {
         transform: translateX(-50%) scale(1.04);
     }
 
@@ -386,6 +404,13 @@
         .year-label {
             font-size: 3.2rem;
             bottom: -14px;
+            left: 50% !important;
+            right: auto !important;
+            transform: translateX(-50%) !important;
+        }
+        .left-card .article-card:hover .year-label,
+        .right-card .article-card:hover .year-label {
+            transform: translateX(-50%) scale(1.04) !important;
         }
         .timeline-row::after {
             height: 14%;
