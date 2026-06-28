@@ -55,14 +55,11 @@
                                 <img src="https://codeshy-1119.github.io/posts/database-design/封面.png" alt="物资管理信息系统 - 数据库课程设计完整报告">
                         </div>
                     </div>
-                    <!-- 年份标签：位于卡片底部 -->
                     <div class="year-label">2026</div>
             </div>
 
-            <!-- 时间节点（中间的小圆点） -->
-            <div class="timeline-node">
-                <span class="timeline-dot"></span>
-            </div>
+            <!-- 中间空列（原小圆点位置，现在留空） -->
+            <div class="timeline-node"></div>
 
             <!-- 右侧卡片（偶数显示） -->
             <div class="timeline-card-wrapper right-card empty-card">
@@ -73,10 +70,8 @@
             <div class="timeline-card-wrapper left-card empty-card">
             </div>
 
-            <!-- 时间节点（中间的小圆点） -->
-            <div class="timeline-node">
-                <span class="timeline-dot"></span>
-            </div>
+            <!-- 中间空列（原小圆点位置，现在留空） -->
+            <div class="timeline-node"></div>
 
             <!-- 右侧卡片（偶数显示） -->
             <div class="timeline-card-wrapper right-card ">
@@ -106,14 +101,11 @@
                                 <img src="https://codeshy-1119.github.io/posts/fist-blog/封面.png" alt="My First Post">
                         </div>
                     </div>
-                    <!-- 年份标签：位于卡片底部 -->
                     <div class="year-label">2026</div>
             </div>
 
-            <!-- 时间节点（中间的小圆点） -->
-            <div class="timeline-node">
-                <span class="timeline-dot"></span>
-            </div>
+            <!-- 中间空列（原小圆点位置，现在留空） -->
+            <div class="timeline-node"></div>
 
             <!-- 右侧卡片（偶数显示） -->
             <div class="timeline-card-wrapper right-card empty-card">
@@ -176,7 +168,7 @@
     .timeline-row {
         display: grid;
         grid-template-columns: 1fr 40px 1fr;
-        align-items: end;      /* 底部对齐，年份标签自然位于卡片底部 */
+        align-items: end;
         margin-bottom: 50px;
         position: relative;
     }
@@ -195,36 +187,26 @@
         z-index: 1;
     }
 
-    /* ===== 时间节点（中间的小圆点） ===== */
+    /* ===== 中间空列（原小圆点位置） ===== */
     .timeline-node {
         display: flex;
         align-items: center;
         justify-content: center;
         position: relative;
         z-index: 2;
-        padding-bottom: 6px;   /* 与小圆点垂直位置微调 */
-    }
-
-    .timeline-dot {
-        display: block;
-        width: 10px;
-        height: 10px;
-        border-radius: 50%;
-        background: rgba(255, 255, 255, 0.6);
-        border: 2px solid rgba(255, 255, 255, 0.3);
-        box-shadow: 0 0 12px rgba(255, 255, 255, 0.1);
-        flex-shrink: 0;
+        padding-bottom: 6px;
+        /* 不显示任何内容 */;
     }
 
     /* ===== 卡片容器 ===== */
     .timeline-card-wrapper {
         display: flex;
-        flex-direction: column;   /* 卡片在上，年份标签在下 */
-        align-items: flex-end;    /* 左侧卡片右对齐 */
+        flex-direction: column;
+        align-items: flex-end;
         position: relative;
     }
     .right-card {
-        align-items: flex-start;  /* 右侧卡片左对齐 */
+        align-items: flex-start;
     }
     .empty-card {
         visibility: hidden;
@@ -240,19 +222,17 @@
         background: transparent;
         line-height: 1;
         padding: 0 10px;
-        margin-top: -22px;       /* 向上伸出，一半在卡片内一半在外 */
+        margin-top: -22px;
         z-index: 3;
         position: relative;
         pointer-events: none;
         transition: transform 0.3s ease;
         white-space: nowrap;
     }
-    /* 左侧卡片：年份标签右对齐 */
     .left-card .year-label {
         align-self: flex-end;
         margin-right: 5px;
     }
-    /* 右侧卡片：年份标签左对齐 */
     .right-card .year-label {
         align-self: flex-start;
         margin-left: 5px;
@@ -411,10 +391,6 @@
         .timeline-row::after {
             height: 14%;
         }
-        .timeline-dot {
-            width: 8px;
-            height: 8px;
-        }
         .timeline-card-wrapper {
             padding: 0 8px;
         }
@@ -451,11 +427,6 @@
         }
         .timeline-row::after {
             height: 10%;
-        }
-        .timeline-dot {
-            width: 6px;
-            height: 6px;
-            border-width: 1.5px;
         }
         .timeline-card-wrapper {
             padding: 0 4px;
