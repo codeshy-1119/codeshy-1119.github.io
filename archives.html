@@ -53,13 +53,13 @@
                         </div>
                         <div class="card-image">
                                 <img src="https://codeshy-1119.github.io/posts/database-design/封面.png" alt="物资管理信息系统 - 数据库课程设计完整报告">
-                            <!-- 年份标签：叠放在图片下半部分 -->
-                            <span class="dot-year">2026</span>
                         </div>
+                        <!-- 年份标签：纯文字，大号，叠在卡片底部 -->
+                        <span class="dot-year">2026</span>
                     </div>
             </div>
 
-            <!-- 时间节点（居中）—— 仅保留小圆点 -->
+            <!-- 时间节点（中间的小圆点） -->
             <div class="timeline-node">
                 <span class="timeline-dot"></span>
             </div>
@@ -73,7 +73,7 @@
             <div class="timeline-card-wrapper left-card empty-card">
             </div>
 
-            <!-- 时间节点（居中）—— 仅保留小圆点 -->
+            <!-- 时间节点（中间的小圆点） -->
             <div class="timeline-node">
                 <span class="timeline-dot"></span>
             </div>
@@ -88,8 +88,8 @@
                         </div>
                         <div class="card-image">
                                 <img src="https://codeshy-1119.github.io/posts/network-design/封面.png" alt="网络综合设计与仿真实现">
-                            <span class="dot-year">2026</span>
                         </div>
+                        <span class="dot-year">2026</span>
                     </div>
             </div>
         </div>
@@ -104,13 +104,13 @@
                         </div>
                         <div class="card-image">
                                 <img src="https://codeshy-1119.github.io/posts/fist-blog/封面.png" alt="My First Post">
-                            <!-- 年份标签：叠放在图片下半部分 -->
-                            <span class="dot-year">2026</span>
                         </div>
+                        <!-- 年份标签：纯文字，大号，叠在卡片底部 -->
+                        <span class="dot-year">2026</span>
                     </div>
             </div>
 
-            <!-- 时间节点（居中）—— 仅保留小圆点 -->
+            <!-- 时间节点（中间的小圆点） -->
             <div class="timeline-node">
                 <span class="timeline-dot"></span>
             </div>
@@ -159,7 +159,7 @@
         position: relative;
     }
 
-    /* ===== 背景时间线（灰色/半透明） ===== */
+    /* ===== 背景时间线（半透明灰色） ===== */
     #timeline::before {
         content: '';
         position: absolute;
@@ -177,19 +177,19 @@
         display: grid;
         grid-template-columns: 1fr 40px 1fr;
         align-items: center;
-        margin-bottom: 40px;
+        margin-bottom: 50px;
         position: relative;
     }
 
-    /* ===== 高亮竖线片段（浅白色，缩短到原来的 1/4） ===== */
+    /* ===== 高亮竖线片段（浅白色，缩短到约 1/4） ===== */
     .timeline-row::after {
         content: '';
         position: absolute;
         top: 50%;
         left: 50%;
         width: 2px;
-        height: 20%;  /* 原来是 80%，现在改为 20% ≈ 1/4 */
-        background: rgba(255, 255, 255, 0.8);
+        height: 18%;
+        background: rgba(255, 255, 255, 0.7);
         transform: translate(-50%, -50%);
         border-radius: 2px;
         z-index: 1;
@@ -222,11 +222,11 @@
     }
     .left-card {
         justify-content: flex-end;
-        padding-right: 0;
+        padding-right: 12px;
     }
     .right-card {
         justify-content: flex-start;
-        padding-left: 0;
+        padding-left: 12px;
     }
     .empty-card {
         visibility: hidden;
@@ -245,22 +245,14 @@
         height: 180px;
         max-width: 100%;
         width: 100%;
-        /* 卡片向中间延伸，与时间轴重叠 */
-        margin-right: -20px;
-        margin-left: -20px;
+        /* 卡片与中轴线保持间距，不再紧贴 */
+        position: relative;
     }
     .article-card:hover {
         transform: translateY(-4px) scale(1.01);
         box-shadow: 0 8px 30px rgba(0,0,0,0.2);
     }
-    .right-card .article-card {
-        margin-left: -20px;
-        margin-right: 0;
-    }
-    .left-card .article-card {
-        margin-right: -20px;
-        margin-left: 0;
-    }
+    /* 左右卡片不再用负 margin，依靠 padding 保持间距 */
 
     .card-text {
         flex: 1.2;
@@ -314,7 +306,7 @@
         text-decoration: underline;
     }
 
-    /* ===== 图片区域 + 年份标签（交叠） ===== */
+    /* ===== 图片区域 ===== */
     .card-image {
         flex: 1;
         min-width: 0;
@@ -336,31 +328,33 @@
         opacity: 0.25;
     }
 
-    /* ===== 年份标签：无模糊背景，一半在图片上一半在外 ===== */
+    /* ===== 年份标签：纯文字，大号，无背景，叠在卡片底部 ===== */
     .dot-year {
         position: absolute;
-        bottom: -10px;              /* 一半在图片上，一半在外 */
+        bottom: -8px;
         left: 50%;
         transform: translateX(-50%);
-        font-size: 1.1rem;
-        font-weight: 600;
-        color: rgba(255, 255, 255, 0.9);
-        background: transparent;    /* 完全透明背景 */
-        padding: 4px 18px;
-        border: 1px solid rgba(255, 255, 255, 0.3);
-        border-radius: 30px;
-        text-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
-        letter-spacing: 1px;
-        white-space: nowrap;
+        font-size: 4.2rem;       /* 约原来的 4 倍 */
+        font-weight: 700;
+        color: rgba(255, 255, 255, 0.85);
+        text-shadow: 0 4px 24px rgba(0, 0, 0, 0.5),
+                     0 2px 8px rgba(0, 0, 0, 0.3);
+        /* 去掉所有背景、边框、毛玻璃 */
+        background: transparent !important;
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+        border: none !important;
+        border-radius: 0 !important;
+        padding: 0 !important;
+        letter-spacing: 2px;
         z-index: 3;
-        transition: all 0.3s ease;
-        /* 让标签与卡片背景产生交叠感 */
-        background: rgba(0, 0, 0, 0.15);
-        backdrop-filter: none;
+        line-height: 1;
+        pointer-events: none;
+        transition: transform 0.3s ease;
+        white-space: nowrap;
     }
-    .dot-year:hover {
-        transform: translateX(-50%) scale(1.05);
-        border-color: rgba(255, 255, 255, 0.5);
+    .article-card:hover .dot-year {
+        transform: translateX(-50%) scale(1.04);
     }
 
     /* ===== 返回按钮 ===== */
@@ -398,8 +392,6 @@
         .article-card {
             height: auto;
             flex-direction: column;
-            margin-right: -10px !important;
-            margin-left: -10px !important;
         }
         .card-image {
             height: 140px;
@@ -407,25 +399,22 @@
         .card-text h2 a {
             font-size: 1rem;
         }
-        .left-card .article-card {
-            margin-right: -10px !important;
-            margin-left: 0 !important;
-        }
-        .right-card .article-card {
-            margin-left: -10px !important;
-            margin-right: 0 !important;
-        }
         .dot-year {
-            font-size: 0.9rem;
-            padding: 3px 14px;
-            bottom: -8px;
+            font-size: 3.2rem;
+            bottom: -6px;
         }
         .timeline-row::after {
-            height: 16%;
+            height: 14%;
         }
         .timeline-dot {
             width: 8px;
             height: 8px;
+        }
+        .left-card {
+            padding-right: 8px;
+        }
+        .right-card {
+            padding-left: 8px;
         }
     }
 
@@ -435,8 +424,6 @@
         }
         .article-card {
             min-height: 140px;
-            margin-right: -5px !important;
-            margin-left: -5px !important;
         }
         .card-image {
             height: 100px;
@@ -453,25 +440,24 @@
         .read-more {
             font-size: 0.8rem;
         }
-        .left-card .article-card {
-            margin-right: -5px !important;
-        }
-        .right-card .article-card {
-            margin-left: -5px !important;
-        }
         .dot-year {
-            font-size: 0.75rem;
-            padding: 2px 10px;
-            bottom: -6px;
-            border-width: 1px;
+            font-size: 2.4rem;
+            bottom: -4px;
+            letter-spacing: 1px;
         }
         .timeline-row::after {
-            height: 12%;
+            height: 10%;
         }
         .timeline-dot {
             width: 6px;
             height: 6px;
             border-width: 1.5px;
+        }
+        .left-card {
+            padding-right: 4px;
+        }
+        .right-card {
+            padding-left: 4px;
         }
         #back-home {
             bottom: 15px;
