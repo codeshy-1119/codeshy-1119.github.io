@@ -55,10 +55,11 @@
                                 <img src="https://codeshy-1119.github.io/posts/database-design/封面.png" alt="物资管理信息系统 - 数据库课程设计完整报告">
                         </div>
                     </div>
+                    <!-- 年份标签：位于卡片底部，向上伸出一半 -->
                     <div class="year-label">2026</div>
             </div>
 
-            <!-- 中间空列（原小圆点位置，现在留空） -->
+            <!-- 中间空列（无圆点） -->
             <div class="timeline-node"></div>
 
             <!-- 右侧卡片（偶数显示） -->
@@ -70,7 +71,7 @@
             <div class="timeline-card-wrapper left-card empty-card">
             </div>
 
-            <!-- 中间空列（原小圆点位置，现在留空） -->
+            <!-- 中间空列（无圆点） -->
             <div class="timeline-node"></div>
 
             <!-- 右侧卡片（偶数显示） -->
@@ -101,10 +102,11 @@
                                 <img src="https://codeshy-1119.github.io/posts/fist-blog/封面.png" alt="My First Post">
                         </div>
                     </div>
+                    <!-- 年份标签：位于卡片底部，向上伸出一半 -->
                     <div class="year-label">2026</div>
             </div>
 
-            <!-- 中间空列（原小圆点位置，现在留空） -->
+            <!-- 中间空列（无圆点） -->
             <div class="timeline-node"></div>
 
             <!-- 右侧卡片（偶数显示） -->
@@ -187,7 +189,7 @@
         z-index: 1;
     }
 
-    /* ===== 中间空列（原小圆点位置） ===== */
+    /* ===== 中间空列 ===== */
     .timeline-node {
         display: flex;
         align-items: center;
@@ -195,7 +197,7 @@
         position: relative;
         z-index: 2;
         padding-bottom: 6px;
-        /* 不显示任何内容 */;
+        /* 无任何显示元素 */;
     }
 
     /* ===== 卡片容器 ===== */
@@ -212,7 +214,7 @@
         visibility: hidden;
     }
 
-    /* ===== 年份标签（独立盒子，位于卡片底部，向上伸出） ===== */
+    /* ===== 年份标签：一半在卡片内，一半在卡片外 ===== */
     .year-label {
         font-size: 4.2rem;
         font-weight: 700;
@@ -222,7 +224,8 @@
         background: transparent;
         line-height: 1;
         padding: 0 10px;
-        margin-top: -22px;
+        /* 关键：向上移动一半高度，实现一半覆盖卡片底部 */
+        margin-top: -35px;
         z-index: 3;
         position: relative;
         pointer-events: none;
@@ -380,7 +383,7 @@
         }
         .year-label {
             font-size: 3.2rem;
-            margin-top: -18px;
+            margin-top: -26px;   /* 调整到约一半高度 */
         }
         .left-card .year-label {
             margin-right: 0;
@@ -423,7 +426,7 @@
         }
         .year-label {
             font-size: 2.4rem;
-            margin-top: -14px;
+            margin-top: -20px;   /* 调整到约一半高度 */
         }
         .timeline-row::after {
             height: 10%;
