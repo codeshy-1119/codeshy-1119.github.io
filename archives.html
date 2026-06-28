@@ -55,11 +55,10 @@
                                 <img src="https://codeshy-1119.github.io/posts/database-design/封面.png" alt="物资管理信息系统 - 数据库课程设计完整报告">
                         </div>
                     </div>
-                    <!-- 年份标签：位于卡片底部，向上伸出一半 -->
                     <div class="year-label">2026</div>
             </div>
 
-            <!-- 中间空列（无圆点） -->
+            <!-- 中间空列 -->
             <div class="timeline-node"></div>
 
             <!-- 右侧卡片（偶数显示） -->
@@ -71,7 +70,7 @@
             <div class="timeline-card-wrapper left-card empty-card">
             </div>
 
-            <!-- 中间空列（无圆点） -->
+            <!-- 中间空列 -->
             <div class="timeline-node"></div>
 
             <!-- 右侧卡片（偶数显示） -->
@@ -102,11 +101,10 @@
                                 <img src="https://codeshy-1119.github.io/posts/fist-blog/封面.png" alt="My First Post">
                         </div>
                     </div>
-                    <!-- 年份标签：位于卡片底部，向上伸出一半 -->
                     <div class="year-label">2026</div>
             </div>
 
-            <!-- 中间空列（无圆点） -->
+            <!-- 中间空列 -->
             <div class="timeline-node"></div>
 
             <!-- 右侧卡片（偶数显示） -->
@@ -153,7 +151,7 @@
         position: relative;
     }
 
-    /* ===== 背景时间线（半透明灰色） ===== */
+    /* ===== 背景时间线 ===== */
     #timeline::before {
         content: '';
         position: absolute;
@@ -175,7 +173,7 @@
         position: relative;
     }
 
-    /* ===== 高亮竖线片段（浅白色） ===== */
+    /* ===== 高亮竖线片段 ===== */
     .timeline-row::after {
         content: '';
         position: absolute;
@@ -197,7 +195,6 @@
         position: relative;
         z-index: 2;
         padding-bottom: 6px;
-        /* 无任何显示元素 */;
     }
 
     /* ===== 卡片容器 ===== */
@@ -214,7 +211,7 @@
         visibility: hidden;
     }
 
-    /* ===== 年份标签：一半在卡片内，一半在卡片外 ===== */
+    /* ===== 年份标签 ===== */
     .year-label {
         font-size: 4.2rem;
         font-weight: 700;
@@ -224,7 +221,6 @@
         background: transparent;
         line-height: 1;
         padding: 0 10px;
-        /* 关键：向上移动一半高度，实现一半覆盖卡片底部 */
         margin-top: -35px;
         z-index: 3;
         position: relative;
@@ -265,6 +261,17 @@
         box-shadow: 0 8px 30px rgba(0,0,0,0.2);
     }
 
+    /* ===== 关键修改：左侧卡片图片在左，右侧卡片图片在右 ===== */
+    /* 左侧卡片（时间轴左侧）：图片在左，文字在右 */
+    .left-card .article-card {
+        flex-direction: row-reverse;
+    }
+    /* 右侧卡片（时间轴右侧）：文字在左，图片在右（默认） */
+    .right-card .article-card {
+        flex-direction: row;
+    }
+
+    /* ===== 文字区域 ===== */
     .card-text {
         flex: 1.2;
         padding: 16px 22px;
@@ -373,7 +380,7 @@
         }
         .article-card {
             height: auto;
-            flex-direction: column;
+            flex-direction: column !important;  /* 小屏幕强制改为上下排列 */
         }
         .card-image {
             height: 140px;
@@ -383,7 +390,7 @@
         }
         .year-label {
             font-size: 3.2rem;
-            margin-top: -26px;   /* 调整到约一半高度 */
+            margin-top: -26px;
         }
         .left-card .year-label {
             margin-right: 0;
@@ -399,6 +406,13 @@
         }
         .timeline-node {
             padding-bottom: 4px;
+        }
+        /* 小屏幕下左侧卡片的图片在文字上方（因为flex-direction: column，默认顺序），但我们不关心，因为布局变为上下 */
+        .left-card .article-card {
+            flex-direction: column !important;
+        }
+        .right-card .article-card {
+            flex-direction: column !important;
         }
     }
 
@@ -426,7 +440,7 @@
         }
         .year-label {
             font-size: 2.4rem;
-            margin-top: -20px;   /* 调整到约一半高度 */
+            margin-top: -20px;
         }
         .timeline-row::after {
             height: 10%;
