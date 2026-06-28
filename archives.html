@@ -53,9 +53,10 @@
                         </div>
                         <div class="card-image">
                                 <img src="https://codeshy-1119.github.io/posts/database-design/封面.png" alt="物资管理信息系统 - 数据库课程设计完整报告">
+                            <!-- 年份标签：在图片下方，一半在图片内一半在外 -->
+                            <div class="year-label">2026</div>
                         </div>
                     </div>
-                    <div class="year-label">2026</div>
             </div>
 
             <!-- 中间空列 -->
@@ -83,9 +84,9 @@
                         </div>
                         <div class="card-image">
                                 <img src="https://codeshy-1119.github.io/posts/network-design/封面.png" alt="网络综合设计与仿真实现">
+                            <div class="year-label">2026</div>
                         </div>
                     </div>
-                    <div class="year-label">2026</div>
             </div>
         </div>
         <div class="timeline-row">
@@ -99,9 +100,10 @@
                         </div>
                         <div class="card-image">
                                 <img src="https://codeshy-1119.github.io/posts/fist-blog/封面.png" alt="My First Post">
+                            <!-- 年份标签：在图片下方，一半在图片内一半在外 -->
+                            <div class="year-label">2026</div>
                         </div>
                     </div>
-                    <div class="year-label">2026</div>
             </div>
 
             <!-- 中间空列 -->
@@ -211,35 +213,6 @@
         visibility: hidden;
     }
 
-    /* ===== 年份标签 ===== */
-    .year-label {
-        font-size: 4.2rem;
-        font-weight: 700;
-        color: rgba(255, 255, 255, 0.9);
-        text-shadow: 0 4px 24px rgba(0, 0, 0, 0.5),
-                     0 2px 8px rgba(0, 0, 0, 0.3);
-        background: transparent;
-        line-height: 1;
-        padding: 0 10px;
-        margin-top: -35px;
-        z-index: 3;
-        position: relative;
-        pointer-events: none;
-        transition: transform 0.3s ease;
-        white-space: nowrap;
-    }
-    .left-card .year-label {
-        align-self: flex-end;
-        margin-right: 5px;
-    }
-    .right-card .year-label {
-        align-self: flex-start;
-        margin-left: 5px;
-    }
-    .timeline-card-wrapper:hover .year-label {
-        transform: scale(1.04);
-    }
-
     /* ===== 卡片样式 ===== */
     .article-card {
         display: flex;
@@ -261,12 +234,11 @@
         box-shadow: 0 8px 30px rgba(0,0,0,0.2);
     }
 
-    /* ===== 关键修改：左侧卡片图片在左，右侧卡片图片在右 ===== */
-    /* 左侧卡片（时间轴左侧）：图片在左，文字在右 */
+    /* ===== 左侧卡片：图片在左，文字在右 ===== */
     .left-card .article-card {
         flex-direction: row-reverse;
     }
-    /* 右侧卡片（时间轴右侧）：文字在左，图片在右（默认） */
+    /* 右侧卡片：文字在左，图片在右 */
     .right-card .article-card {
         flex-direction: row;
     }
@@ -324,7 +296,7 @@
         text-decoration: underline;
     }
 
-    /* ===== 图片区域 ===== */
+    /* ===== 图片区域（相对定位，用于放置年份标签） ===== */
     .card-image {
         flex: 1;
         min-width: 0;
@@ -344,6 +316,29 @@
     .placeholder-img {
         font-size: 3rem;
         opacity: 0.25;
+    }
+
+    /* ===== 年份标签：在图片下方，一半在图片内一半在外 ===== */
+    .year-label {
+        position: absolute;
+        bottom: -18px;          /* 一半在图片内一半在外 */
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 4.2rem;
+        font-weight: 700;
+        color: rgba(255, 255, 255, 0.9);
+        text-shadow: 0 4px 24px rgba(0, 0, 0, 0.5),
+                     0 2px 8px rgba(0, 0, 0, 0.3);
+        background: transparent;
+        line-height: 1;
+        padding: 0 10px;
+        z-index: 3;
+        pointer-events: none;
+        white-space: nowrap;
+        transition: transform 0.3s ease;
+    }
+    .article-card:hover .year-label {
+        transform: translateX(-50%) scale(1.04);
     }
 
     /* ===== 返回按钮 ===== */
@@ -380,7 +375,7 @@
         }
         .article-card {
             height: auto;
-            flex-direction: column !important;  /* 小屏幕强制改为上下排列 */
+            flex-direction: column !important;
         }
         .card-image {
             height: 140px;
@@ -390,13 +385,7 @@
         }
         .year-label {
             font-size: 3.2rem;
-            margin-top: -26px;
-        }
-        .left-card .year-label {
-            margin-right: 0;
-        }
-        .right-card .year-label {
-            margin-left: 0;
+            bottom: -14px;
         }
         .timeline-row::after {
             height: 14%;
@@ -406,13 +395,6 @@
         }
         .timeline-node {
             padding-bottom: 4px;
-        }
-        /* 小屏幕下左侧卡片的图片在文字上方（因为flex-direction: column，默认顺序），但我们不关心，因为布局变为上下 */
-        .left-card .article-card {
-            flex-direction: column !important;
-        }
-        .right-card .article-card {
-            flex-direction: column !important;
         }
     }
 
@@ -440,7 +422,7 @@
         }
         .year-label {
             font-size: 2.4rem;
-            margin-top: -20px;
+            bottom: -10px;
         }
         .timeline-row::after {
             height: 10%;
