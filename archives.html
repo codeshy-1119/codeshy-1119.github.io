@@ -54,7 +54,7 @@
                         <div class="card-image">
                                 <img src="https://codeshy-1119.github.io/posts/database-design/封面.png" alt="物资管理信息系统 - 数据库课程设计完整报告">
                         </div>
-                        <!-- 年份标签：纯文字，大号，叠在卡片底部 -->
+                        <!-- 年份贴纸：从卡片右边缘伸出 -->
                         <span class="dot-year">2026</span>
                     </div>
             </div>
@@ -89,6 +89,7 @@
                         <div class="card-image">
                                 <img src="https://codeshy-1119.github.io/posts/network-design/封面.png" alt="网络综合设计与仿真实现">
                         </div>
+                        <!-- 年份贴纸：从卡片左边缘伸出 -->
                         <span class="dot-year">2026</span>
                     </div>
             </div>
@@ -105,7 +106,7 @@
                         <div class="card-image">
                                 <img src="https://codeshy-1119.github.io/posts/fist-blog/封面.png" alt="My First Post">
                         </div>
-                        <!-- 年份标签：纯文字，大号，叠在卡片底部 -->
+                        <!-- 年份贴纸：从卡片右边缘伸出 -->
                         <span class="dot-year">2026</span>
                     </div>
             </div>
@@ -181,14 +182,14 @@
         position: relative;
     }
 
-    /* ===== 高亮竖线片段（浅白色，缩短到约 1/4） ===== */
+    /* ===== 高亮竖线片段（浅白色，缩短到约 1/5） ===== */
     .timeline-row::after {
         content: '';
         position: absolute;
         top: 50%;
         left: 50%;
         width: 2px;
-        height: 18%;
+        height: 16%;
         background: rgba(255, 255, 255, 0.7);
         transform: translate(-50%, -50%);
         border-radius: 2px;
@@ -222,11 +223,11 @@
     }
     .left-card {
         justify-content: flex-end;
-        padding-right: 12px;
+        padding-right: 30px;   /* 与时间轴保持间距 */
     }
     .right-card {
         justify-content: flex-start;
-        padding-left: 12px;
+        padding-left: 30px;
     }
     .empty-card {
         visibility: hidden;
@@ -245,14 +246,12 @@
         height: 180px;
         max-width: 100%;
         width: 100%;
-        /* 卡片与中轴线保持间距，不再紧贴 */
         position: relative;
     }
     .article-card:hover {
         transform: translateY(-4px) scale(1.01);
         box-shadow: 0 8px 30px rgba(0,0,0,0.2);
     }
-    /* 左右卡片不再用负 margin，依靠 padding 保持间距 */
 
     .card-text {
         flex: 1.2;
@@ -328,59 +327,41 @@
         opacity: 0.25;
     }
 
-    /* ===== 年份标签：纯文字，大号，无背景，叠在卡片底部 ===== */
+    /* ===== 年份贴纸：一半在卡片内，一半伸出卡片 ===== */
     .dot-year {
         position: absolute;
-        bottom: -8px;
-        left: 50%;
-        transform: translateX(-50%);
-        font-size: 4.2rem;       /* 约原来的 4 倍 */
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 4.2rem;
         font-weight: 700;
-        color: rgba(255, 255, 255, 0.85);
+        color: rgba(255, 255, 255, 0.9);
         text-shadow: 0 4px 24px rgba(0, 0, 0, 0.5),
                      0 2px 8px rgba(0, 0, 0, 0.3);
-        /* 去掉所有背景、边框、毛玻璃 */
         background: transparent !important;
         backdrop-filter: none !important;
-        -webkit-backdrop-filter: none !important;
         border: none !important;
         border-radius: 0 !important;
         padding: 0 !important;
-        letter-spacing: 2px;
-        z-index: 3;
         line-height: 1;
+        z-index: 3;
         pointer-events: none;
-        transition: transform 0.3s ease;
         white-space: nowrap;
+        transition: transform 0.3s ease;
     }
     .article-card:hover .dot-year {
-        transform: translateX(-50%) scale(1.04);
+        transform: translateY(-50%) scale(1.04);
     }
 
-    /* ===== 返回按钮 ===== */
-    #back-home {
-        position: fixed;
-        bottom: 25px;
-        right: 25px;
-        z-index: 10;
-        padding: 14px 22px;
-        background: rgba(42, 157, 143, 0.9);
-        color: #fff;
-        border: none;
-        border-radius: 40px;
-        font-size: 1.1rem;
-        font-weight: bold;
-        cursor: pointer;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-        backdrop-filter: blur(4px);
-        transition: background 0.2s, transform 0.2s;
+    /* 左侧卡片：从右边缘伸出（向右） */
+    .left-card .dot-year {
+        right: -25px;           /* 伸出一半，约 -25px */
+        text-align: right;
     }
-    #back-home:hover {
-        background: rgba(42, 157, 143, 1);
-        transform: scale(1.05);
-    }
-    #back-home:active {
-        transform: scale(0.95);
+
+    /* 右侧卡片：从左边缘伸出（向左） */
+    .right-card .dot-year {
+        left: -25px;
+        text-align: left;
     }
 
     /* ===== 响应式 ===== */
@@ -401,7 +382,14 @@
         }
         .dot-year {
             font-size: 3.2rem;
-            bottom: -6px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        .left-card .dot-year {
+            right: -18px;
+        }
+        .right-card .dot-year {
+            left: -18px;
         }
         .timeline-row::after {
             height: 14%;
@@ -411,10 +399,10 @@
             height: 8px;
         }
         .left-card {
-            padding-right: 8px;
+            padding-right: 20px;
         }
         .right-card {
-            padding-left: 8px;
+            padding-left: 20px;
         }
     }
 
@@ -442,8 +430,12 @@
         }
         .dot-year {
             font-size: 2.4rem;
-            bottom: -4px;
-            letter-spacing: 1px;
+        }
+        .left-card .dot-year {
+            right: -12px;
+        }
+        .right-card .dot-year {
+            left: -12px;
         }
         .timeline-row::after {
             height: 10%;
@@ -454,10 +446,10 @@
             border-width: 1.5px;
         }
         .left-card {
-            padding-right: 4px;
+            padding-right: 14px;
         }
         .right-card {
-            padding-left: 4px;
+            padding-left: 14px;
         }
         #back-home {
             bottom: 15px;
