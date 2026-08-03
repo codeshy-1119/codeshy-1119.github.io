@@ -1,0 +1,3081 @@
+<!DOCTYPE html>
+<html lang="chinese (simplified)">
+<head>
+    <title>才华恒毅的blog</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://codeshy-1119.github.io/theme/css/style.min.css" />
+    <link rel="stylesheet" href="https://codeshy-1119.github.io/theme/css/dark-theme.min.css" />
+    <link rel="stylesheet" href="https://codeshy-1119.github.io/custom.css" />
+</head>
+
+<body>
+
+    <!-- ===== 全局随机视频背景 ===== -->
+    <div id="global-hero">
+        <video autoplay muted loop playsinline id="bg-video"></video>
+    </div>
+
+    <!-- ===== 顶部导航栏（固定） ===== -->
+    <nav id="navbar">
+        <div class="nav-container">
+            <div class="nav-left">
+                <a href="https://codeshy-1119.github.io/" class="nav-brand">才华恒毅的blog</a>
+            </div>
+            <div class="nav-right">
+                <a href="https://codeshy-1119.github.io/" class="nav-link">首页</a>
+                <a href="https://codeshy-1119.github.io/archives.html" class="nav-link">归档</a>
+                <a href="https://codeshy-1119.github.io/categories.html" class="nav-link">分类</a>
+                <a href="https://codeshy-1119.github.io/tags.html" class="nav-link">标签</a>
+                <a href="https://codeshy-1119.github.io/author/cai-hua-heng-yi.html" class="nav-link">关于</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ===== 页面内容（子模板填充） ===== -->
+
+<!-- ===== 目录切换按钮（固定在左侧） ===== -->
+<button id="toc-toggle">📑 目录</button>
+
+<!-- ===== 目录面板（左侧滑出） ===== -->
+<div id="toc-panel">
+    <div id="toc-header">
+        <span>📖 文章目录</span>
+        <button id="toc-close">✕</button>
+    </div>
+    <nav id="toc-content"></nav>
+</div>
+
+<!-- ===== 文章内容（浮在背景上的卡片） ===== -->
+<div id="article-content">
+    <article>
+        <header>
+            <h1 class="article-title">网络培训笔记：从交换到高可用的全栈知识体系</h1>
+            <p class="article-meta">
+                周六 01 八月 2026
+                    · <a href="https://codeshy-1119.github.io/category/ji-zhu.html">技术</a>
+                    · Tagged with
+                        <a href="https://codeshy-1119.github.io/tag/negao-ji-jiao-huan.html">NE，高级交换</a>            </p>
+        </header>
+        <div class="article-body">
+            <h1>第一天</h1>
+<blockquote>
+<p>核心内容：OSI模型、IP地址基础、ARP/TCP/UDP协议、基础CLI命令、远程管理配置</p>
+</blockquote>
+<h2>一、网络基础概念</h2>
+<h3>1. 网络拓扑</h3>
+<p>拓扑就是网络设备的连接图：
+- <strong>星型</strong>：扩展性好，可靠性差。
+- <strong>全网状</strong>：扩展性差，可靠性好。
+- <strong>双星型</strong>：均衡（<strong>常用</strong>）。</p>
+<blockquote>
+<p>📌 一句话总结：拓扑是网络设备的连接图，常见有星型、全网状和双星型，双星型是可靠性、扩展性最均衡的常用方案。</p>
+</blockquote>
+<h3>2. OSI参考模型（七层）</h3>
+<p>分层的意义：每一层各司其职，降低复杂度，利于升级和排障。
+- <strong>发送方</strong>：从应用层往下，逐层<strong>封装</strong>数据。
+- <strong>接收方</strong>：从物理层往上，逐层<strong>解封装</strong>获取数据。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">层级</th>
+<th style="text-align: left;">名称</th>
+<th style="text-align: left;">核心设备/功能</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;"><strong>物理层</strong></td>
+<td style="text-align: left;">传输比特流（网线电信号、光纤光信号、无线电磁波），设备：<strong>调制解调器（光猫）</strong></td>
+</tr>
+<tr>
+<td style="text-align: left;">2</td>
+<td style="text-align: left;"><strong>数据链路层</strong></td>
+<td style="text-align: left;">根据 <strong>MAC地址</strong> 进行转发，设备：<strong>交换机</strong>。交换机不能划分广播域，负责广播域内通信</td>
+</tr>
+<tr>
+<td style="text-align: left;">3</td>
+<td style="text-align: left;"><strong>网络层</strong></td>
+<td style="text-align: left;">根据 <strong>IP地址</strong> 进行转发，设备：<strong>路由器</strong>。路由器可以划分广播域，负责广播域间通信（选路）</td>
+</tr>
+<tr>
+<td style="text-align: left;">4-7</td>
+<td style="text-align: left;">传输层及以上</td>
+<td style="text-align: left;">TCP/UDP（传输层）、会话、表示、应用层</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>📌 一句话总结：OSI七层模型（物理层、数据链路层、网络层、传输层、会话层、表示层、应用层）规定了数据从发送方逐层封装、接收方逐层解封装的标准，确保不同厂商设备可以互操作；其中交换机工作在数据链路层（基于MAC转发，不能划分广播域），路由器工作在网络层（基于IP转发，能划分广播域）。</p>
+</blockquote>
+<h3>3. 关键术语辨析</h3>
+<ul>
+<li><strong>冲突域</strong>：交换机和路由器都能解决冲突。有线网络因交换机普及已无冲突问题，无线网络仍存在。</li>
+<li><strong>广播域</strong>：路由器可以划分广播域。广播域不宜过大，否则会出现<strong>广播风暴</strong>。</li>
+</ul>
+<blockquote>
+<p>📌 一句话总结：交换机可以解决冲突域问题，路由器可以划分广播域，广播域过大会导致广播风暴。</p>
+</blockquote>
+<h2>二、IP地址与子网掩码</h2>
+<ul>
+<li><strong>IP地址</strong>：逻辑地址（可变化），起门牌号作用。</li>
+<li><strong>子网掩码</strong>：用于确定IP地址的哪些位是<strong>网络位</strong>，哪些是<strong>主机位</strong>。</li>
+<li>网络位一致的IP地址，属于<strong>同一网段</strong> = 同一子网 = 同一广播域。</li>
+</ul>
+<blockquote>
+<p>📌 一句话总结：IP地址是逻辑地址（可变化），子网掩码决定网络位和主机位，网络位相同则属于同一网段（同一广播域）。</p>
+</blockquote>
+<h3>IPv4通信三种方式</h3>
+<ol>
+<li><strong>单播</strong>：一对一。</li>
+<li><strong>组播</strong>：一对一组。</li>
+<li><strong>广播</strong>：一对所有（通常用于查找，无实际通信意义）。</li>
+</ol>
+<blockquote>
+<p>📌 一句话总结：单播是一对一，组播是一对一组，广播是一对所有（通常用于查找，无实际通信意义）。</p>
+</blockquote>
+<h2>三、ARP协议（地址解析协议）</h2>
+<blockquote>
+<p><strong>作用</strong>：将IP地址解析为MAC地址（有缓存直接用，无缓存广播找，单播回）。</p>
+</blockquote>
+<p><strong>工作流程</strong>（主机A与主机B通信）：
+0. A判断B是否在同一广播域（是则查B的MAC，否则查<strong>网关</strong>的MAC）。
+1. A查ARP缓存表，若无B的MAC记录。
+2. A广播发送ARP查询（请求192.168.1.2的MAC）。
+3. B收到后记录A的IP-MAC映射，并<strong>单播回应</strong>自己的MAC。
+4. A更新缓存表，封装数据包并发送。</p>
+<blockquote>
+<p>📌 一句话总结：ARP用于将IP地址解析为MAC地址，流程是"有缓存直接用，无缓存广播找，目标单播回"。</p>
+</blockquote>
+<h3>免费ARP</h3>
+<p>主机使用IP前，广播询问该IP对应的MAC。<strong>无回应</strong> = IP不冲突；<strong>有回应</strong> = IP冲突，需重新获取地址。</p>
+<blockquote>
+<p>📌 一句话总结：主机使用IP前广播询问该IP对应的MAC，无回应表示IP不冲突，有回应表示IP冲突需重新获取。</p>
+</blockquote>
+<h2>四、传输层协议（TCP / UDP）</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">特性</th>
+<th style="text-align: left;">TCP（面向连接）</th>
+<th style="text-align: left;">UDP（无连接）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">特点</td>
+<td style="text-align: left;">可靠传输</td>
+<td style="text-align: left;">尽力而为（快）</td>
+</tr>
+<tr>
+<td style="text-align: left;">适用场景</td>
+<td style="text-align: left;">邮件、下载、刷抖音</td>
+<td style="text-align: left;">游戏、音视频、直播</td>
+</tr>
+<tr>
+<td style="text-align: left;">核心机制</td>
+<td style="text-align: left;">三次握手、四次挥手、分段重组、重传、窗口大小（流量控制）</td>
+<td style="text-align: left;">有分段，但<strong>无</strong>重组、重传、窗口大小</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>📌 一句话总结：TCP是面向连接的可靠传输（有三次握手、重传、窗口机制），适用于邮件、下载等场景；UDP是无连接的尽力传输（快但无重传），适用于游戏、音视频、直播等场景。</p>
+</blockquote>
+<h3>端口号（0-65535）</h3>
+<ul>
+<li><strong>0-1023（知名端口）</strong>：80(HTTP)、22(SSH)、23(Telnet)、53(DNS)、25(SMTP)、443(HTTPS)、20/21(FTP)</li>
+<li><strong>注册端口</strong>：3389(RDP)、3306(MySQL)、1812/1813(Radius)</li>
+<li><strong>动态端口</strong>：临时分配，用完归还<blockquote>
+<p><strong>源端口号</strong>是随机的，<strong>目的端口号</strong>通常是知名端口号。</p>
+</blockquote>
+</li>
+</ul>
+<blockquote>
+<p>📌 一句话总结：端口号范围0-65535，其中0-1023为知名端口（如80-HTTP、23-Telnet、53-DNS），源端口随机生成，目的端口通常为知名端口。</p>
+</blockquote>
+<h2>五、基础CLI命令（华三/华为）</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">命令/符号</th>
+<th style="text-align: left;">作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>tab</code></td>
+<td style="text-align: left;">补全命令</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>?</code></td>
+<td style="text-align: left;">帮助命令</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>undo</code></td>
+<td style="text-align: left;">在任何命令前加，表示删除/取消</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>quit</code></td>
+<td style="text-align: left;">退出到上一个视图</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>return</code></td>
+<td style="text-align: left;">直接回到用户视图</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>save</code></td>
+<td style="text-align: left;">保存配置</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>display this</code></td>
+<td style="text-align: left;">查看当前视图下的配置</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>display current-configuration</code></td>
+<td style="text-align: left;">查看全部配置</td>
+</tr>
+</tbody>
+</table>
+<p><strong>视图提示符</strong>：
+- <code>&lt;H3C&gt;</code> ：用户视图
+- <code>[H3C]</code> ：系统视图</p>
+<p><strong>基本配置示例</strong>：</p>
+<div class="highlight"><pre><span></span><code>&lt;H3C&gt;<span class="w"> </span>system-view
+<span class="o">[</span>H3C<span class="o">]</span><span class="w"> </span>sysname<span class="w"> </span>R1
+<span class="o">[</span>R1<span class="o">]</span><span class="w"> </span>interface<span class="w"> </span>GigabitEthernet<span class="w"> </span><span class="m">0</span>/0
+<span class="o">[</span>R1-GigabitEthernet0/0<span class="o">]</span><span class="w"> </span>ip<span class="w"> </span>address<span class="w"> </span><span class="m">192</span>.168.1.1<span class="w"> </span><span class="m">24</span>
+</code></pre></div>
+
+<p><strong>常见报错提示</strong>：
+- <code>% Ambiguous command</code>：命令输入太简略，多输几个字母。
+- <code>% Unrecognized command</code>：命令拼写错误。
+- <code>% Incomplete command</code>：命令不完整。</p>
+<blockquote>
+<p>📌 一句话总结：tab补全命令、?帮助查询、undo表示删除、quit退出当前视图、return直接回到用户视图、save保存配置、display current-configuration查看全部配置。</p>
+</blockquote>
+<h2>六、远程管理配置（Telnet / SSH）</h2>
+<h3>1. 配置Telnet（仅密码认证）</h3>
+<div class="highlight"><pre><span></span><code><span class="o">[</span>R1<span class="o">]</span><span class="w"> </span>telnet<span class="w"> </span>server<span class="w"> </span><span class="nb">enable</span>
+<span class="o">[</span>R1<span class="o">]</span><span class="w"> </span>line<span class="w"> </span>vty<span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="m">4</span>
+<span class="o">[</span>R1-line-vty0-63<span class="o">]</span><span class="w"> </span>authentication-mode<span class="w"> </span>password
+<span class="o">[</span>R1-line-vty0-63<span class="o">]</span><span class="w"> </span><span class="nb">set</span><span class="w"> </span>authentication<span class="w"> </span>password<span class="w"> </span>simple<span class="w"> </span>shangwen@123
+<span class="o">[</span>R1-line-vty0-63<span class="o">]</span><span class="w"> </span>user-role<span class="w"> </span>level-15<span class="w">    </span><span class="c1"># 提升权限</span>
+</code></pre></div>
+
+<p>客户端测试：<code>&lt;R4&gt; telnet 192.168.1.1</code></p>
+<blockquote>
+<p>📌 一句话总结：Telnet配置需开启telnet server、进入vty线路设置认证方式（password或scheme）和用户权限（user-role level-15）。</p>
+</blockquote>
+<h3>2. 配置Telnet（用户名+密码认证，不同用户不同权限）</h3>
+<div class="highlight"><pre><span></span><code><span class="o">[</span>R2<span class="o">]</span><span class="w"> </span>telnet<span class="w"> </span>server<span class="w"> </span><span class="nb">enable</span>
+<span class="o">[</span>R2<span class="o">]</span><span class="w"> </span>local-user<span class="w"> </span>shangwen
+<span class="o">[</span>R2-luser-manage-shangwen<span class="o">]</span><span class="w"> </span>password<span class="w"> </span>simple<span class="w"> </span>upwen@1234
+<span class="o">[</span>R2-luser-manage-shangwen<span class="o">]</span><span class="w"> </span>service-type<span class="w"> </span>telnet
+<span class="o">[</span>R2-luser-manage-shangwen<span class="o">]</span><span class="w"> </span>authorization-attribute<span class="w"> </span>user-role<span class="w"> </span>level-15
+
+<span class="o">[</span>R2<span class="o">]</span><span class="w"> </span>local-user<span class="w"> </span>zsq
+<span class="o">[</span>R2-luser-manage-zsq<span class="o">]</span><span class="w"> </span>password<span class="w"> </span>simple<span class="w"> </span>shangwen@123
+<span class="o">[</span>R2-luser-manage-zsq<span class="o">]</span><span class="w"> </span>service-type<span class="w"> </span>telnet
+<span class="o">[</span>R2-luser-manage-zsq<span class="o">]</span><span class="w"> </span>authorization-attribute<span class="w"> </span>user-role<span class="w"> </span>level-1
+
+<span class="o">[</span>R2<span class="o">]</span><span class="w"> </span>line<span class="w"> </span>vty<span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="m">63</span>
+<span class="o">[</span>R2-line-vty0-63<span class="o">]</span><span class="w"> </span>authentication-mode<span class="w"> </span>scheme
+</code></pre></div>
+
+<h3>3. 配置SSH（更安全）</h3>
+<div class="highlight"><pre><span></span><code><span class="o">[</span>R3<span class="o">]</span><span class="w"> </span>ssh<span class="w"> </span>server<span class="w"> </span><span class="nb">enable</span>
+<span class="o">[</span>R3<span class="o">]</span><span class="w"> </span>local-user<span class="w"> </span>shangwen
+<span class="o">[</span>R3-luser-manage-shangwen<span class="o">]</span><span class="w"> </span>password<span class="w"> </span>simple<span class="w"> </span>upwen@1234
+<span class="o">[</span>R3-luser-manage-shangwen<span class="o">]</span><span class="w"> </span>service-type<span class="w"> </span>ssh
+<span class="o">[</span>R3-luser-manage-shangwen<span class="o">]</span><span class="w"> </span>authorization-attribute<span class="w"> </span>user-role<span class="w"> </span>level-15
+<span class="o">[</span>R3<span class="o">]</span><span class="w"> </span>line<span class="w"> </span>vty<span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="m">63</span>
+<span class="o">[</span>R3-line-vty0-63<span class="o">]</span><span class="w"> </span>authentication-mode<span class="w"> </span>scheme
+</code></pre></div>
+
+<blockquote>
+<p>📌 一句话总结：SSH配置需开启ssh server、创建本地用户并设置service-type ssh，再进入vty设置authentication-mode scheme，安全性高于Telnet。</p>
+</blockquote>
+<h1>第二天</h1>
+<blockquote>
+<p>核心内容：交换机转发原理、VLAN概念、Access/Trunk接口、文件管理与FTP备份</p>
+</blockquote>
+<h2>一、交换机转发原理</h2>
+<p>交换机依据 <strong>MAC地址表</strong> 进行转发，MAC地址表记录 MAC地址 ↔ 接口 的映射关系。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">行为</th>
+<th style="text-align: left;">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>学习</strong></td>
+<td style="text-align: left;">收到数据帧的<strong>源MAC</strong> + 接收接口 → 自动生成MAC表项</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>泛洪</strong></td>
+<td style="text-align: left;">目标MAC不在表中，交换机向<strong>所有接口</strong>（除接收口外）广播发送</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>转发</strong></td>
+<td style="text-align: left;">目标MAC在表中，交换机从<strong>对应接口</strong>发出</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>更新</strong></td>
+<td style="text-align: left;">（1）后到优先（新记录覆盖旧记录）；（2）老化时间 <strong>300秒</strong></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>📌 一句话总结：交换机依据MAC地址表转发，收到帧时学习源MAC与接口的映射，目标MAC未知则泛洪，已知则从对应接口转发，MAC表老化时间为300秒。</p>
+</blockquote>
+<h2>二、VLAN技术（虚拟局域网）</h2>
+<blockquote>
+<p><strong>作用</strong>：在交换机上划分广播域，实现二层隔离。</p>
+</blockquote>
+<h3>VLAN优点</h3>
+<ol>
+<li>减少广播流量，提高带宽利用率。</li>
+<li>不同广播域不能直接通信，提升安全性（防ARP欺骗等）。</li>
+<li>不受物理位置限制，组网更灵活。</li>
+</ol>
+<blockquote>
+<p>📌 一句话总结：VLAN在交换机上划分广播域，实现二层隔离，能减少广播流量、提升安全性和组网灵活性。</p>
+</blockquote>
+<h3>802.1Q封装</h3>
+<p>PC不识别VLAN Tag，数据进入交换机时，会打上 <strong>VLAN Tag</strong>（标签）标识属于哪个VLAN。最常见的划分方式是<strong>基于接口划分VLAN</strong>。</p>
+<blockquote>
+<p>📌 一句话总结：PC不识别VLAN Tag，数据进入交换机时会打上802.1Q封装的VLAN Tag标签标识所属VLAN。</p>
+</blockquote>
+<h3>交换机接口类型</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">接口类型</th>
+<th style="text-align: left;">连接对象</th>
+<th style="text-align: left;">VLAN通过</th>
+<th style="text-align: left;">数据帧Tag特征</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Access</strong></td>
+<td style="text-align: left;">终端设备（PC）</td>
+<td style="text-align: left;">只允许1个VLAN</td>
+<td style="text-align: left;">收发数据<strong>通常不带Tag</strong></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Trunk</strong></td>
+<td style="text-align: left;">网络设备（交换机/路由器）</td>
+<td style="text-align: left;">允许多个VLAN</td>
+<td style="text-align: left;">收发数据<strong>通常带Tag</strong>（PVID除外）</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Hybrid</strong></td>
+<td style="text-align: left;">终端或网络设备均可</td>
+<td style="text-align: left;">允许多个VLAN</td>
+<td style="text-align: left;">可自定义哪些VLAN带Tag，哪些不带</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>PVID特点</strong>：每个接口只能有一个PVID，Trunk两端PVID必须一致。</p>
+<p>📌 一句话总结：Access接口只允许一个VLAN通过且不带Tag（接终端），Trunk接口允许多个VLAN通过且通常带Tag（接网络设备），Hybrid接口可自定义哪些VLAN带/不带Tag（华为/华三特色接口）；Trunk的PVID两端必须一致，华为/华三Trunk默认只允许VLAN 1，思科/锐捷默认允许所有VLAN。</p>
+</blockquote>
+<h2>三、VLAN配置命令</h2>
+<h3>1. 创建VLAN与命名</h3>
+<div class="highlight"><pre><span></span><code><span class="o">[</span>S1<span class="o">]</span><span class="w"> </span>display<span class="w"> </span>vlan<span class="w"> </span>brief<span class="w">          </span><span class="c1"># 查看VLAN摘要</span>
+<span class="o">[</span>S1<span class="o">]</span><span class="w"> </span>vlan<span class="w"> </span><span class="m">10</span>
+<span class="o">[</span>S1-vlan10<span class="o">]</span><span class="w"> </span>name<span class="w"> </span>IT<span class="w">              </span><span class="c1"># 命名VLAN 10为IT</span>
+<span class="o">[</span>S1<span class="o">]</span><span class="w"> </span>vlan<span class="w"> </span><span class="m">20</span>
+<span class="o">[</span>S1-vlan20<span class="o">]</span><span class="w"> </span>name<span class="w"> </span>CW
+</code></pre></div>
+
+<h3>2. 接口划分VLAN（两种方法）</h3>
+<p><strong>方法一（接口视图配置）</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="o">[</span>S1<span class="o">]</span><span class="w"> </span>interface<span class="w"> </span>GigabitEthernet<span class="w"> </span><span class="m">1</span>/0/1
+<span class="o">[</span>S1-GigabitEthernet1/0/1<span class="o">]</span><span class="w"> </span>port<span class="w"> </span>link-type<span class="w"> </span>access
+<span class="o">[</span>S1-GigabitEthernet1/0/1<span class="o">]</span><span class="w"> </span>port<span class="w"> </span>access<span class="w"> </span>vlan<span class="w"> </span><span class="m">10</span>
+</code></pre></div>
+
+<p><strong>方法二（VLAN视图下添加接口）</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="o">[</span>S1<span class="o">]</span><span class="w"> </span>vlan<span class="w"> </span><span class="m">20</span>
+<span class="o">[</span>S1-vlan20<span class="o">]</span><span class="w"> </span>port<span class="w"> </span>GigabitEthernet<span class="w"> </span><span class="m">1</span>/0/2
+</code></pre></div>
+
+<p><strong>批量配置</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="o">[</span>S1<span class="o">]</span><span class="w"> </span>interface<span class="w"> </span>range<span class="w"> </span>GigabitEthernet<span class="w"> </span><span class="m">1</span>/0/10<span class="w"> </span>to<span class="w"> </span>GigabitEthernet<span class="w"> </span><span class="m">1</span>/0/20
+<span class="o">[</span>S1-if-range<span class="o">]</span><span class="w"> </span>port<span class="w"> </span>link-type<span class="w"> </span>access
+<span class="o">[</span>S1-if-range<span class="o">]</span><span class="w"> </span>port<span class="w"> </span>access<span class="w"> </span>vlan<span class="w"> </span><span class="m">10</span>
+</code></pre></div>
+
+<h3>3. Trunk接口配置</h3>
+<div class="highlight"><pre><span></span><code><span class="o">[</span>S1<span class="o">]</span><span class="w"> </span>interface<span class="w"> </span>GigabitEthernet<span class="w"> </span><span class="m">1</span>/0/3
+<span class="o">[</span>S1-GigabitEthernet1/0/3<span class="o">]</span><span class="w"> </span>port<span class="w"> </span>link-type<span class="w"> </span>trunk
+<span class="o">[</span>S1-GigabitEthernet1/0/3<span class="o">]</span><span class="w"> </span>port<span class="w"> </span>trunk<span class="w"> </span>permit<span class="w"> </span>vlan<span class="w"> </span><span class="m">10</span><span class="w"> </span><span class="m">20</span><span class="w">    </span><span class="c1"># 允许VLAN 10和20通过</span>
+<span class="o">[</span>S1-GigabitEthernet1/0/3<span class="o">]</span><span class="w"> </span>port<span class="w"> </span>trunk<span class="w"> </span>pvid<span class="w"> </span>vlan<span class="w"> </span><span class="m">10</span><span class="w">         </span><span class="c1"># 调整PVID（默认不需调整）</span>
+</code></pre></div>
+
+<blockquote>
+<p><strong>注意</strong>：华为/华三的Trunk<strong>默认只允许VLAN 1</strong>；思科/锐捷默认允许所有VLAN。</p>
+</blockquote>
+<div class="highlight"><pre><span></span><code><span class="o">[</span>S1<span class="o">]</span><span class="w"> </span>display<span class="w"> </span>port<span class="w"> </span>trunk<span class="w">          </span><span class="c1"># 查看Trunk接口状态</span>
+</code></pre></div>
+
+<blockquote>
+<p>📌 一句话总结：通过vlan命令创建VLAN并命名，使用port link-type access + port access vlan将接口划入VLAN，使用port link-type trunk + port trunk permit vlan允许VLAN通过Trunk。</p>
+</blockquote>
+<h2>四、文件管理与FTP备份</h2>
+<h3>1. 设备文件操作</h3>
+<div class="highlight"><pre><span></span><code>&lt;H3C&gt;<span class="w"> </span>dir<span class="w">                        </span><span class="c1"># 查看当前目录文件</span>
+&lt;R1&gt;<span class="w"> </span>reset<span class="w"> </span>saved-configuration<span class="w">   </span><span class="c1"># 清除配置文件（等价于 delete startup.cfg）</span>
+&lt;R1&gt;<span class="w"> </span>reboot<span class="w">                      </span><span class="c1"># 重启设备（会提示是否保存配置）</span>
+</code></pre></div>
+
+<h3>2. 配置文件备份与恢复</h3>
+<div class="highlight"><pre><span></span><code>&lt;R1&gt;<span class="w"> </span>copy<span class="w"> </span>startup.cfg<span class="w"> </span><span class="m">20260721</span>.cfg<span class="w">              </span><span class="c1"># 备份配置文件</span>
+&lt;R1&gt;<span class="w"> </span>startup<span class="w"> </span>saved-configuration<span class="w"> </span><span class="m">20260721</span>.cfg<span class="w">   </span><span class="c1"># 修改下次启动加载的配置文件</span>
+</code></pre></div>
+
+<h3>3. FTP远程备份（将配置传到服务器）</h3>
+<p><strong>服务端（R1）配置</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="o">[</span>R1<span class="o">]</span><span class="w"> </span>ftp<span class="w"> </span>server<span class="w"> </span><span class="nb">enable</span>
+<span class="o">[</span>R1<span class="o">]</span><span class="w"> </span>local-user<span class="w"> </span>shangwen
+<span class="o">[</span>R1-luser-manage-shangwen<span class="o">]</span><span class="w"> </span>password<span class="w"> </span>simple<span class="w"> </span>upwen@1234
+<span class="o">[</span>R1-luser-manage-shangwen<span class="o">]</span><span class="w"> </span>service-type<span class="w"> </span>ftp
+<span class="o">[</span>R1-luser-manage-shangwen<span class="o">]</span><span class="w"> </span>authorization-attribute<span class="w"> </span>user-role<span class="w"> </span>level-15<span class="w">   </span><span class="c1"># FTP需高权限</span>
+</code></pre></div>
+
+<p><strong>客户端（R2）操作</strong>：</p>
+<div class="highlight"><pre><span></span><code>&lt;R2&gt;<span class="w"> </span>ftp<span class="w"> </span><span class="m">192</span>.168.1.1
+ftp&gt;<span class="w"> </span>get<span class="w"> </span><span class="m">20260721</span>.cfg<span class="w">              </span><span class="c1"># 下载文件</span>
+</code></pre></div>
+
+<blockquote>
+<p>📌 一句话总结：使用dir查看文件、reset saved-configuration清除配置、copy备份配置文件、startup saved-configuration指定下次启动文件，FTP备份需开启ftp server并创建具有level-15权限的本地用户。</p>
+</blockquote>
+<h1>第三天</h1>
+<blockquote>
+<p>核心内容：STP产生背景、工作原理、端口状态、收敛机制、Hybrid接口详解与实验</p>
+</blockquote>
+<h2>一、STP（生成树协议）产生背景</h2>
+<h3>1. 环路产生原因</h3>
+<ul>
+<li>管理员误操作。</li>
+<li>为了<strong>可靠性</strong>设计的冗余网络结构。</li>
+</ul>
+<h3>2. 环路危害</h3>
+<ol>
+<li>广播流量无终止循环，严重占用带宽，可能导致<strong>断网</strong>。</li>
+<li>交换机MAC地址表<strong>不断抖动</strong>，CPU高负载，可能<strong>宕机</strong>。</li>
+<li>PC频繁处理广播信息，导致<strong>终端卡顿</strong>。</li>
+</ol>
+<h3>3. 解决方案</h3>
+<p>在所有交换机上运行STP，自动计算并<strong>逻辑拥塞（Block）</strong>某些接口以破除环路；当物理链路故障时，拥塞接口可重新转发（具备一定的可靠性），起<strong>备用路径</strong>作用。</p>
+<blockquote>
+<p>📌 一句话总结：STP用于解决二层网络中因冗余链路或误操作导致的广播风暴、MAC地址表抖动和终端卡顿问题，通过逻辑拥塞接口破除环路。</p>
+</blockquote>
+<h2>二、STP工作原理（选路规则）</h2>
+<p><strong>关键字段</strong>：
+- <strong>桥ID</strong> = 优先级（默认32768，以4096倍数增减）+ MAC地址。
+- <strong>路径开销</strong>：根据带宽计算，带宽越大开销越小。
+- <strong>根路径开销</strong>：从本设备到根桥的所有路径开销之和。</p>
+<h3>选举四步曲</h3>
+<ol>
+<li><strong>选根桥</strong>：桥ID<strong>最小</strong>的设备。</li>
+<li><strong>选根端口（RP）</strong>（每台非根交换机上选1个）：</li>
+<li>（1）根路径开销最小（从接口出发）；</li>
+<li>（2）对端桥ID最小；</li>
+<li>（3）对端端口ID最小。</li>
+<li><strong>选指定端口（DP）</strong>：</li>
+<li>根桥上的所有端口都是DP；</li>
+<li>每条链路两端必有一端为DP；</li>
+<li>选法：（1）根路径开销最小（从设备出发）；（2）桥ID最小；（3）端口ID最小。</li>
+<li><strong>剩余端口为拥塞端口（Block）</strong>。</li>
+</ol>
+<blockquote>
+<p>📌 一句话总结：STP选举过程分四步——先选桥ID最小的根桥，再在每台非根交换机上选根路径开销最小+对端桥ID最小+对端端口ID最小的根端口，然后选根路径开销最小+桥ID最小+端口ID最小的指定端口（根桥上所有端口均为指定端口），剩余端口为拥塞端口。</p>
+</blockquote>
+<h3>BPDU（桥协议数据单元）</h3>
+<ul>
+<li>携带桥ID、路径开销等信息。</li>
+<li>根桥选举后，<strong>仅根桥每2秒</strong>发送BPDU，其他设备只作<strong>中转</strong>。</li>
+<li><strong>指定端口</strong>发BPDU，<strong>根端口</strong>收BPDU。</li>
+</ul>
+<blockquote>
+<p>📌 一句话总结：BPDU携带桥ID和路径开销等信息，根桥选举后仅根桥每2秒发送BPDU，其他设备仅作中转，指定端口负责发送、根端口负责接收。</p>
+</blockquote>
+<h2>三、STP端口状态与收敛时间</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">状态</th>
+<th style="text-align: left;">说明</th>
+<th style="text-align: left;">耗时</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>disable</strong></td>
+<td style="text-align: left;">接口关闭（shutdown）</td>
+<td style="text-align: left;">-</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>blocking</strong></td>
+<td style="text-align: left;">拥塞，不收发数据，但接收BPDU</td>
+<td style="text-align: left;">-</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>listening</strong></td>
+<td style="text-align: left;">进行端口角色选举</td>
+<td style="text-align: left;">15秒</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>learning</strong></td>
+<td style="text-align: left;">学习MAC地址表（不转发数据）</td>
+<td style="text-align: left;">15秒</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>forwarding</strong></td>
+<td style="text-align: left;">正常转发</td>
+<td style="text-align: left;">-</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>一个正常接口从Down到转发，至少需要 <strong>30秒</strong>（Listening 15s + Learning 15s）。</p>
+</blockquote>
+<h3>故障收敛时间</h3>
+<ul>
+<li><strong>直连故障</strong>：30秒（拥塞接口所在交换机直连线路故障，直接感知拓扑变化）。</li>
+<li><strong>非直连故障</strong>：50秒（20秒BPDU超时 + 30秒重新运算）。</li>
+</ul>
+<blockquote>
+<p>📌 一句话总结：STP端口有disable、blocking、listening(15s)、learning(15s)、forwarding五种状态，正常接口从Down到转发需30秒；直连故障收敛需30秒，非直连故障需50秒（20秒BPDU超时+30秒重新运算）。</p>
+</blockquote>
+<h3>基础STP配置命令</h3>
+<div class="highlight"><pre><span></span><code><span class="o">[</span>S1<span class="o">]</span><span class="w"> </span>undo<span class="w"> </span>stp<span class="w"> </span>global<span class="w"> </span><span class="nb">enable</span><span class="w">          </span><span class="c1"># 全局关闭STP（不推荐）</span>
+<span class="o">[</span>S1<span class="o">]</span><span class="w"> </span>stp<span class="w"> </span>mode<span class="w"> </span>stp<span class="w">                    </span><span class="c1"># 切换为STP模式（默认MSTP）</span>
+<span class="o">[</span>S3<span class="o">]</span><span class="w"> </span>stp<span class="w"> </span>priority<span class="w"> </span><span class="m">0</span><span class="w">                  </span><span class="c1"># 调整优先级，使该设备成为根桥</span>
+<span class="o">[</span>S1<span class="o">]</span><span class="w"> </span>display<span class="w"> </span>stp<span class="w"> </span>brief<span class="w">               </span><span class="c1"># 查看生成树简要信息</span>
+</code></pre></div>
+
+<blockquote>
+<p>📌 一句话总结：使用stp mode stp切换模式、stp priority调整优先级使设备成为根桥、display stp brief查看生成树状态，不推荐全局关闭STP。</p>
+</blockquote>
+<h2>四、Hybrid接口（混合接口）详解与实验</h2>
+<p>Hybrid接口是华为/华三的特色接口，兼具Access和Trunk特性：<strong>可连接终端，也可连接设备；可传输多个VLAN；能自定义哪些VLAN带Tag，哪些不带Tag</strong>。</p>
+<blockquote>
+<p>📌 一句话总结：Hybrid接口兼具Access和Trunk特性，通过port hybrid pvid vlan设置缺省VLAN、port hybrid vlan X tagged/untagged自定义各VLAN发送时是否携带Tag，可实现终端与设备混合连接且灵活控制Tag行为。</p>
+</blockquote>
+<h3>实验拓扑（S1 —— S2，两台交换机）</h3>
+<p><strong>需求</strong>：PC1（VLAN10）、PC2（VLAN20）都能访问服务器（VLAN100），但PC1与PC2二层隔离。</p>
+<p><strong>S1配置</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="o">[</span>S1<span class="o">]</span><span class="w"> </span>vlan<span class="w"> </span><span class="m">10</span>
+<span class="o">[</span>S1<span class="o">]</span><span class="w"> </span>vlan<span class="w"> </span><span class="m">20</span>
+<span class="o">[</span>S1<span class="o">]</span><span class="w"> </span>vlan<span class="w"> </span><span class="m">100</span>
+
+<span class="o">[</span>S1<span class="o">]</span><span class="w"> </span>interface<span class="w"> </span>GigabitEthernet<span class="w"> </span><span class="m">1</span>/0/1
+<span class="o">[</span>S1-GigabitEthernet1/0/1<span class="o">]</span><span class="w"> </span>port<span class="w"> </span>link-type<span class="w"> </span>hybrid
+<span class="o">[</span>S1-GigabitEthernet1/0/1<span class="o">]</span><span class="w"> </span>port<span class="w"> </span>hybrid<span class="w"> </span>pvid<span class="w"> </span>vlan<span class="w"> </span><span class="m">10</span><span class="w">                </span><span class="c1"># PC无Tag进入，打上VLAN10</span>
+<span class="o">[</span>S1-GigabitEthernet1/0/1<span class="o">]</span><span class="w"> </span>port<span class="w"> </span>hybrid<span class="w"> </span>vlan<span class="w"> </span><span class="m">10</span><span class="w"> </span><span class="m">100</span><span class="w"> </span>untagged<span class="w">        </span><span class="c1"># 允许VLAN10和100，发出时剥除Tag</span>
+
+<span class="o">[</span>S1<span class="o">]</span><span class="w"> </span>interface<span class="w"> </span>GigabitEthernet<span class="w"> </span><span class="m">1</span>/0/2
+<span class="o">[</span>S1-GigabitEthernet1/0/2<span class="o">]</span><span class="w"> </span>port<span class="w"> </span>link-type<span class="w"> </span>hybrid
+<span class="o">[</span>S1-GigabitEthernet1/0/2<span class="o">]</span><span class="w"> </span>port<span class="w"> </span>hybrid<span class="w"> </span>pvid<span class="w"> </span>vlan<span class="w"> </span><span class="m">20</span>
+<span class="o">[</span>S1-GigabitEthernet1/0/2<span class="o">]</span><span class="w"> </span>port<span class="w"> </span>hybrid<span class="w"> </span>vlan<span class="w"> </span><span class="m">20</span><span class="w"> </span><span class="m">100</span><span class="w"> </span>untagged
+
+<span class="o">[</span>S1<span class="o">]</span><span class="w"> </span>interface<span class="w"> </span>GigabitEthernet<span class="w"> </span><span class="m">1</span>/0/3
+<span class="o">[</span>S1-GigabitEthernet1/0/3<span class="o">]</span><span class="w"> </span>port<span class="w"> </span>link-type<span class="w"> </span>hybrid
+<span class="o">[</span>S1-GigabitEthernet1/0/3<span class="o">]</span><span class="w"> </span>port<span class="w"> </span>hybrid<span class="w"> </span>vlan<span class="w"> </span><span class="m">10</span><span class="w"> </span><span class="m">20</span><span class="w"> </span><span class="m">100</span><span class="w"> </span>tagged<span class="w">       </span><span class="c1"># 互联接口，全部带Tag发送</span>
+</code></pre></div>
+
+<p><strong>S2配置</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="o">[</span>S2<span class="o">]</span><span class="w"> </span>vlan<span class="w"> </span><span class="m">10</span>
+<span class="o">[</span>S2<span class="o">]</span><span class="w"> </span>vlan<span class="w"> </span><span class="m">20</span>
+<span class="o">[</span>S2<span class="o">]</span><span class="w"> </span>vlan<span class="w"> </span><span class="m">100</span>
+
+<span class="o">[</span>S2<span class="o">]</span><span class="w"> </span>interface<span class="w"> </span>GigabitEthernet<span class="w"> </span><span class="m">1</span>/0/1
+<span class="o">[</span>S2-GigabitEthernet1/0/1<span class="o">]</span><span class="w"> </span>port<span class="w"> </span>link-type<span class="w"> </span>hybrid
+<span class="o">[</span>S2-GigabitEthernet1/0/1<span class="o">]</span><span class="w"> </span>port<span class="w"> </span>hybrid<span class="w"> </span>pvid<span class="w"> </span>vlan<span class="w"> </span><span class="m">100</span><span class="w">               </span><span class="c1"># 服务器接口</span>
+<span class="o">[</span>S2-GigabitEthernet1/0/1<span class="o">]</span><span class="w"> </span>port<span class="w"> </span>hybrid<span class="w"> </span>vlan<span class="w"> </span><span class="m">10</span><span class="w"> </span><span class="m">20</span><span class="w"> </span><span class="m">100</span><span class="w"> </span>untagged
+
+<span class="o">[</span>S2<span class="o">]</span><span class="w"> </span>interface<span class="w"> </span>GigabitEthernet<span class="w"> </span><span class="m">1</span>/0/2
+<span class="o">[</span>S2-GigabitEthernet1/0/2<span class="o">]</span><span class="w"> </span>port<span class="w"> </span>link-type<span class="w"> </span>hybrid
+<span class="o">[</span>S2-GigabitEthernet1/0/2<span class="o">]</span><span class="w"> </span>port<span class="w"> </span>hybrid<span class="w"> </span>vlan<span class="w"> </span><span class="m">10</span><span class="w"> </span><span class="m">20</span><span class="w"> </span><span class="m">100</span><span class="w"> </span>tagged<span class="w">       </span><span class="c1"># 互联接口</span>
+</code></pre></div>
+
+<h1>第四天</h1>
+<blockquote>
+<p>核心内容：路由表原理、静态/默认路由配置、浮动路由、负载分担</p>
+</blockquote>
+<h2>一、路由表基础</h2>
+<p>路由器依据<strong>路由表</strong>进行转发，无匹配路径则丢弃。</p>
+<h3>路由表的五大要素</h3>
+<ol>
+<li><strong>目标网段</strong>（要到达的目的网段）。</li>
+<li><strong>出接口</strong>（从本设备哪个接口发出）。</li>
+<li><strong>下一跳</strong>（下一台设备的IP地址，<strong>推荐使用</strong>）。</li>
+<li><strong>优先级</strong>（网络协议的优先程度，<strong>数值越小越优</strong>，不同协议间比较）。</li>
+<li><strong>度量值</strong>（路径优劣程度，<strong>数值越小越优</strong>，同协议内比较）。</li>
+</ol>
+<blockquote>
+<p>选路规则：先比<strong>优先级</strong>，再比<strong>度量值</strong>。</p>
+<p>📌 一句话总结：路由器依据路由表转发，路由表由目标网段、出接口、下一跳、优先级（数值越小越优）和度量值（数值越小越优）五大要素组成，选路时先比优先级再比度量值。</p>
+</blockquote>
+<h3>路由表产生方式</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">方式</th>
+<th style="text-align: left;">特点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>直连路由</strong></td>
+<td style="text-align: left;">自动出现</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>静态路由</strong></td>
+<td style="text-align: left;">管理员手工配置；适合小型网络；不消耗资源；安全性高；无法自适应变化</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>动态路由</strong></td>
+<td style="text-align: left;">路由器间自动交换；适合中大型网络；消耗资源；可自适应变化</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>📌 一句话总结：直连路由自动出现，静态路由由管理员手工配置（适合小型网络、不消耗资源、安全性高但无法自适应变化），动态路由由路由器间自动交换产生（适合中大型网络、消耗资源但可自适应变化）。</p>
+</blockquote>
+<p><strong>路由匹配原则</strong>：<strong>最长子网掩码匹配原则</strong>（掩码最长的条目优先使用）。</p>
+<blockquote>
+<p>📌 一句话总结：路由器采用最长子网掩码匹配原则，即掩码最长的路由条目优先使用。</p>
+</blockquote>
+<h2>二、静态路由配置</h2>
+<h3>场景：R1连接三层交换机S2，需访问S2下挂的PC网段</h3>
+<p><strong>S2配置地址（三层接口）</strong>：</p>
+<ul>
+<li>
+<p><strong>方法一</strong>（接口切换为路由模式）：
+  <code>bash
+  [S2] interface GigabitEthernet 1/0/3
+  [S2-GigabitEthernet1/0/3] port link-mode route
+  [S2-GigabitEthernet1/0/3] ip address 192.168.15.5 24</code></p>
+</li>
+<li>
+<p><strong>方法二</strong>（VLANIF方式，推荐）：
+  <code>bash
+  [S2] vlan 999
+  [S2] interface GigabitEthernet 1/0/3
+  [S2-GigabitEthernet1/0/3] port link-type access
+  [S2-GigabitEthernet1/0/3] port access vlan 999
+  [S2] interface Vlan-interface 999
+  [S2-Vlan-interface999] ip address 192.168.15.5 24</code></p>
+</li>
+</ul>
+<h3>配置静态路由</h3>
+<div class="highlight"><pre><span></span><code><span class="o">[</span>R1<span class="o">]</span><span class="w"> </span>ip<span class="w"> </span>route-static<span class="w"> </span><span class="m">192</span>.168.60.0<span class="w"> </span><span class="m">24</span><span class="w"> </span><span class="m">192</span>.168.15.5
+<span class="o">[</span>R1<span class="o">]</span><span class="w"> </span>ip<span class="w"> </span>route-static<span class="w"> </span><span class="m">192</span>.168.70.0<span class="w"> </span><span class="m">24</span><span class="w"> </span><span class="m">192</span>.168.15.5
+<span class="o">[</span>S2<span class="o">]</span><span class="w"> </span>ip<span class="w"> </span>route-static<span class="w"> </span><span class="m">192</span>.168.10.0<span class="w"> </span><span class="m">24</span><span class="w"> </span><span class="m">192</span>.168.15.1
+<span class="o">[</span>S2<span class="o">]</span><span class="w"> </span>ip<span class="w"> </span>route-static<span class="w"> </span><span class="m">192</span>.168.20.0<span class="w"> </span><span class="m">24</span><span class="w"> </span><span class="m">192</span>.168.15.1<span class="w">    </span><span class="c1"># 回包路由（静态路由是单向的）</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="o">[</span>R1<span class="o">]</span><span class="w"> </span>display<span class="w"> </span>ip<span class="w"> </span>routing-table<span class="w">        </span><span class="c1"># 查看路由表</span>
+</code></pre></div>
+
+<blockquote>
+<p>📌 一句话总结：使用ip route-static 目标网段 掩码 下一跳地址配置静态路由，需注意静态路由是单向的，必须配置回包路由才能实现双向通信。</p>
+</blockquote>
+<h2>三、默认路由（0.0.0.0/0）</h2>
+<blockquote>
+<p><strong>特点</strong>：可匹配所有目标网络；遵循最长掩码匹配原则，<strong>最后才使用</strong>。</p>
+</blockquote>
+<h3>使用场景</h3>
+<ol>
+<li><strong>访问外网</strong>：内网所有路由器需配置默认路由（逐跳转发）。默认路由访外网，明细路由访内网。</li>
+<li><strong>只有一个出口的末端网络</strong>。</li>
+<li><strong>电脑的网关</strong>。</li>
+</ol>
+<h3>注意事项</h3>
+<ul>
+<li><strong>默认路由不能互指</strong>，否则产生<strong>路由环路</strong>。</li>
+<li>多运营商出口时，可配合浮动静态实现主备。</li>
+</ul>
+<blockquote>
+<p>📌 一句话总结：默认路由（0.0.0.0/0）能匹配所有目标网络，遵循最长掩码匹配原则最后才使用，适用于访问外网、末端网络和电脑网关场景，但不能互指否则会产生路由环路。</p>
+</blockquote>
+<h2>四、负载分担与浮动静态路由</h2>
+<h3>负载分担</h3>
+<p>当两条路由去往同一目的网段，且<strong>优先级和度量值均相同</strong>时，同时加入路由表，实现流量分担。</p>
+<div class="highlight"><pre><span></span><code><span class="o">[</span>R1<span class="o">]</span><span class="w"> </span>ip<span class="w"> </span>route-static<span class="w"> </span><span class="m">192</span>.168.60.0<span class="w"> </span><span class="m">24</span><span class="w"> </span><span class="m">192</span>.168.15.5
+<span class="o">[</span>R1<span class="o">]</span><span class="w"> </span>ip<span class="w"> </span>route-static<span class="w"> </span><span class="m">192</span>.168.60.0<span class="w"> </span><span class="m">24</span><span class="w"> </span><span class="m">192</span>.168.18.8<span class="w">   </span><span class="c1"># 两条等价，自动负载分担</span>
+</code></pre></div>
+
+<blockquote>
+<p>📌 一句话总结：当两条路由去往同一目的网段且优先级和度量值均相同时，同时加入路由表实现流量负载分担。</p>
+</blockquote>
+<h3>浮动静态路由（主备路径）</h3>
+<div class="highlight"><pre><span></span><code><span class="o">[</span>R1<span class="o">]</span><span class="w"> </span>ip<span class="w"> </span>route-static<span class="w"> </span><span class="m">192</span>.168.60.0<span class="w"> </span><span class="m">24</span><span class="w"> </span><span class="m">192</span>.168.15.5
+<span class="o">[</span>R1<span class="o">]</span><span class="w"> </span>ip<span class="w"> </span>route-static<span class="w"> </span><span class="m">192</span>.168.60.0<span class="w"> </span><span class="m">24</span><span class="w"> </span><span class="m">192</span>.168.18.8<span class="w"> </span>preference<span class="w"> </span><span class="m">80</span><span class="w">   </span><span class="c1"># 优先级调大，作为备份</span>
+</code></pre></div>
+
+<blockquote>
+<p>默认情况下，只有<strong>最优路径</strong>加入路由表。若主链路故障，备用路径（浮动路由）自动浮现。</p>
+<p>📌 一句话总结：通过配置两条去往同一目的网段但优先级不同的静态路由，高优先级（数值小）为主路径，低优先级（数值大）为备份路径，主链路故障时备份自动浮现。</p>
+</blockquote>
+<h1>第五天</h1>
+<blockquote>
+<p>核心内容：路由协议分类、OSPF原理与多区域配置、单臂路由、VLANIF配置</p>
+</blockquote>
+<h2>一、路由协议分类</h2>
+<h3>按工作范围分</h3>
+<ul>
+<li><strong>IGP（内部网关协议）</strong>：组织机构内部使用，如 RIP、OSPF、IS-IS、EIGRP。</li>
+<li><strong>EGP（外部网关协议）</strong>：组织机构之间互联，如 <strong>BGP</strong>。</li>
+</ul>
+<h3>按算法分</h3>
+<ul>
+<li><strong>距离矢量路由协议</strong>：RIP、BGP。RIP以<strong>跳数</strong>为度量（不综合考虑带宽）。</li>
+<li><strong>链路状态路由协议</strong>：OSPF、IS-IS。OSPF以<strong>带宽</strong>为度量，更科学。</li>
+</ul>
+<blockquote>
+<p>📌 一句话总结：按工作范围分为IGP（内部网关协议，如OSPF、RIP）和EGP（外部网关协议，如BGP）；按算法分为距离矢量（RIP以跳数为度量）和链路状态（OSPF以带宽为度量，更科学）。</p>
+</blockquote>
+<h2>二、OSPF协议详解</h2>
+<h3>核心概念</h3>
+<ul>
+<li><strong>LSA（链路状态通告）</strong>：每台路由器将自己的直连信息整理成LSA发给邻居。</li>
+<li><strong>LSDB（链路状态数据库）</strong>：全网所有LSA的集合。</li>
+</ul>
+<blockquote>
+<p>📌 一句话总结：每台路由器将自己的直连信息整理成LSA发给邻居，全网所有LSA集合形成LSDB，路由器基于LSDB计算出最优路径。</p>
+</blockquote>
+<h3>DR（指定路由器）选举</h3>
+<blockquote>
+<p><strong>目的</strong>：在广播域中减少重复的LSA更新。所有路由器只与DR/BDR建立邻接关系。</p>
+</blockquote>
+<p><strong>选举规则</strong>：
+1. <strong>OSPF优先级</strong>（越大越优，默认为1，0表示不参与选举）。
+2. <strong>Router-ID</strong>（越大越优）。</p>
+<blockquote>
+<p><strong>原则</strong>：<strong>非抢占原则</strong>（DR选定后，即使新加入更高优先级设备，也不重新选举）。</p>
+<p>📌 一句话总结：在广播域中选举DR和BDR以减少重复的LSA更新，选举规则先比OSPF优先级（越大越优，0表示不参与）再比Router-ID（越大越优），遵循非抢占原则（DR选定后不重新选举）。</p>
+</blockquote>
+<h3>OSPF基础配置</h3>
+<div class="highlight"><pre><span></span><code><span class="o">[</span>R1<span class="o">]</span><span class="w"> </span>ospf<span class="w"> </span><span class="m">1</span><span class="w">                                    </span><span class="c1"># 启动OSPF，进程号本地有效</span>
+<span class="o">[</span>R1-ospf-1<span class="o">]</span><span class="w"> </span>area<span class="w"> </span><span class="m">0</span>
+<span class="o">[</span>R1-ospf-1-area-0.0.0.0<span class="o">]</span><span class="w"> </span>network<span class="w"> </span><span class="m">192</span>.168.12.0<span class="w"> </span><span class="m">0</span>.0.0.255<span class="w">   </span><span class="c1"># 宣告网段（使用反掩码）</span>
+<span class="o">[</span>R1-ospf-1-area-0.0.0.0<span class="o">]</span><span class="w"> </span>network<span class="w"> </span><span class="m">10</span>.1.1.1<span class="w"> </span><span class="m">0</span>.0.0.0<span class="w">         </span><span class="c1"># 宣告主机地址</span>
+</code></pre></div>
+
+<blockquote>
+<p><strong>宣告的两层含义</strong>：（1）该网段以LSA发布到OSPF网络；（2）该接口收发OSPF报文，建立邻居。因此<strong>所有直连网段都需要宣告</strong>。</p>
+<p>📌 一句话总结：使用ospf 1启动OSPF进程，进入area区域后用network 网段 反掩码宣告直连网段，宣告的含义是既发布路由信息也在该接口收发OSPF报文建立邻居。</p>
+</blockquote>
+<h3>常用查看与调整命令</h3>
+<div class="highlight"><pre><span></span><code><span class="o">[</span>R3<span class="o">]</span><span class="w"> </span>display<span class="w"> </span>ospf<span class="w"> </span>peer<span class="w">                         </span><span class="c1"># 查看OSPF邻居</span>
+
+<span class="c1"># 调整Router-ID</span>
+<span class="o">[</span>R3<span class="o">]</span><span class="w"> </span>ospf<span class="w"> </span><span class="m">1</span><span class="w"> </span>router-id<span class="w"> </span><span class="m">33</span>.33.33.33
+&lt;R3&gt;<span class="w"> </span>reset<span class="w"> </span>ospf<span class="w"> </span>process<span class="w">                        </span><span class="c1"># 重启进程使ID生效（会断网！）</span>
+
+<span class="c1"># 调整DR优先级（基于接口）</span>
+<span class="o">[</span>R5<span class="o">]</span><span class="w"> </span>interface<span class="w"> </span>GigabitEthernet<span class="w"> </span><span class="m">0</span>/0
+<span class="o">[</span>R5-GigabitEthernet0/0<span class="o">]</span><span class="w"> </span>ospf<span class="w"> </span>dr-priority<span class="w"> </span><span class="m">100</span>
+</code></pre></div>
+
+<blockquote>
+<p>📌 一句话总结：display ospf peer查看邻居，ospf router-id调整Router-ID（需reset ospf process重启进程生效，会中断网络），ospf dr-priority调整接口DR选举优先级。</p>
+</blockquote>
+<h3>多区域OSPF配置</h3>
+<blockquote>
+<p>多区域可减轻大型网络设备运算压力。区域间互通无需额外操作。</p>
+</blockquote>
+<div class="highlight"><pre><span></span><code><span class="o">[</span>R1<span class="o">]</span><span class="w"> </span>ospf<span class="w"> </span><span class="m">1</span>
+<span class="o">[</span>R1-ospf-1<span class="o">]</span><span class="w"> </span>area<span class="w"> </span><span class="m">0</span>
+<span class="o">[</span>R1-ospf-1-area-0.0.0.0<span class="o">]</span><span class="w"> </span>network<span class="w"> </span><span class="m">10</span>.1.1.1<span class="w"> </span><span class="m">0</span>.0.0.0
+<span class="o">[</span>R1-ospf-1-area-0.0.0.0<span class="o">]</span><span class="w"> </span>network<span class="w"> </span><span class="m">192</span>.168.12.0<span class="w"> </span><span class="m">0</span>.0.0.255
+<span class="o">[</span>R1-ospf-1<span class="o">]</span><span class="w"> </span>area<span class="w"> </span><span class="m">1</span>
+<span class="o">[</span>R1-ospf-1-area-0.0.0.1<span class="o">]</span><span class="w"> </span>network<span class="w"> </span><span class="m">192</span>.168.145.0<span class="w"> </span><span class="m">0</span>.0.0.255
+</code></pre></div>
+
+<blockquote>
+<p>📌 一句话总结：在边界路由器上分别进入不同区域宣告对应网段即可实现多区域OSPF，区域间互通无需额外配置，多区域能减轻大型网络中设备的运算压力。</p>
+</blockquote>
+<h3>OSPF开销调整（影响选路）</h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># 方法一：调整参考带宽（所有设备需一致）</span>
+<span class="o">[</span>R1<span class="o">]</span><span class="w"> </span>ospf<span class="w"> </span><span class="m">1</span>
+<span class="o">[</span>R1-ospf-1<span class="o">]</span><span class="w"> </span>bandwidth-reference<span class="w"> </span><span class="m">10000</span>
+
+<span class="c1"># 方法二：直接修改接口开销</span>
+<span class="o">[</span>R1<span class="o">]</span><span class="w"> </span>interface<span class="w"> </span>GigabitEthernet<span class="w"> </span><span class="m">0</span>/1
+<span class="o">[</span>R1-GigabitEthernet0/1<span class="o">]</span><span class="w"> </span>ospf<span class="w"> </span>cost<span class="w"> </span><span class="m">30</span>
+</code></pre></div>
+
+<blockquote>
+<p>📌 一句话总结：通过bandwidth-reference调整参考带宽（所有设备需一致）或直接在接口下用ospf cost修改开销值，可以影响OSPF的路径选择。</p>
+</blockquote>
+<h2>三、VLAN间路由</h2>
+<h3>1. 单臂路由（路由器子接口）</h3>
+<blockquote>
+<p>适用场景：使用路由器作为VLAN网关，通过一个物理接口划分多个子接口，每个子接口对应一个VLAN网关。交换机侧配置Trunk，根据VLAN Tag决定进入哪个子接口。</p>
+</blockquote>
+<p><strong>交换机配置</strong>（二层）：</p>
+<div class="highlight"><pre><span></span><code><span class="o">[</span>H3C<span class="o">]</span><span class="w"> </span>vlan<span class="w"> </span><span class="m">10</span>
+<span class="o">[</span>H3C-vlan10<span class="o">]</span><span class="w"> </span>port<span class="w"> </span>GigabitEthernet<span class="w"> </span><span class="m">1</span>/0/1
+<span class="o">[</span>H3C<span class="o">]</span><span class="w"> </span>vlan<span class="w"> </span><span class="m">20</span>
+<span class="o">[</span>H3C-vlan20<span class="o">]</span><span class="w"> </span>port<span class="w"> </span>GigabitEthernet<span class="w"> </span><span class="m">1</span>/0/2
+<span class="o">[</span>H3C<span class="o">]</span><span class="w"> </span>interface<span class="w"> </span>GigabitEthernet<span class="w"> </span><span class="m">1</span>/0/3
+<span class="o">[</span>H3C-GigabitEthernet1/0/3<span class="o">]</span><span class="w"> </span>port<span class="w"> </span>link-type<span class="w"> </span>trunk
+<span class="o">[</span>H3C-GigabitEthernet1/0/3<span class="o">]</span><span class="w"> </span>port<span class="w"> </span>trunk<span class="w"> </span>permit<span class="w"> </span>vlan<span class="w"> </span><span class="m">10</span><span class="w"> </span><span class="m">20</span>
+</code></pre></div>
+
+<p><strong>路由器子接口配置</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="o">[</span>R1<span class="o">]</span><span class="w"> </span>interface<span class="w"> </span>GigabitEthernet<span class="w"> </span><span class="m">0</span>/0.1
+<span class="o">[</span>R1-GigabitEthernet0/0.1<span class="o">]</span><span class="w"> </span>vlan-type<span class="w"> </span>dot1q<span class="w"> </span>vid<span class="w"> </span><span class="m">10</span>
+<span class="o">[</span>R1-GigabitEthernet0/0.1<span class="o">]</span><span class="w"> </span>ip<span class="w"> </span>address<span class="w"> </span><span class="m">192</span>.168.10.1<span class="w"> </span><span class="m">24</span>
+
+<span class="o">[</span>R1<span class="o">]</span><span class="w"> </span>interface<span class="w"> </span>GigabitEthernet<span class="w"> </span><span class="m">0</span>/0.2
+<span class="o">[</span>R1-GigabitEthernet0/0.2<span class="o">]</span><span class="w"> </span>vlan-type<span class="w"> </span>dot1q<span class="w"> </span>vid<span class="w"> </span><span class="m">20</span>
+<span class="o">[</span>R1-GigabitEthernet0/0.2<span class="o">]</span><span class="w"> </span>ip<span class="w"> </span>address<span class="w"> </span><span class="m">192</span>.168.20.1<span class="w"> </span><span class="m">24</span>
+</code></pre></div>
+
+<blockquote>
+<p>📌 一句话总结：在路由器一个物理接口上划分多个子接口，每个子接口通过vlan-type dot1q vid绑定一个VLAN并配置对应网关地址，交换机侧配置Trunk，根据VLAN Tag决定进入哪个子接口实现VLAN间通信。</p>
+</blockquote>
+<h3>2. VLANIF（三层交换机）</h3>
+<blockquote>
+<p>三层交换机可同时实现交换与路由功能。先在物理接口划分VLAN，再创建虚拟的 <strong>VLANIF接口</strong> 作为网关。</p>
+</blockquote>
+<p><strong>配置条件</strong>：（1）设备存在该VLAN；（2）有接口能传输该VLAN（接口不能Down）。</p>
+<div class="highlight"><pre><span></span><code><span class="o">[</span>S2<span class="o">]</span><span class="w"> </span>vlan<span class="w"> </span><span class="m">60</span>
+<span class="o">[</span>S2-vlan60<span class="o">]</span><span class="w"> </span>port<span class="w"> </span>GigabitEthernet<span class="w"> </span><span class="m">1</span>/0/1
+<span class="o">[</span>S2<span class="o">]</span><span class="w"> </span>vlan<span class="w"> </span><span class="m">70</span>
+<span class="o">[</span>S2-vlan70<span class="o">]</span><span class="w"> </span>port<span class="w"> </span>GigabitEthernet<span class="w"> </span><span class="m">1</span>/0/2
+<span class="o">[</span>S2<span class="o">]</span><span class="w"> </span>interface<span class="w"> </span>Vlan-interface<span class="w"> </span><span class="m">60</span>
+<span class="o">[</span>S2-Vlan-interface60<span class="o">]</span><span class="w"> </span>ip<span class="w"> </span>address<span class="w"> </span><span class="m">192</span>.168.60.1<span class="w"> </span><span class="m">24</span>
+<span class="o">[</span>S2<span class="o">]</span><span class="w"> </span>interface<span class="w"> </span>Vlan-interface<span class="w"> </span><span class="m">70</span>
+<span class="o">[</span>S2-Vlan-interface70<span class="o">]</span><span class="w"> </span>ip<span class="w"> </span>address<span class="w"> </span><span class="m">192</span>.168.70.1<span class="w"> </span><span class="m">24</span>
+</code></pre></div>
+
+<blockquote>
+<p>📌 一句话总结：三层交换机在物理接口划分VLAN后，创建虚拟的Vlan-interface接口并配置IP地址作为该VLAN的网关，前提是设备存在该VLAN且有接口能传输该VLAN（接口不能Down）。</p>
+</blockquote>
+<h1>第六天</h1>
+<blockquote>
+<p>核心内容：DHCP动态地址分配、链路聚合、接入层安全（802.1X、端口隔离）</p>
+</blockquote>
+<h2>一、DHCP（动态主机配置协议）</h2>
+<blockquote>
+<p><strong>作用</strong>：动态分配IP、掩码、网关、DNS等参数。</p>
+</blockquote>
+<p><strong>优点</strong>：简化终端配置、提升移动用户体验、提高地址利用率。</p>
+<h3>DHCP分配四步流程</h3>
+<ol>
+<li><strong>Discover</strong>：客户端<strong>广播</strong>寻找DHCP服务器。</li>
+<li><strong>Offer</strong>：服务器<strong>单播</strong>回应Offer（包含IP等参数）。</li>
+<li><strong>Request</strong>：客户端<strong>广播</strong>请求确认配置；续租也使用request包；分配相对固定地址。</li>
+<li><strong>Ack</strong>：服务器<strong>单播</strong>确认分配，该IP不再分配他人。</li>
+</ol>
+<blockquote>
+<p>终端获取地址后会发送<strong>免费ARP</strong>检查IP冲突（请求自己IP对应的MAC，无回应则正常使用）。</p>
+<p>📌 一句话总结：DHCP通过Discover（广播找服务器）、Offer（单播回应IP参数）、Request（广播请求确认）、Ack（单播确认分配）四步动态分配IP/掩码/网关/DNS，终端获取地址后会发送免费ARP检查IP冲突。</p>
+</blockquote>
+<h2>二、链路聚合（Link Aggregation）</h2>
+<blockquote>
+<p><strong>作用</strong>：提高带宽、增强可靠性、实现负载分担。</p>
+</blockquote>
+<h3>聚合分类</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">类型</th>
+<th style="text-align: left;">特点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>静态聚合</strong></td>
+<td style="text-align: left;">手工配置，不考虑对方状态（兼容性好）</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>动态聚合（LACP）</strong></td>
+<td style="text-align: left;">设备间通过LACP协商，自动检测错误，<strong>推荐使用</strong>（不同厂商对接可能失败）</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>华三动态模式</strong>默认均为 <code>active</code>（主动发送）。</p>
+<p>📌 一句话总结：链路聚合将多条物理链路捆绑为一条逻辑链路，提高带宽、增强可靠性并实现负载分担；静态聚合手工配置（兼容性好），动态聚合通过LACP协议自动协商（推荐，但不同厂商对接可能失败）。</p>
+</blockquote>
+<h3>聚合要求</h3>
+<ol>
+<li><strong>硬件一致</strong>（电口/光口、速率一致）。</li>
+<li><strong>软件一致</strong>（Access/Trunk、允许VLAN、PVID一致）。<blockquote>
+<p><strong>最佳实践</strong>：物理接口只加入聚合组，所有配置在<strong>聚合接口</strong>下完成。</p>
+</blockquote>
+</li>
+</ol>
+<blockquote>
+<p>📌 一句话总结：聚合要求硬件一致（电口/光口、速率相同）和软件一致（接口类型、允许VLAN、PVID相同），最佳实践是物理接口只加入聚合组，所有配置在聚合接口下完成；华三动态聚合失败时仍会选一个接口保证通信（其他厂商直接Down）。</p>
+</blockquote>
+<h3>二层静态聚合配置</h3>
+<div class="highlight"><pre><span></span><code><span class="o">[</span>S1<span class="o">]</span><span class="w"> </span>interface<span class="w"> </span>Bridge-Aggregation<span class="w"> </span><span class="m">1</span>
+<span class="o">[</span>S1<span class="o">]</span><span class="w"> </span>interface<span class="w"> </span>range<span class="w"> </span>GigabitEthernet<span class="w"> </span><span class="m">1</span>/0/1<span class="w"> </span>GigabitEthernet<span class="w"> </span><span class="m">1</span>/0/2
+<span class="o">[</span>S1-if-range<span class="o">]</span><span class="w"> </span>port<span class="w"> </span>link-aggregation<span class="w"> </span>group<span class="w"> </span><span class="m">1</span>
+
+<span class="c1"># 在聚合口下配置属性</span>
+<span class="o">[</span>S1<span class="o">]</span><span class="w"> </span>interface<span class="w"> </span>Bridge-Aggregation<span class="w"> </span><span class="m">1</span>
+<span class="o">[</span>S1-Bridge-Aggregation1<span class="o">]</span><span class="w"> </span>port<span class="w"> </span>link-type<span class="w"> </span>trunk
+<span class="o">[</span>S1-Bridge-Aggregation1<span class="o">]</span><span class="w"> </span>port<span class="w"> </span>trunk<span class="w"> </span>permit<span class="w"> </span>vlan<span class="w"> </span>all
+</code></pre></div>
+
+<h3>二层动态聚合配置</h3>
+<div class="highlight"><pre><span></span><code><span class="o">[</span>S1<span class="o">]</span><span class="w"> </span>interface<span class="w"> </span>Bridge-Aggregation<span class="w"> </span><span class="m">2</span>
+<span class="o">[</span>S1-Bridge-Aggregation2<span class="o">]</span><span class="w"> </span>link-aggregation<span class="w"> </span>mode<span class="w"> </span>dynamic
+<span class="o">[</span>S1<span class="o">]</span><span class="w"> </span>interface<span class="w"> </span>range<span class="w"> </span>GigabitEthernet<span class="w"> </span><span class="m">1</span>/0/7<span class="w"> </span>GigabitEthernet<span class="w"> </span><span class="m">1</span>/0/8
+<span class="o">[</span>S1-if-range<span class="o">]</span><span class="w"> </span>port<span class="w"> </span>link-aggregation<span class="w"> </span>group<span class="w"> </span><span class="m">2</span>
+</code></pre></div>
+
+<blockquote>
+<p><strong>注意</strong>：一边静态、一边动态无法正常聚合。华三动态聚合失败时，为保证通信，仍会选一个接口转发（其他厂商直接Down）。</p>
+</blockquote>
+<h3>查看聚合状态</h3>
+<div class="highlight"><pre><span></span><code><span class="o">[</span>S1<span class="o">]</span><span class="w"> </span>display<span class="w"> </span>interface<span class="w"> </span>Bridge-Aggregation<span class="w"> </span><span class="m">1</span><span class="w"> </span>brief
+<span class="o">[</span>S1<span class="o">]</span><span class="w"> </span>display<span class="w"> </span>link-aggregation<span class="w"> </span>summary
+</code></pre></div>
+
+<blockquote>
+<p>📌 一句话总结：display interface Bridge-Aggregation brief查看聚合接口状态，display link-aggregation summary查看聚合汇总信息。</p>
+</blockquote>
+<h3>三层路由器聚合配置</h3>
+<div class="highlight"><pre><span></span><code><span class="o">[</span>R4<span class="o">]</span><span class="w"> </span>interface<span class="w"> </span>Route-Aggregation<span class="w"> </span><span class="m">1</span>
+<span class="o">[</span>R4<span class="o">]</span><span class="w"> </span>interface<span class="w"> </span>range<span class="w"> </span>GigabitEthernet<span class="w"> </span><span class="m">0</span>/0<span class="w"> </span>GigabitEthernet<span class="w"> </span><span class="m">0</span>/1
+<span class="o">[</span>R4-if-range<span class="o">]</span><span class="w"> </span>port<span class="w"> </span>link-aggregation<span class="w"> </span>group<span class="w"> </span><span class="m">1</span>
+</code></pre></div>
+
+<h2>三、接入层安全技术</h2>
+<h3>1. 802.1X认证</h3>
+<ul>
+<li><strong>原理</strong>：交换机配合认证服务器，终端未通过认证前<strong>内外网均无法访问</strong>。</li>
+<li><strong>特点</strong>：安全性极高，但交换机需支持802.1X，成本较高。</li>
+</ul>
+<blockquote>
+<p>📌 一句话总结：交换机配合认证服务器，终端未通过认证前内外网均无法访问，安全性极高但需要交换机支持802.1X功能（成本较高）。</p>
+</blockquote>
+<h3>2. 端口隔离</h3>
+<ul>
+<li><strong>原理</strong>：在同一广播域内，配置端口隔离后，主机间<strong>无法直接互访</strong>，可有效防止ARP欺骗等攻击。</li>
+<li><strong>适用场景</strong>：同一广播域但无互访需求的终端。</li>
+</ul>
+<blockquote>
+<p>📌 一句话总结：在同一个广播域内配置端口隔离后，主机间无法直接互访，能有效防止ARP欺骗等在同一广播域内发起的攻击。</p>
+</blockquote>
+<h1>第七天</h1>
+<blockquote>
+<p>核心内容：ACL（访问控制列表）与 NAT（网络地址转换）</p>
+</blockquote>
+<h2>一、ACL（访问控制列表）</h2>
+<p>ACL 的两大核心功能：<strong>匹配流量</strong> 与 <strong>访问控制</strong>。</p>
+<h3>1. 匹配流量（通配符掩码）</h3>
+<p>匹配依据为 <strong>五元组</strong>：源IP、目的IP、协议、源端口号（不常用，因为源端口是随机的）、目的端口号。</p>
+<h4>（1）基础匹配符</h4>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">通配符掩码</th>
+<th style="text-align: left;">含义</th>
+<th style="text-align: left;">示例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>0.0.0.255</code></td>
+<td style="text-align: left;">匹配前24位固定，后8位任意</td>
+<td style="text-align: left;"><code>192.168.1.0 0.0.0.255</code> → 匹配 192.168.1.x 网段</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>0.0.255.255</code></td>
+<td style="text-align: left;">匹配前16位固定，后16位任意</td>
+<td style="text-align: left;"><code>172.16.0.0 0.0.255.255</code> → 匹配 172.16.x.x</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>255.255.255.255</code></td>
+<td style="text-align: left;">匹配任意地址</td>
+<td style="text-align: left;"><code>0.0.0.0 255.255.255.255</code> = <code>any</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>0.0.0.0</code></td>
+<td style="text-align: left;">精确匹配单个地址</td>
+<td style="text-align: left;"><code>192.168.1.10 0.0.0.0</code> → 仅匹配该主机</td>
+</tr>
+</tbody>
+</table>
+<h4>（2）范围匹配（难度二）</h4>
+<ul>
+<li><code>192.168.1.32 0.0.0.31</code> → 匹配 192.168.1.32 ~ 192.168.1.63</li>
+<li><code>192.168.1.64 0.0.0.15</code> → 匹配 192.168.1.64 ~ 192.168.1.79</li>
+<li><code>192.168.1.128 0.0.0.63</code> → 匹配 192.168.1.128 ~ 192.168.1.191</li>
+</ul>
+<h4>（3）奇偶匹配（难度三）</h4>
+<p>观察二进制最后一位：<code>1</code> 为奇数，<code>0</code> 为偶数。通配符掩码 <code>254</code>（二进制 <code>11111110</code>）表示前7位任意，最后一位固定。</p>
+<ul>
+<li><code>192.168.1.100 0.0.254.255</code> → 匹配 192.168.1.x 中的奇数或偶数 IP（取决于 254 对应的数值奇偶性）。</li>
+</ul>
+<h4>（4）匹配地址类别</h4>
+<ul>
+<li><strong>A类</strong>：<code>0.0.0.0 127.255.255.255</code></li>
+<li><strong>B类</strong>：<code>172.0.0.0 63.255.255.255</code></li>
+<li><strong>C类</strong>：<code>192.0.0.0 31.255.255.255</code></li>
+</ul>
+<h4>（5）端口匹配操作符</h4>
+<ul>
+<li><code>eq</code> — 等于（常用）</li>
+<li><code>range</code> — 范围</li>
+<li><code>gt</code> — 大于</li>
+<li><code>lt</code> — 小于</li>
+</ul>
+<blockquote>
+<p>📌 一句话总结：ACL基于五元组（源/目的IP、协议、源/目的端口）匹配流量，使用通配符掩码（0表示必须匹配、1表示任意）灵活定义匹配范围，如0.0.0.255匹配前24位固定、后8位任意；范围匹配通过通配符掩码实现连续IP段匹配（如0.0.0.31匹配32个地址），奇偶匹配利用通配符掩码254控制二进制最后一位固定来实现奇/偶数IP的匹配。</p>
+</blockquote>
+<h3>2. ACL 分类与部署原则</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">类型</th>
+<th style="text-align: left;">匹配依据</th>
+<th style="text-align: left;">部署建议</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>基本ACL</strong></td>
+<td style="text-align: left;">仅源IP地址</td>
+<td style="text-align: left;">离<strong>目的</strong>近</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>高级ACL</strong></td>
+<td style="text-align: left;">五元组</td>
+<td style="text-align: left;">离<strong>源</strong>近（目的近亦可，但会增加无效转发）</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>万能法则</strong>：如果不会判断，统一放在<strong>目的近</strong>。</p>
+<p>📌 一句话总结：基本ACL仅匹配源IP，建议部署在离目的近的位置；高级ACL匹配五元组，建议部署在离源近的位置（目的近亦可但会增加无效转发），不确定时统一放在目的近。</p>
+</blockquote>
+<h3>3. ACL 配置注意事项（重点）</h3>
+<ol>
+<li><strong>自上而下匹配</strong>，命中即执行，不再继续向下 ⇒ <strong>先小后大</strong>（精确条目放前面，大范围放后面）。</li>
+<li>
+<p>❌ 错误示例：先 <code>permit 192.168.1.0/24</code>，后 <code>deny 192.168.1.10</code> → 后者永远不生效。</p>
+</li>
+<li>
+<p><strong>默认行为差异</strong>（华为/华三 vs 思科/锐捷）：</p>
+</li>
+<li><strong>华为/华三</strong>：访问控制时默认<strong>允许</strong>；流量匹配时默认<strong>拒绝</strong>。</li>
+<li><strong>锐捷/思科</strong>：任何时候都默认<strong>拒绝</strong>。</li>
+<li>✅ <strong>建议</strong>：无论什么设备，都手工明确配置 <code>permit any</code> 或 <code>deny any</code>。</li>
+</ol>
+<blockquote>
+<p>📌 一句话总结：ACL自上而下匹配（命中即执行，不再继续），需遵循"先小后大"原则（精确条目放前面）；华为/华三访问控制时默认允许、流量匹配时默认拒绝，思科/锐捷任何时候都默认拒绝，建议手工明确配置permit any或deny any。</p>
+</blockquote>
+<h3>4. 配置步骤</h3>
+<ol>
+<li><strong>确定部署位置</strong>（根据上方原则判断源近或目的近）。</li>
+<li><strong>配置 ACL 规则</strong>（拒绝场景：<code>deny xxx</code> + <code>permit any</code>；仅允许场景：<code>permit xxx</code> + <code>deny any</code>）。</li>
+<li><strong>调用在接口的对应方向</strong>（in / out）。</li>
+</ol>
+<h3>5. 配置案例</h3>
+<h4>案例1：基本ACL — PC5 不能访问 PC7</h4>
+<div class="highlight"><pre><span></span><code><span class="o">[</span>R3<span class="o">]</span><span class="w"> </span>acl<span class="w"> </span>basic<span class="w"> </span><span class="m">2000</span>
+<span class="o">[</span>R3-acl-ipv4-basic-2000<span class="o">]</span><span class="w"> </span>rule<span class="w"> </span>deny<span class="w"> </span><span class="nb">source</span><span class="w"> </span><span class="m">192</span>.168.1.5<span class="w"> </span><span class="m">0</span>.0.0.0
+<span class="o">[</span>R3-acl-ipv4-basic-2000<span class="o">]</span><span class="w"> </span>rule<span class="w"> </span>permit<span class="w"> </span><span class="nb">source</span><span class="w"> </span>any
+<span class="o">[</span>R3<span class="o">]</span><span class="w"> </span>interface<span class="w"> </span>GigabitEthernet<span class="w"> </span><span class="m">0</span>/1
+<span class="o">[</span>R3-GigabitEthernet0/1<span class="o">]</span><span class="w"> </span>packet-filter<span class="w"> </span><span class="m">2000</span><span class="w"> </span>outbound
+</code></pre></div>
+
+<h4>案例2：基本ACL — 仅允许 PC5 访问 PC7</h4>
+<div class="highlight"><pre><span></span><code><span class="o">[</span>R3<span class="o">]</span><span class="w"> </span>acl<span class="w"> </span>basic<span class="w"> </span>name<span class="w"> </span>onlypc5
+<span class="o">[</span>R3-acl-ipv4-basic-onlypc5<span class="o">]</span><span class="w"> </span>rule<span class="w"> </span>permit<span class="w"> </span><span class="nb">source</span><span class="w"> </span><span class="m">192</span>.168.1.5<span class="w"> </span><span class="m">0</span>
+<span class="o">[</span>R3-acl-ipv4-basic-onlypc5<span class="o">]</span><span class="w"> </span>rule<span class="w"> </span>deny<span class="w"> </span><span class="nb">source</span><span class="w"> </span>any
+<span class="o">[</span>R3<span class="o">]</span><span class="w"> </span>interface<span class="w"> </span>GigabitEthernet<span class="w"> </span><span class="m">0</span>/0
+<span class="o">[</span>R3-GigabitEthernet0/0<span class="o">]</span><span class="w"> </span>packet-filter<span class="w"> </span>name<span class="w"> </span>onlypc5<span class="w"> </span>inbound
+</code></pre></div>
+
+<blockquote>
+<p>⚠️ <strong>注意</strong>：此配置如果调用在 inbound 方向，会拒绝 OSPF 等信息，可能导致邻居断开。<strong>推荐调用在 outbound 方向</strong>。</p>
+</blockquote>
+<h4>案例3：高级ACL — 拒绝 R1 Telnet R2</h4>
+<div class="highlight"><pre><span></span><code><span class="o">[</span>R1<span class="o">]</span><span class="w"> </span>acl<span class="w"> </span>advanced<span class="w"> </span><span class="m">3000</span>
+<span class="o">[</span>R1-acl-ipv4-adv-3000<span class="o">]</span><span class="w"> </span>rule<span class="w"> </span>deny<span class="w"> </span>tcp<span class="w"> </span><span class="nb">source</span><span class="w"> </span><span class="m">192</span>.168.12.1<span class="w"> </span><span class="m">0</span><span class="w"> </span>destination<span class="w"> </span><span class="m">192</span>.168.12.2<span class="w"> </span><span class="m">0</span><span class="w"> </span>destination-port<span class="w"> </span>eq<span class="w"> </span>telnet
+<span class="o">[</span>R1-acl-ipv4-adv-3000<span class="o">]</span><span class="w"> </span>rule<span class="w"> </span>permit<span class="w"> </span>ip
+</code></pre></div>
+
+<h4>案例4：高级ACL — 仅允许 R3（192.168.23.3）Telnet R2</h4>
+<div class="highlight"><pre><span></span><code><span class="o">[</span>R2<span class="o">]</span><span class="w"> </span>acl<span class="w"> </span>basic<span class="w"> </span><span class="m">2000</span>
+<span class="o">[</span>R2-acl-ipv4-basic-2000<span class="o">]</span><span class="w"> </span>rule<span class="w"> </span>permit<span class="w"> </span><span class="nb">source</span><span class="w"> </span><span class="m">192</span>.168.23.3<span class="w"> </span><span class="m">0</span>
+<span class="o">[</span>R2-acl-ipv4-basic-2000<span class="o">]</span><span class="w"> </span>rule<span class="w"> </span>deny<span class="w"> </span><span class="nb">source</span><span class="w"> </span>any
+<span class="o">[</span>R2<span class="o">]</span><span class="w"> </span>telnet<span class="w"> </span>server<span class="w"> </span>acl<span class="w"> </span><span class="m">2000</span><span class="w">   </span><span class="c1"># 调用位置不局限在物理接口</span>
+</code></pre></div>
+
+<blockquote>
+<p>📌 一句话总结：基本ACL使用acl basic + rule deny/permit source控制源IP访问，高级ACL使用acl advanced + rule deny/permit tcp/ip控制五元组，通过packet-filter或telnet server acl调用在接口或服务上。</p>
+</blockquote>
+<h2>二、NAT（网络地址转换）</h2>
+<h3>1. 产生背景</h3>
+<ul>
+<li>IPv4 地址不足，划分 <strong>私网地址</strong> 与 <strong>公网地址</strong>。</li>
+<li>私网地址范围：</li>
+<li>A类：<code>10.0.0.0 ~ 10.255.255.255</code></li>
+<li>B类：<code>172.16.0.0 ~ 172.31.255.255</code></li>
+<li>C类：<code>192.168.0.0 ~ 192.168.255.255</code></li>
+<li>私网地址访问公网前，必须转换为合法公网地址。</li>
+</ul>
+<blockquote>
+<p>📌 一句话总结：由于IPv4地址不足，划分了私网地址（A类10.0.0.0/8、B类172.16.0.0/12、C类192.168.0.0/16）和公网地址，私网地址访问公网前必须转换为合法的公网地址。</p>
+</blockquote>
+<h3>2. NAT 分类</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">类型</th>
+<th style="text-align: left;">方向</th>
+<th style="text-align: left;">适用场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>SNAT</strong>（源地址转换）</td>
+<td style="text-align: left;">内网 → 外网</td>
+<td style="text-align: left;">所有网络都需要（临时分配公网地址）</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>DNAT</strong>（目的地址转换）</td>
+<td style="text-align: left;">外网 → 内网</td>
+<td style="text-align: left;">内网有对外提供服务的服务器时（固定映射）</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>📌 一句话总结：SNAT（源地址转换）用于内网访问外网，临时分配公网地址；DNAT（目的地址转换）用于外网访问内网的服务器，需要固定映射关系。</p>
+</blockquote>
+<h3>3. NAT 六种实现形式</h3>
+<h4>① 静态 NAT</h4>
+<p>公网 IP 与私网 IP <strong>一对一固定映射</strong>。支持 SNAT 和 DNAT，适用于重要业务服务器。</p>
+<div class="highlight"><pre><span></span><code><span class="o">[</span>R1<span class="o">]</span><span class="w"> </span>interface<span class="w"> </span>GigabitEthernet<span class="w"> </span><span class="m">0</span>/1
+<span class="o">[</span>R1-GigabitEthernet0/1<span class="o">]</span><span class="w"> </span>nat<span class="w"> </span>static<span class="w"> </span><span class="nb">enable</span>
+<span class="o">[</span>R1<span class="o">]</span><span class="w"> </span>nat<span class="w"> </span>static<span class="w"> </span>outbound<span class="w"> </span><span class="m">192</span>.168.1.4<span class="w"> </span><span class="m">100</span>.1.1.10
+</code></pre></div>
+
+<blockquote>
+<p>📌 一句话总结：公网IP与私网IP一对一固定映射，地址利用率低但支持SNAT和DNAT，适用于重要业务服务器。</p>
+</blockquote>
+<h4>② 动态 NAT</h4>
+<p>公网 IP <strong>临时分配</strong>给私网主机，用完归还。同时在线人数 = 公网 IP 数量。仅支持 SNAT。</p>
+<div class="highlight"><pre><span></span><code><span class="o">[</span>R1<span class="o">]</span><span class="w"> </span>acl<span class="w"> </span>basic<span class="w"> </span><span class="m">2000</span>
+<span class="o">[</span>R1-acl-ipv4-basic-2000<span class="o">]</span><span class="w"> </span>rule<span class="w"> </span>permit<span class="w"> </span><span class="nb">source</span><span class="w"> </span><span class="m">192</span>.168.1.0<span class="w"> </span><span class="m">0</span>.0.0.255
+<span class="o">[</span>R1<span class="o">]</span><span class="w"> </span>nat<span class="w"> </span>address-group<span class="w"> </span><span class="m">1</span>
+<span class="o">[</span>R1-address-group-1<span class="o">]</span><span class="w"> </span>address<span class="w"> </span><span class="m">100</span>.1.1.10<span class="w"> </span><span class="m">100</span>.1.1.20
+<span class="o">[</span>R1<span class="o">]</span><span class="w"> </span>interface<span class="w"> </span>GigabitEthernet<span class="w"> </span><span class="m">0</span>/1
+<span class="o">[</span>R1-GigabitEthernet0/1<span class="o">]</span><span class="w"> </span>nat<span class="w"> </span>outbound<span class="w"> </span><span class="m">2000</span><span class="w"> </span>address-group<span class="w"> </span><span class="m">1</span><span class="w"> </span>no-pat<span class="w">   </span><span class="c1"># no-pat 不做端口转换</span>
+</code></pre></div>
+
+<blockquote>
+<p>📌 一句话总结：公网IP临时分配给私网主机、用完归还，同时在线人数等于公网IP数量，仅支持SNAT。</p>
+</blockquote>
+<h4>③ NAPT（网络地址端口转换）⭐ 内网访问外网最常用</h4>
+<p><strong>多个私网主机共享一个公网 IP</strong>，通过端口号区分。仅支持 SNAT。</p>
+<div class="highlight"><pre><span></span><code><span class="o">[</span>R1<span class="o">]</span><span class="w"> </span>interface<span class="w"> </span>GigabitEthernet<span class="w"> </span><span class="m">0</span>/1
+<span class="o">[</span>R1-GigabitEthernet0/1<span class="o">]</span><span class="w"> </span>nat<span class="w"> </span>outbound<span class="w"> </span><span class="m">2000</span><span class="w"> </span>address-group<span class="w"> </span><span class="m">1</span><span class="w">   </span><span class="c1"># 省略 no-pat 即为 NAPT</span>
+</code></pre></div>
+
+<blockquote>
+<p>📌 一句话总结：多个私网主机通过端口号共享一个公网IP，每个会话建立临时映射关系，是内网访问外网最常用的方式，仅支持SNAT。</p>
+</blockquote>
+<h4>④ Easy IP（华为/华三）</h4>
+<p>NAPT 的特例：<strong>直接将私网地址转换为出接口的公网地址</strong>。适用于无固定公网 IP 的场景（如 ADSL 拨号）。</p>
+<div class="highlight"><pre><span></span><code><span class="o">[</span>R1<span class="o">]</span><span class="w"> </span>acl<span class="w"> </span>basic<span class="w"> </span><span class="m">2000</span>
+<span class="o">[</span>R1-acl-ipv4-basic-2000<span class="o">]</span><span class="w"> </span>rule<span class="w"> </span>permit<span class="w"> </span><span class="nb">source</span><span class="w"> </span><span class="m">192</span>.168.1.0<span class="w"> </span><span class="m">0</span>.0.0.255
+<span class="o">[</span>R1<span class="o">]</span><span class="w"> </span>interface<span class="w"> </span>GigabitEthernet<span class="w"> </span><span class="m">0</span>/1
+<span class="o">[</span>R1-GigabitEthernet0/1<span class="o">]</span><span class="w"> </span>nat<span class="w"> </span>outbound<span class="w"> </span><span class="m">2000</span>
+</code></pre></div>
+
+<blockquote>
+<p>📌 一句话总结：NAPT的特例，将私网地址直接转换为出接口的公网地址，适用于无固定公网IP的ADSL拨号场景。</p>
+</blockquote>
+<h4>⑤ 端口映射（NAT Server）⭐ 外网访问内网常用</h4>
+<p><strong>固定将公网 IP:端口 映射到 私网 IP:端口</strong>（DNAT）。</p>
+<div class="highlight"><pre><span></span><code><span class="o">[</span>R1-GigabitEthernet0/1<span class="o">]</span><span class="w"> </span>nat<span class="w"> </span>server<span class="w"> </span>protocol<span class="w"> </span>tcp<span class="w"> </span>global<span class="w"> </span><span class="m">100</span>.1.1.10<span class="w"> </span><span class="m">23</span><span class="w"> </span>inside<span class="w"> </span><span class="m">192</span>.168.1.7<span class="w"> </span><span class="m">23</span>
+</code></pre></div>
+
+<blockquote>
+<p>📌 一句话总结：固定将公网IP:端口映射到私网IP:端口，用于外网主动访问内网服务器，属于DNAT。</p>
+</blockquote>
+<h4>⑥ NAT ALG（应用层网关）</h4>
+<p>针对 FTP 等包含随机端口信息的协议，ALG 可识别应用层数据并自动建立映射，解决普通 NAT 无法处理的问题。</p>
+<blockquote>
+<p>📌 一句话总结：针对FTP等包含随机端口信息的协议，ALG可识别应用层数据中的私网IP和端口信息并自动建立映射，解决普通NAT无法处理此类协议的问题。</p>
+</blockquote>
+<h1>第八天</h1>
+<blockquote>
+<p>核心内容：网络注意事项、MVRP、Private VLAN、Super VLAN、QINQ、RSTP（快速生成树）</p>
+</blockquote>
+<h2>一、基础网络注意事项（承接前六天拓扑）</h2>
+<ol>
+<li>所有内网三层设备必须配置<strong>默认路由</strong>。</li>
+<li>仔细检查 <strong>PC 的网关地址</strong> 是否配置错误。</li>
+<li>外网路由器<strong>不能配置任何动态路由协议</strong>，本拓扑中所有公网地址段均视为直连。</li>
+<li><strong>R8 的出口网段禁止宣告进 OSPF</strong>：</li>
+<li>ISP（运营商）不会与你建立 OSPF 邻居；</li>
+<li>OSPF 内部路由泄露给运营商存在严重<strong>安全风险</strong>。</li>
+</ol>
+<blockquote>
+<p>📌 一句话总结：内网三层设备需配置默认路由、检查PC网关是否正确、外网路由器不能配置动态路由协议（公网地址段视为直连）、R8出口网段禁止宣告进OSPF（ISP不建立OSPF且存在安全风险）。</p>
+</blockquote>
+<h2>二、MVRP（VLAN 注册协议）</h2>
+<p>让中间交换机<strong>动态学习</strong> VLAN 信息，无需手动逐个创建。</p>
+<div class="highlight"><pre><span></span><code><span class="o">[</span>S2<span class="o">]</span><span class="w"> </span>mvrp<span class="w"> </span>global<span class="w"> </span><span class="nb">enable</span><span class="w">                           </span><span class="c1"># 全局开启</span>
+<span class="o">[</span>S2<span class="o">]</span><span class="w"> </span>interface<span class="w"> </span>GigabitEthernet<span class="w"> </span><span class="m">1</span>/0/2
+<span class="o">[</span>S2-GigabitEthernet1/0/2<span class="o">]</span><span class="w"> </span>mvrp<span class="w"> </span><span class="nb">enable</span><span class="w">             </span><span class="c1"># 接口开启</span>
+<span class="o">[</span>S2-GigabitEthernet1/0/2<span class="o">]</span><span class="w"> </span>mvrp<span class="w"> </span>registration<span class="w"> </span>normal<span class="w"> </span><span class="c1"># 模式（默认normal）</span>
+</code></pre></div>
+
+<p><strong>三种注册模式</strong>：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">模式</th>
+<th style="text-align: left;">行为</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>normal</code></td>
+<td style="text-align: left;">可动态注册和注销（默认）</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>fixed</code></td>
+<td style="text-align: left;">不接收新注册，也不注销已有</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>forbidden</code></td>
+<td style="text-align: left;">已注册的 VLAN 信息也会被删除</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>📌 一句话总结：MVRP让中间交换机动态学习和注销VLAN信息，有三种模式——normal（动态注册/注销）、fixed（不接收新也不注销已有）、forbidden（已有VLAN信息也会消失）。</p>
+</blockquote>
+<h2>三、Private VLAN（私有VLAN）</h2>
+<p>在一个广播域内实现<strong>二层隔离</strong>，无需划分多个子网。</p>
+<ul>
+<li><strong>主 VLAN（Primary）</strong>：与所有辅助 VLAN 通信。</li>
+<li><strong>辅助 VLAN（Secondary）</strong>：</li>
+<li><strong>团体 VLAN（Community）</strong>：可与主 VLAN 及同团体成员通信。</li>
+<li><strong>隔离 VLAN（Isolated）</strong>：只能与主 VLAN 通信，互相隔离。</li>
+</ul>
+<p><strong>配置示例</strong>：</p>
+<div class="highlight"><pre><span></span><code><span class="o">[</span>S2<span class="o">]</span><span class="w"> </span>vlan<span class="w"> </span><span class="m">30</span>
+<span class="o">[</span>S2<span class="o">]</span><span class="w"> </span>vlan<span class="w"> </span><span class="m">40</span>
+<span class="o">[</span>S2<span class="o">]</span><span class="w"> </span>vlan<span class="w"> </span><span class="m">10</span>
+<span class="o">[</span>S2-vlan10<span class="o">]</span><span class="w"> </span>private-vlan<span class="w"> </span>primary<span class="w">                      </span><span class="c1"># 设置 vlan10 为主vlan</span>
+<span class="o">[</span>S2-vlan10<span class="o">]</span><span class="w"> </span>private-vlan<span class="w"> </span>secondary<span class="w"> </span><span class="m">30</span><span class="w"> </span><span class="m">40</span><span class="w">              </span><span class="c1"># 关联辅助vlan</span>
+
+<span class="o">[</span>S2<span class="o">]</span><span class="w"> </span>interface<span class="w"> </span>GigabitEthernet<span class="w"> </span><span class="m">1</span>/0/1
+<span class="o">[</span>S2-GigabitEthernet1/0/1<span class="o">]</span><span class="w"> </span>port<span class="w"> </span>access<span class="w"> </span>vlan<span class="w"> </span><span class="m">30</span>
+<span class="o">[</span>S2-GigabitEthernet1/0/1<span class="o">]</span><span class="w"> </span>port<span class="w"> </span>private-vlan<span class="w"> </span>host<span class="w">      </span><span class="c1"># 设为host端口（辅助vlan）</span>
+
+<span class="o">[</span>S2<span class="o">]</span><span class="w"> </span>interface<span class="w"> </span>GigabitEthernet<span class="w"> </span><span class="m">1</span>/0/2
+<span class="o">[</span>S2-GigabitEthernet1/0/2<span class="o">]</span><span class="w"> </span>port<span class="w"> </span>access<span class="w"> </span>vlan<span class="w"> </span><span class="m">40</span>
+<span class="o">[</span>S2-GigabitEthernet1/0/2<span class="o">]</span><span class="w"> </span>port<span class="w"> </span>private-vlan<span class="w"> </span>host
+
+<span class="o">[</span>S2<span class="o">]</span><span class="w"> </span>interface<span class="w"> </span>GigabitEthernet<span class="w"> </span><span class="m">1</span>/0/3
+<span class="o">[</span>S2-GigabitEthernet1/0/3<span class="o">]</span><span class="w"> </span>port<span class="w"> </span>access<span class="w"> </span>vlan<span class="w"> </span><span class="m">10</span>
+<span class="o">[</span>S2-GigabitEthernet1/0/3<span class="o">]</span><span class="w"> </span>port<span class="w"> </span>private-vlan<span class="w"> </span><span class="m">10</span><span class="w"> </span>promiscuous<span class="w">  </span><span class="c1"># 设为混杂端口（主vlan）</span>
+</code></pre></div>
+
+<blockquote>
+<p>📌 一句话总结：Private VLAN在一个广播域内实现二层隔离，主VLAN可与所有辅助VLAN通信，辅助VLAN分为团体VLAN（可同团体及主VLAN通信）和隔离VLAN（只能与主VLAN通信）。</p>
+</blockquote>
+<h2>四、Super VLAN（超级VLAN）</h2>
+<ul>
+<li><strong>Sub VLAN（子VLAN）</strong>：实现二层隔离，物理接口划分，<strong>不能创建 VLANIF 接口</strong>。</li>
+<li><strong>Super VLAN（超级VLAN）</strong>：仅存在三层 VLANIF 接口，作为所有 Sub VLAN 的<strong>网关</strong>。</li>
+<li>Sub VLAN 间互通需在 Super VLAN 的 VLANIF 上开启 <strong>ARP 代理</strong>。</li>
+</ul>
+<blockquote>
+<p>📌 一句话总结：Super VLAN让所有Sub VLAN使用同一网段地址，Sub VLAN实现二层隔离且不能创建VLANIF接口，Super VLAN的VLANIF作为所有Sub VLAN的网关，Sub VLAN间互通需在Super VLAN上开启ARP代理。</p>
+</blockquote>
+<h2>五、QINQ（双层 VLAN 标签）</h2>
+<ul>
+<li><strong>内层标签</strong>：私网 VLAN，用于用户内部通信。</li>
+<li><strong>外层标签</strong>：公网 VLAN，用于运营商骨干网传输。</li>
+<li><strong>基本 QINQ</strong>：不管内层 VLAN 是多少，都打上<strong>相同</strong>的外层标签。</li>
+<li><strong>灵活 QINQ</strong>：根据内层 VLAN 的不同，打上<strong>不同</strong>的外层标签。</li>
+</ul>
+<blockquote>
+<p>📌 一句话总结：QINQ在数据帧上封装两层VLAN Tag，内层是私网VLAN（用户内部通信），外层是公网VLAN（运营商骨干网传输）；基本QINQ统一打相同外层标签，灵活QINQ根据内层VLAN不同打不同外层标签。</p>
+</blockquote>
+<h2>六、STP 与 RSTP（生成树协议）</h2>
+<h3>1. STP 原有四大缺陷（收敛慢）</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">问题场景</th>
+<th style="text-align: left;">收敛时间</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">PC 接入（未启用边缘端口）</td>
+<td style="text-align: left;">30s</td>
+</tr>
+<tr>
+<td style="text-align: left;">直连链路故障</td>
+<td style="text-align: left;">30s</td>
+</tr>
+<tr>
+<td style="text-align: left;">非直连链路故障</td>
+<td style="text-align: left;">50s</td>
+</tr>
+<tr>
+<td style="text-align: left;">初始化收敛</td>
+<td style="text-align: left;">30s</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>📌 一句话总结：STP存在PC接入需30s、直连链路故障30s、非直连链路故障50s、初始化收敛30s四个收敛慢的问题。</p>
+</blockquote>
+<h3>2. RSTP 的六大改进点</h3>
+<h4>改进①：端口状态精简（5 → 3）</h4>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">RSTP 状态</th>
+<th style="text-align: left;">对应 STP 状态</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>discarding</code>（丢弃）</td>
+<td style="text-align: left;">disable / blocking / listening</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>learning</code>（学习）</td>
+<td style="text-align: left;">learning</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>forwarding</code>（转发）</td>
+<td style="text-align: left;">forwarding</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>📌 一句话总结：RSTP将STP的五种端口状态合并为discarding、learning、forwarding三种，机制更简约但收敛速度提升不明显。</p>
+</blockquote>
+<h4>改进②：新增端口角色（解决直连故障 30s）</h4>
+<ul>
+<li><strong>替代端口（Alternate）</strong>：收到其他交换机发来的更优 BPDU，是<strong>根端口</strong>的备份。</li>
+<li><strong>备份端口（Backup）</strong>：收到本交换机发来的更优 BPDU，是<strong>指定端口</strong>的备份（不常见）。</li>
+<li><strong>边缘端口</strong>：连接终端，直接进入转发状态。</li>
+</ul>
+<blockquote>
+<p>替代端口在初始化时即确定无环备用路径，直连故障时可<strong>立即切换</strong>。</p>
+<p>📌 一句话总结：RSTP新增替代端口（根端口的备份，收到其他交换机更优BPDU）和备份端口（指定端口的备份，收到本交换机更优BPDU），在初始化时即确定无环备用路径，直连故障时可立即切换。</p>
+</blockquote>
+<h4>改进③：P/A 机制（Proposal / Agreement）— 解决初始化 30s</h4>
+<ul>
+<li>在 STP 运算基础上增加 <strong>P/A 回应机制</strong>，收到 A 置位后立即转发。</li>
+<li>将初始化收敛时间缩短至 <strong>1s 以内</strong>。</li>
+</ul>
+<blockquote>
+<p>📌 一句话总结：RSTP在STP运算基础上增加P/A回应机制，收到A置位后立即转发，将初始化收敛时间缩短至1秒以内。</p>
+</blockquote>
+<h4>改进④：次优 BPDU 处理机制 — 解决非直连故障 50s</h4>
+<ul>
+<li>非直连故障时，替代端口收到次优 BPDU → 转为指定端口（DP），反向发送最优 BPDU。</li>
+<li>原交换机收到最优 BPDU → 选举为根端口（RP）→ 回应 A 置位 → 快速转发。</li>
+</ul>
+<blockquote>
+<p>📌 一句话总结：非直连故障时，替代端口收到次优BPDU后转为指定端口并反向发送最优BPDU，原交换机收到后选举为根端口并回应A置位快速转发，解决非直连故障50s问题。</p>
+</blockquote>
+<h4>改进⑤：边缘端口特性</h4>
+<ul>
+<li>接入终端<strong>直接进入转发</strong>（0s 等待）。</li>
+<li>边缘端口收到 BPDU 后，<strong>立即丧失边缘特性</strong>，变为普通端口。</li>
+<li>不参与 P/A 拥塞，状态变化不发送 TC BPDU，TC BPDU 不会清除边缘端口的 MAC 表。</li>
+<li>⚠️ <strong>注意</strong>：边缘端口依然会发送 BPDU，若两个边缘端口互接，可能形成<strong>临时环路（0~2s）</strong>。</li>
+</ul>
+<blockquote>
+<p>📌 一句话总结：边缘端口接入终端直接进入转发（0s等待），收到BPDU后立即丧失边缘特性变为普通端口；不参与P/A拥塞、不发送TC BPDU、TC BPDU不清除其MAC表，但两边缘端口互接可能形成0~2s临时环路。</p>
+</blockquote>
+<h4>改进⑥：TC BPDU 传递优化</h4>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">STP</th>
+<th style="text-align: left;">RSTP</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">需先发送 TCN 通知根桥，由根桥发出 TC BPDU</td>
+<td style="text-align: left;"><strong>变化节点直接发出</strong> TC BPDU，无需等待根桥</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>📌 一句话总结：STP中TC BPDU需先发送TCN通知根桥、由根桥发出，而RSTP中变化节点可直接发出TC BPDU，无需等待根桥。</p>
+</blockquote>
+<h1>第九天</h1>
+<blockquote>
+<p>核心内容：STP/RSTP缺点、PVSTP、MSTP（多生成树协议）、STP保护机制、VRRP（虚拟路由冗余协议）</p>
+</blockquote>
+<h2>一、STP / RSTP 的缺点</h2>
+<p>STP和RSTP在整个网络中只能运行<strong>一棵生成树</strong>，存在以下问题：</p>
+<ol>
+<li><strong>拥塞端口只有一个</strong>：冗余链路中只有一条被阻塞，不转发任何数据，造成<strong>带宽资源浪费</strong>。</li>
+<li><strong>无法实现负载分担</strong>：所有VLAN的流量都走同一棵生成树，无法根据VLAN将流量分配到不同链路上。</li>
+</ol>
+<blockquote>
+<p>📌 一句话总结：STP和RSTP全网只有一棵生成树，拥塞端口不转发任何数据造成带宽浪费，且无法实现多VLAN间的负载分担。</p>
+</blockquote>
+<h2>二、PVSTP（每VLAN生成树协议）</h2>
+<blockquote>
+<p><strong>全称</strong>：Per-VLAN Spanning Tree Protocol（思科私有协议）</p>
+</blockquote>
+<h3>核心思想</h3>
+<ul>
+<li><strong>一个VLAN一棵生成树</strong>，不同VLAN拥有独立的生成树拓扑。</li>
+<li>将不同VLAN的<strong>根桥放在不同交换机</strong>上，使不同VLAN的拥塞端口落在<strong>不同链路</strong>上，从而实现<strong>线路负载分担</strong>。</li>
+</ul>
+<h3>缺点</h3>
+<ul>
+<li>VLAN数量多时，生成树的数量也相应增多，对交换机的<strong>CPU和内存消耗极大</strong>。</li>
+</ul>
+<blockquote>
+<p>📌 一句话总结：PVSTP为每个VLAN单独运行一棵生成树，通过将不同VLAN的根桥放在不同交换机上实现负载分担，但VLAN数量多时会严重消耗交换机资源。</p>
+</blockquote>
+<h2>三、MSTP（多生成树协议）</h2>
+<blockquote>
+<p><strong>全称</strong>：Multiple Spanning Tree Protocol（IEEE 802.1s标准协议，华为/华三设备默认运行）</p>
+</blockquote>
+<h3>1. MSTP的核心优势</h3>
+<ul>
+<li>通过<strong>实例（Instance）</strong> 控制生成树的数量，从而控制对交换机资源的消耗。</li>
+<li>通过控制每个实例的<strong>根桥位置</strong>，实现不同实例间的<strong>负载分担</strong>。</li>
+<li><strong>完全继承</strong>RSTP的所有优点（P/A机制、边缘端口、替代/备份端口等）。</li>
+</ul>
+<blockquote>
+<p>📌 一句话总结：MSTP通过实例控制生成树数量来降低资源消耗，并通过控制各实例根桥位置实现负载分担，同时继承了RSTP的所有快速收敛特性。</p>
+</blockquote>
+<h3>2. MSTP域（Region）</h3>
+<p>当交换机数量较大时，可以划分多个MSTP域，<strong>减轻设备运算压力，加快收敛速度</strong>。</p>
+<p><strong>判断交换机是否在同一个域的条件</strong>（三者必须完全一致）：</p>
+<ol>
+<li><strong>域名（Region Name）相同</strong>（华三设备域名默认是设备的MAC地址，必须手动修改才能一致）</li>
+<li><strong>修订号（Revision Level）相同</strong>（默认均为0，无实际意义，保持一致即可）</li>
+<li><strong>实例与VLAN的映射关系（Instance ↔ VLAN）相同</strong>（有一个默认的实例0）</li>
+</ol>
+<blockquote>
+<p>📌 一句话总结：MSTP可以划分多个域来减轻设备压力，判断是否在同一域需满足三个条件——域名相同、修订号相同、实例与VLAN的映射关系相同。</p>
+</blockquote>
+<h3>3. IST 与 CST</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">概念</th>
+<th style="text-align: left;">全称</th>
+<th style="text-align: left;">作用范围</th>
+<th style="text-align: left;">生成树数量</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>IST</strong></td>
+<td style="text-align: left;">Internal Spanning Tree（内部生成树）</td>
+<td style="text-align: left;">运行在MSTP<strong>域内</strong></td>
+<td style="text-align: left;">可运行<strong>多棵</strong>生成树（每个实例一棵）</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>CST</strong></td>
+<td style="text-align: left;">Common Spanning Tree（公共生成树）</td>
+<td style="text-align: left;">运行在MSTP<strong>域之间</strong></td>
+<td style="text-align: left;">只能运行<strong>一棵</strong>生成树</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>关键结论</strong>：通过MSTP实现负载均衡，<strong>只能在域内完成</strong>（因为域间只有一棵CST，无法负载分担）。</p>
+</blockquote>
+<p><strong>多域场景下新增端口角色</strong>：</p>
+<ul>
+<li><strong>Master端口</strong>：域内交换机连接域外交换机时，负责域间通信的端口。</li>
+<li><strong>域边缘端口</strong>：位于MSTP域边界，连接其他域的端口。</li>
+</ul>
+<blockquote>
+<p>📌 一句话总结：MSTP域内运行IST（可多棵生成树，实现负载分担），域间运行CST（只有一棵生成树，无法负载分担）；多域场景下新增Master端口和域边缘端口。</p>
+</blockquote>
+<h3>4. MSTP配置命令</h3>
+<h4>① 切换生成树模式为MSTP（设备默认即为MSTP模式，此命令通常无需执行）</h4>
+<p>bash</p>
+<div class="highlight"><pre><span></span><code><span class="o">[</span><span class="n">S1</span><span class="o">]</span><span class="w"> </span><span class="n">stp</span><span class="w"> </span><span class="n">mode</span><span class="w"> </span><span class="n">mstp</span>
+</code></pre></div>
+
+<h4>② 创建VLAN并配置Trunk（准备工作）</h4>
+<p>bash</p>
+<div class="highlight"><pre><span></span><code><span class="o">[</span><span class="n">S4</span><span class="o">]</span><span class="w"> </span><span class="n">vlan</span><span class="w"> </span><span class="mi">4</span>
+<span class="o">[</span><span class="n">S4</span><span class="o">]</span><span class="w"> </span><span class="n">vlan</span><span class="w"> </span><span class="mi">5</span>
+<span class="o">[</span><span class="n">S4</span><span class="o">]</span><span class="w"> </span><span class="n">vlan</span><span class="w"> </span><span class="mi">6</span>
+<span class="o">[</span><span class="n">S4</span><span class="o">]</span><span class="w"> </span><span class="n">interface</span><span class="w"> </span><span class="k">range</span><span class="w"> </span><span class="n">GigabitEthernet</span><span class="w"> </span><span class="mi">1</span><span class="o">/</span><span class="mi">0</span><span class="o">/</span><span class="mi">1</span><span class="w"> </span><span class="n">GigabitEthernet</span><span class="w"> </span><span class="mi">1</span><span class="o">/</span><span class="mi">0</span><span class="o">/</span><span class="mi">2</span>
+<span class="o">[</span><span class="n">S4-if-range</span><span class="o">]</span><span class="w"> </span><span class="n">port</span><span class="w"> </span><span class="n">link</span><span class="o">-</span><span class="n">type</span><span class="w"> </span><span class="n">trunk</span>
+<span class="o">[</span><span class="n">S4-if-range</span><span class="o">]</span><span class="w"> </span><span class="n">port</span><span class="w"> </span><span class="n">trunk</span><span class="w"> </span><span class="n">permit</span><span class="w"> </span><span class="n">vlan</span><span class="w"> </span><span class="ow">all</span>
+</code></pre></div>
+
+<h4>③ 配置MSTP域和实例映射</h4>
+<p>bash</p>
+<div class="highlight"><pre><span></span><code><span class="o">[</span><span class="n">S4</span><span class="o">]</span><span class="w"> </span><span class="n">stp</span><span class="w"> </span><span class="n">region</span><span class="o">-</span><span class="n">configuration</span><span class="w">              </span><span class="err">#</span><span class="w"> </span><span class="n">进入MSTP域配置模式</span>
+<span class="o">[</span><span class="n">S4-mst-region</span><span class="o">]</span><span class="w"> </span><span class="n">region</span><span class="o">-</span><span class="n">name</span><span class="w"> </span><span class="n">shangwen</span><span class="w">       </span><span class="err">#</span><span class="w"> </span><span class="n">配置域名</span><span class="err">（</span><span class="n">必须修改</span><span class="err">，</span><span class="n">默认是MAC地址</span><span class="err">）</span>
+<span class="o">[</span><span class="n">S4-mst-region</span><span class="o">]</span><span class="w"> </span><span class="n">revision</span><span class="o">-</span><span class="k">level</span><span class="w"> </span><span class="mi">1</span><span class="w">           </span><span class="err">#</span><span class="w"> </span><span class="n">配置修订号</span><span class="err">（</span><span class="n">默认0</span><span class="err">，</span><span class="n">保持一致即可</span><span class="err">）</span>
+<span class="o">[</span><span class="n">S4-mst-region</span><span class="o">]</span><span class="w"> </span><span class="n">instance</span><span class="w"> </span><span class="mi">4</span><span class="w"> </span><span class="n">vlan</span><span class="w"> </span><span class="mi">4</span><span class="w">          </span><span class="err">#</span><span class="w"> </span><span class="n">将VLAN</span><span class="w"> </span><span class="mi">4</span><span class="n">映射到实例4</span>
+<span class="o">[</span><span class="n">S4-mst-region</span><span class="o">]</span><span class="w"> </span><span class="n">instance</span><span class="w"> </span><span class="mi">5</span><span class="w"> </span><span class="n">vlan</span><span class="w"> </span><span class="mi">5</span><span class="w">          </span><span class="err">#</span><span class="w"> </span><span class="n">将VLAN</span><span class="w"> </span><span class="mi">5</span><span class="n">映射到实例5</span>
+<span class="o">[</span><span class="n">S4-mst-region</span><span class="o">]</span><span class="w"> </span><span class="n">instance</span><span class="w"> </span><span class="mi">6</span><span class="w"> </span><span class="n">vlan</span><span class="w"> </span><span class="mi">6</span><span class="w">          </span><span class="err">#</span><span class="w"> </span><span class="n">将VLAN</span><span class="w"> </span><span class="mi">6</span><span class="n">映射到实例6</span>
+<span class="o">[</span><span class="n">S4-mst-region</span><span class="o">]</span><span class="w"> </span><span class="n">active</span><span class="w"> </span><span class="n">region</span><span class="o">-</span><span class="n">configuration</span><span class="w"> </span><span class="err">#</span><span class="w"> </span><span class="n">激活配置</span><span class="err">（</span><span class="n">必须执行</span><span class="err">）</span>
+</code></pre></div>
+
+<h4>④ 查看MSTP配置信息</h4>
+<p>bash</p>
+<div class="highlight"><pre><span></span><code><span class="o">[</span><span class="n">S4</span><span class="o">]</span><span class="w"> </span><span class="n">display</span><span class="w"> </span><span class="n">stp</span><span class="w"> </span><span class="n">region</span><span class="o">-</span><span class="n">configuration</span><span class="w">      </span><span class="err">#</span><span class="w"> </span><span class="n">查看MSTP域配置</span>
+</code></pre></div>
+
+<h4>⑤ 调整各实例的根桥位置（实现负载分担）</h4>
+<blockquote>
+<p><strong>关键</strong>：MSTP默认不进行负载分担，必须手动调整各实例的根桥位置。</p>
+</blockquote>
+<p>bash</p>
+<div class="highlight"><pre><span></span><code><span class="o">[</span><span class="n">S4</span><span class="o">]</span><span class="w"> </span><span class="n">stp</span><span class="w"> </span><span class="n">instance</span><span class="w"> </span><span class="mi">4</span><span class="w"> </span><span class="n">root</span><span class="w"> </span><span class="k">primary</span><span class="w">           </span><span class="err">#</span><span class="w"> </span><span class="n">将S4设为实例4的根桥</span>
+<span class="o">[</span><span class="n">S5</span><span class="o">]</span><span class="w"> </span><span class="n">stp</span><span class="w"> </span><span class="n">instance</span><span class="w"> </span><span class="mi">5</span><span class="w"> </span><span class="n">root</span><span class="w"> </span><span class="k">primary</span><span class="w">           </span><span class="err">#</span><span class="w"> </span><span class="n">将S5设为实例5的根桥</span>
+<span class="o">[</span><span class="n">S6</span><span class="o">]</span><span class="w"> </span><span class="n">stp</span><span class="w"> </span><span class="n">instance</span><span class="w"> </span><span class="mi">6</span><span class="w"> </span><span class="n">root</span><span class="w"> </span><span class="k">primary</span><span class="w">           </span><span class="err">#</span><span class="w"> </span><span class="n">将S6设为实例6的根桥</span>
+</code></pre></div>
+
+<p>这样，不同VLAN的流量会通过不同交换机转发，实现<strong>负载分担</strong>。</p>
+<blockquote>
+<p>📌 一句话总结：MSTP配置需先创建VLAN并配置Trunk，然后进入域配置模式设置域名、修订号、实例与VLAN映射并激活，最后通过stp instance X root primary将不同实例的根桥放在不同交换机上实现负载分担。</p>
+</blockquote>
+<h2>四、STP保护机制</h2>
+<h3>1. BPDU保护（BPDU Protection）</h3>
+<ul>
+<li><strong>作用对象</strong>：<strong>边缘端口</strong>。</li>
+<li><strong>原理</strong>：边缘端口本应只连接终端设备，不应收到BPDU。如果边缘端口收到了BPDU，说明有人私接了交换机，存在环路风险。BPDU保护是一种<strong>更严格的惩罚措施</strong>——直接<strong>关闭（shutdown）该接口</strong>。</li>
+<li><strong>恢复方式</strong>：需管理员手动恢复（或在配置error-down auto-recovery后自动恢复）。</li>
+</ul>
+<p>bash</p>
+<div class="highlight"><pre><span></span><code><span class="o">[</span><span class="n">S2</span><span class="o">]</span><span class="w"> </span><span class="n">stp</span><span class="w"> </span><span class="n">bpdu</span><span class="o">-</span><span class="n">protection</span><span class="w">                   </span><span class="err">#</span><span class="w"> </span><span class="n">全局开启BPDU保护</span><span class="err">（</span><span class="n">对设备上所有边缘端口生效</span><span class="err">）</span>
+</code></pre></div>
+
+<blockquote>
+<p>📌 一句话总结：BPDU保护作用于边缘端口，若边缘端口收到BPDU则直接关闭该接口，防止因私接交换机引发环路，是一种更严格的惩罚措施。</p>
+</blockquote>
+<h3>2. 根桥保护（Root Protection）</h3>
+<ul>
+<li><strong>作用对象</strong>：<strong>指定端口</strong>（只能在指定接口下配置）。</li>
+<li><strong>问题场景</strong>：新加入的交换机优先级更高，会抢占根桥身份，导致整个生成树拓扑重新计算，拥塞端口位置改变，网络震荡。</li>
+<li><strong>原理</strong>：在指定端口上启用根保护后，如果该接口收到<strong>更优的BPDU</strong>（意味着有新的交换机想成为根桥），会立即将该接口<strong>拥塞（discarding）</strong> 。</li>
+<li><strong>恢复方式</strong>：如果一段时间内没有收到更优BPDU，接口可<strong>自主恢复</strong>转发状态。</li>
+</ul>
+<p>bash</p>
+<div class="highlight"><pre><span></span><code><span class="o">[</span><span class="n">S2</span><span class="o">]</span><span class="w"> </span><span class="n">interface</span><span class="w"> </span><span class="n">GigabitEthernet</span><span class="w"> </span><span class="mi">1</span><span class="o">/</span><span class="mi">0</span><span class="o">/</span><span class="mi">3</span>
+<span class="o">[</span><span class="n">S2-GigabitEthernet1/0/3</span><span class="o">]</span><span class="w"> </span><span class="n">stp</span><span class="w"> </span><span class="n">root</span><span class="o">-</span><span class="n">protection</span><span class="w">   </span><span class="err">#</span><span class="w"> </span><span class="n">在指定接口下开启根保护</span>
+</code></pre></div>
+
+<blockquote>
+<p>📌 一句话总结：根桥保护作用于指定端口，当收到更优BPDU时立即拥塞该接口防止根桥被抢占，无更优BPDU后可自主恢复转发。</p>
+</blockquote>
+<h3>3. 环路保护（Loop Protection）</h3>
+<ul>
+<li><strong>使用频率</strong>：<strong>很少使用</strong>。</li>
+<li><strong>问题场景</strong>：接口因单向链路故障等原因<strong>无法收到BPDU（但线路物理状态仍为UP）</strong> ，交换机会误以为拓扑变化，将原先拥塞的接口恢复转发，从而引发<strong>环路</strong>。</li>
+<li><strong>原理</strong>：启用环路保护后，如果接口长时间收不到BPDU，则将接口状态强制设置为<strong>discarding（丢弃）</strong> ，防止环路产生。</li>
+</ul>
+<p>bash</p>
+<div class="highlight"><pre><span></span><code><span class="o">[</span><span class="n">S2</span><span class="o">]</span><span class="w"> </span><span class="n">interface</span><span class="w"> </span><span class="n">GigabitEthernet</span><span class="w"> </span><span class="mi">1</span><span class="o">/</span><span class="mi">0</span><span class="o">/</span><span class="mi">4</span>
+<span class="o">[</span><span class="n">S2-GigabitEthernet1/0/4</span><span class="o">]</span><span class="w"> </span><span class="n">stp</span><span class="w"> </span><span class="n">loop</span><span class="o">-</span><span class="n">protection</span>
+</code></pre></div>
+
+<blockquote>
+<p>📌 一句话总结：环路保护用于解决接口因无法收到BPDU（但线路仍UP）而误恢复转发引发环路的问题，启用后收不到BPDU时将接口强制设为discarding状态，使用较少。</p>
+</blockquote>
+<h3>4. TC BPDU保护（TC Protection）</h3>
+<ul>
+<li><strong>问题场景</strong>：黑客模拟TC BPDU不断发送给交换机，导致交换机频繁删除MAC地址表，网络性能严重下降（TC BPDU攻击）。</li>
+<li><strong>原理</strong>：开启TC BPDU保护后，交换机在<strong>单位时间内（默认为10秒）只处理一次TC BPDU</strong>，超出次数的TC BPDU将被忽略，从而保护设备CPU和MAC表稳定。</li>
+</ul>
+<p>bash</p>
+<div class="highlight"><pre><span></span><code><span class="o">[</span><span class="n">S2</span><span class="o">]</span><span class="w"> </span><span class="n">stp</span><span class="w"> </span><span class="n">tc</span><span class="o">-</span><span class="n">protection</span><span class="w">                    </span><span class="err">#</span><span class="w"> </span><span class="n">开启TC</span><span class="w"> </span><span class="n">BPDU保护</span>
+</code></pre></div>
+
+<blockquote>
+<p>📌 一句话总结：TC BPDU保护防止黑客通过大量发送TC BPDU导致交换机频繁删除MAC表，开启后在10秒内只处理一次TC BPDU，超出次数的被忽略。</p>
+</blockquote>
+<h2>五、STP模式切换与边缘端口配置</h2>
+<h3>切换STP模式</h3>
+<p>bash</p>
+<div class="highlight"><pre><span></span><code><span class="o">[</span><span class="n">S1</span><span class="o">]</span><span class="w"> </span><span class="n">stp</span><span class="w"> </span><span class="n">mode</span><span class="w"> </span><span class="n">rstp</span><span class="w">                        </span><span class="err">#</span><span class="w"> </span><span class="n">切换为RSTP模式</span>
+<span class="o">[</span><span class="n">S1</span><span class="o">]</span><span class="w"> </span><span class="n">stp</span><span class="w"> </span><span class="n">mode</span><span class="w"> </span><span class="n">mstp</span><span class="w">                        </span><span class="err">#</span><span class="w"> </span><span class="n">切换为MSTP模式</span><span class="err">（</span><span class="n">设备默认</span><span class="err">）</span>
+<span class="o">[</span><span class="n">S1</span><span class="o">]</span><span class="w"> </span><span class="n">stp</span><span class="w"> </span><span class="n">mode</span><span class="w"> </span><span class="n">stp</span><span class="w">                         </span><span class="err">#</span><span class="w"> </span><span class="n">切换为STP模式</span>
+</code></pre></div>
+
+<h3>配置边缘端口</h3>
+<p>bash</p>
+<div class="highlight"><pre><span></span><code><span class="o">[</span><span class="n">S2</span><span class="o">]</span><span class="w"> </span><span class="n">interface</span><span class="w"> </span><span class="n">GigabitEthernet</span><span class="w"> </span><span class="mi">1</span><span class="o">/</span><span class="mi">0</span><span class="o">/</span><span class="mi">3</span>
+<span class="o">[</span><span class="n">S2-GigabitEthernet1/0/3</span><span class="o">]</span><span class="w"> </span><span class="n">stp</span><span class="w"> </span><span class="n">edged</span><span class="o">-</span><span class="n">port</span><span class="w">   </span><span class="err">#</span><span class="w"> </span><span class="n">将该接口配置为边缘端口</span>
+</code></pre></div>
+
+<blockquote>
+<p>📌 一句话总结：通过stp mode命令可在STP/RSTP/MSTP三种模式间切换，边缘端口用stp edged-port配置，可使接入终端时立即进入转发状态（0s等待）。</p>
+</blockquote>
+<h2>六、VRRP（虚拟路由冗余协议）</h2>
+<blockquote>
+<p><strong>全称</strong>：Virtual Router Redundancy Protocol（虚拟路由冗余协议）</p>
+</blockquote>
+<h3>1. VRRP的产生背景与核心思想</h3>
+<ul>
+<li><strong>解决的问题</strong>：网关单点故障。如果网络中只有一个网关，该设备故障后，所有依赖该网关的主机都将断网。</li>
+<li><strong>核心思想</strong>：多台设备共同维持一个<strong>虚拟IP地址</strong>，使用该虚拟IP作为主机的网关。其中一台设备作为Master负责转发，其他作为Backup实时监控Master状态。如果Master故障，Backup自动接替，保证网关不中断。</li>
+<li><strong>部署方式</strong>：VRRP是基于<strong>接口</strong>的（通常配置在VLANIF接口或三层物理接口上）。</li>
+</ul>
+<blockquote>
+<p>📌 一句话总结：VRRP通过多台设备共同维护一个虚拟IP作为网关来解决网关单点故障，Master负责转发，Backup监控Master状态并在其故障时自动接替，部署时基于接口配置。</p>
+</blockquote>
+<h3>2. VRRP的角色</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">角色</th>
+<th style="text-align: left;">职责</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Master</strong></td>
+<td style="text-align: left;">负责<strong>所有数据转发</strong>，定期（<strong>每1秒</strong>）发送VRRP通告报文给Backup</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Backup</strong></td>
+<td style="text-align: left;">监视Master的状态，如果<strong>连续3秒</strong>没有收到Master的通告报文，则认为Master故障，<strong>主动切换为Master</strong></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>📌 一句话总结：Master负责转发并每1秒发送VRRP通告（心跳包），Backup监控通告报文，3秒未收到则主动切换为Master。</p>
+</blockquote>
+<h3>3. VRRP角色选举规则</h3>
+<p><strong>比较顺序</strong>（先比1，相同则比2）：</p>
+<ol>
+<li><strong>优先级（Priority）</strong> ：<strong>越大越优</strong></li>
+<li>默认值：<strong>100</strong></li>
+<li>取值范围：<strong>0 ~ 255</strong>（配置范围为 <strong>1 ~ 254</strong>）</li>
+<li><strong>0</strong>：表示放弃Master资格（立即从选举中退出）</li>
+<li><strong>255</strong>：表示接口的物理IP地址与虚拟IP地址相同（即该设备同时拥有虚拟IP，自动成为Master）</li>
+<li><strong>接口IP地址</strong>：<strong>越大越优</strong>（仅当优先级相同时比较）</li>
+</ol>
+<p><strong>状态切换特点</strong>：</p>
+<ul>
+<li>只有优先级为 <strong>255</strong> 的设备，端口角色可以直接从 <code>init</code> 变为 <code>master</code>。</li>
+<li>其他设备都是先进入 <code>backup</code> 状态，在规定时间内没有收到比自己优先级更高的Master通告后，再切换为 <code>master</code>。</li>
+</ul>
+<blockquote>
+<p>📌 一句话总结：VRRP选举先比优先级（默认100，1-254可配置，255为IP地址拥有者自动Master，0表示退出选举），相同则比接口IP地址（越大越优）；只有优先级255能直接成为Master，其他设备先进入Backup状态再根据通告情况升级。</p>
+</blockquote>
+<h3>4. VRRP基础配置命令</h3>
+<h4>① 配置VRRP（在VLANIF接口下）</h4>
+<p>bash</p>
+<div class="highlight"><pre><span></span><code><span class="o">[</span><span class="n">S2</span><span class="o">]</span><span class="w"> </span><span class="n">interface</span><span class="w"> </span><span class="n">Vlan</span><span class="o">-</span><span class="n">interface</span><span class="w"> </span><span class="mi">5</span>
+<span class="o">[</span><span class="n">S2-Vlan-interface5</span><span class="o">]</span><span class="w"> </span><span class="n">vrrp</span><span class="w"> </span><span class="n">vrid</span><span class="w"> </span><span class="mi">5</span><span class="w"> </span><span class="n">virtual</span><span class="o">-</span><span class="n">ip</span><span class="w"> </span><span class="mf">192.168.5.1</span>
+<span class="err">#</span><span class="w"> </span><span class="n">配置VRRP组编号为5</span><span class="err">（</span><span class="n">双方必须一致</span><span class="err">），</span><span class="n">虚拟IP地址为192</span><span class="mf">.168.5.1</span><span class="err">（</span><span class="n">即主机的网关地址</span><span class="err">）</span>
+</code></pre></div>
+
+<h4>② 查看VRRP状态</h4>
+<p>bash</p>
+<div class="highlight"><pre><span></span><code><span class="o">[</span><span class="n">S2</span><span class="o">]</span><span class="w"> </span><span class="n">display</span><span class="w"> </span><span class="n">vrrp</span><span class="w">                        </span><span class="err">#</span><span class="w"> </span><span class="n">查看VRRP简要状态</span>
+<span class="o">[</span><span class="n">S2</span><span class="o">]</span><span class="w"> </span><span class="n">display</span><span class="w"> </span><span class="n">vrrp</span><span class="w"> </span><span class="n">verbose</span><span class="w">                </span><span class="err">#</span><span class="w"> </span><span class="n">查看VRRP详细信息</span>
+</code></pre></div>
+
+<h4>③ 调整VRRP通告时间</h4>
+<p>bash</p>
+<div class="highlight"><pre><span></span><code>[S2-Vlan-interface5] vrrp vrid 5 timer advertise 50
+# 修改VRRP通告报文发送间隔（单位：厘秒，默认100厘秒=1秒）
+# 时间越短，Backup感知Master故障越快
+# 注意：主设备修改后，备设备会自动同步；但锐捷设备时间不一致则无法组建VRRP
+</code></pre></div>
+
+<h4>④ 调整优先级（确定主备）</h4>
+<p>bash</p>
+<div class="highlight"><pre><span></span><code>[S2-Vlan-interface5] vrrp vrid 5 priority 120
+# 调整优先级为120（默认100），数值越高越优先成为Master
+</code></pre></div>
+
+<blockquote>
+<p>📌 一句话总结：VRRP基础配置使用vrrp vrid X virtual-ip配置虚拟IP，用display vrrp查看状态，通过vrrp vrid X priority调整优先级确定主备，通告时间可通过vrrp vrid X timer advertise调整（主设备调整后备设备自动同步）。</p>
+</blockquote>
+<h3>5. VRRP特殊场景与解决方案</h3>
+<h4>场景①：上行链路追踪（上行链路故障切换）</h4>
+<p><strong>问题</strong>：
+VRRP主备切换的判断标准是Backup能否收到Master的VRRP通告报文。但如果Master的<strong>上行链路</strong>（连接外网的链路）发生故障，下行链路仍然正常，Master仍然可以正常发送VRRP通告，Backup不会切换。此时Master虽然VRRP状态正常，但<strong>实际上无法访问外网</strong>，导致所有流量中断。</p>
+<p><strong>解决方案</strong>：
+配置<strong>上行链路追踪（Track）</strong> ，将VRRP优先级与上行链路状态绑定。如果上行链路故障，VRRP优先级自动降低（降低后的优先级低于Backup），从而触发Backup切换为Master。</p>
+<blockquote>
+<p><strong>前提条件</strong>：必须<strong>开启抢占模式</strong>（设备默认开启），否则优先级降低后Backup也不会抢占。</p>
+</blockquote>
+<p>bash</p>
+<div class="highlight"><pre><span></span><code><span class="o">[</span><span class="n">S2</span><span class="o">]</span><span class="w"> </span><span class="n">track</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="n">interface</span><span class="w"> </span><span class="n">GigabitEthernet</span><span class="w"> </span><span class="mi">1</span><span class="o">/</span><span class="mi">0</span><span class="o">/</span><span class="mi">2</span>
+<span class="err">#</span><span class="w"> </span><span class="n">设置追踪项1</span><span class="err">，</span><span class="n">监控GigabitEthernet</span><span class="w"> </span><span class="mi">1</span><span class="o">/</span><span class="mi">0</span><span class="o">/</span><span class="mi">2</span><span class="n">接口状态</span>
+
+<span class="o">[</span><span class="n">S2</span><span class="o">]</span><span class="w"> </span><span class="n">interface</span><span class="w"> </span><span class="n">Vlan</span><span class="o">-</span><span class="n">interface</span><span class="w"> </span><span class="mi">5</span>
+<span class="o">[</span><span class="n">S2-Vlan-interface5</span><span class="o">]</span><span class="w"> </span><span class="n">vrrp</span><span class="w"> </span><span class="n">vrid</span><span class="w"> </span><span class="mi">5</span><span class="w"> </span><span class="n">track</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="n">priority</span><span class="w"> </span><span class="n">reduced</span><span class="w"> </span><span class="mi">30</span>
+<span class="err">#</span><span class="w"> </span><span class="n">如果追踪项1</span><span class="err">（</span><span class="n">上行接口</span><span class="err">）</span><span class="n">故障</span><span class="err">，</span><span class="n">该设备的VRRP优先级自动减30</span>
+<span class="err">#</span><span class="w"> </span><span class="n">例如</span><span class="err">：</span><span class="n">原优先级120</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="n">故障后变为90</span><span class="err">，</span><span class="n">低于Backup的100</span><span class="err">，</span><span class="n">触发切换</span>
+</code></pre></div>
+
+<blockquote>
+<p>📌 一句话总结：上行链路追踪用于解决Master上行链路故障但VRRP通告正常导致无法切换的问题，通过track将VRRP优先级与上行接口状态绑定，上行故障时自动降低优先级触发切换（需开启抢占）。</p>
+</blockquote>
+<h4>场景②：抢占时延（防止频繁切换丢包）</h4>
+<p><strong>问题</strong>：
+Master故障恢复后，如果立即抢占回Master角色，此时设备的路由表、ARP表等信息可能<strong>尚未完全收敛</strong>，在这段时间内转发的数据可能被丢弃，造成业务中断。</p>
+<p><strong>解决方案</strong>：
+配置<strong>抢占时延（Preempt Delay）</strong> ，Master故障恢复后，等待一段时间（如120秒）再抢占回Master角色，确保路由表和转发表完全收敛。</p>
+<blockquote>
+<p><strong>注意</strong>：只能在<strong>主设备</strong>（Master）上配置。</p>
+</blockquote>
+<p>bash</p>
+<div class="highlight"><pre><span></span><code>[S2-Vlan-interface5] vrrp vrid 5 preempt-mode delay 12000
+# 配置抢占时延为12000厘秒 = 120秒
+# Master故障恢复后，等待120秒再抢占回Master角色
+</code></pre></div>
+
+<blockquote>
+<p>📌 一句话总结：抢占时延防止Master故障恢复后立即抢占导致路由表未收敛而丢包，配置后Master恢复需等待指定时间（如120秒）再抢占，只能在主设备上配置。</p>
+</blockquote>
+<h4>场景③：负载分担（多VRRP组互为主备）</h4>
+<p><strong>问题</strong>：
+在传统的VRRP部署中，Backup设备不进行数据转发，完全处于<strong>闲置状态</strong>，造成<strong>资源浪费</strong>。</p>
+<p><strong>解决方案</strong>：
+配置<strong>多个VRRP组</strong>，在不同的VRRP组中互为主备。例如：</p>
+<ul>
+<li><strong>VRRP组1</strong>：S2为Master，S3为Backup</li>
+<li><strong>VRRP组2</strong>：S3为Master，S2为Backup</li>
+</ul>
+<p>将不同VLAN的主机网关分别指向不同VRRP组的虚拟IP，实现<strong>负载分担</strong>。</p>
+<blockquote>
+<p>📌 一句话总结：通过配置多个VRRP组并互为主备（如组1设备A主B备、组2设备B主A备），将不同VLAN网关指向不同VRRP组，实现设备间的负载分担，避免Backup设备闲置浪费资源。</p>
+</blockquote>
+<h4>场景④：VRRP + MSTP 联动</h4>
+<p><strong>问题</strong>：
+VRRP的Master和MSTP的根桥必须<strong>在同一台设备上</strong>。如果VRRP Master在交换机A，而MSTP根桥在交换机B，流量路径可能出现<strong>次优路径</strong>（数据绕路），影响转发效率。</p>
+<p><strong>解决方案</strong>：
+在部署时，确保VRRP Master的设备和对应VLAN的MSTP根桥为<strong>同一台设备</strong>。具体做法是：</p>
+<ul>
+<li>将VRRP Master的优先级和该VLAN对应MSTP实例的根桥设置在相同的交换机上。</li>
+<li>通常结合MSTP多实例和VRRP多组一起部署，实现<strong>VLAN级别的路径最优 + 负载分担</strong>。</li>
+</ul>
+<blockquote>
+<p>📌 一句话总结：VRRP的Master必须和对应VLAN的MSTP根桥在同一台设备上，否则可能出现次优路径导致数据绕行，影响转发效率，需结合MSTP多实例和VRRP多组统一规划。</p>
+</blockquote>
+<h3>6. VRRP认证（增强安全性）</h3>
+<p>bash</p>
+<div class="highlight"><pre><span></span><code>[S2-Vlan-interface5] vrrp vrid 5 authentication-mode md5 plain shangwen
+# 配置VRRP认证，使用MD5加密，密码为shangwen
+# 防止非法设备加入VRRP组，增强安全性
+</code></pre></div>
+
+<blockquote>
+<p>📌 一句话总结：VRRP支持认证（如MD5加密密码），防止非法设备加入VRRP组造成干扰，提升协议安全性。</p>
+</blockquote>
+<h1>第十天</h1>
+<blockquote>
+<p>核心内容：IRF（智能弹性架构）堆叠、M-LAG（跨设备链路聚合）</p>
+</blockquote>
+<h2>一、IRF（堆叠）</h2>
+<blockquote>
+<p><strong>全称</strong>：Intelligent Resilient Framework（智能弹性架构），华三/华为的堆叠技术（华为称为CSS/iStack）</p>
+</blockquote>
+<h3>1. IRF的核心思想</h3>
+<p>IRF可以将<strong>多台物理设备</strong>从逻辑上虚拟成<strong>一台设备</strong>，在管理和转发层面都表现为单一设备。</p>
+<ul>
+<li>管理员只需登录一台设备即可管理整个堆叠系统。</li>
+<li>流量在堆叠成员之间可以跨设备转发。</li>
+</ul>
+<blockquote>
+<p>📌 一句话总结：IRF将多台物理设备虚拟成一台逻辑设备，统一管理、统一转发，简化网络架构。</p>
+</blockquote>
+<h3>2. IRF的角色</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">角色</th>
+<th style="text-align: left;">职责</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Master（主设备）</strong></td>
+<td style="text-align: left;">负责管理整个IRF系统的配置信息，同步给所有Slave；同时参与数据转发</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Slave（从设备）</strong></td>
+<td style="text-align: left;">配置信息从Master同步而来，也参与数据转发，当Master故障时自动接替</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>📌 一句话总结：IRF中Master管理整个系统的配置并参与转发，Slave同步配置并参与转发，Master故障时Slave自动接替。</p>
+</blockquote>
+<h3>3. 堆叠连接方式</h3>
+<p>设备之间通过<strong>堆叠线</strong>进行连接：</p>
+<ul>
+<li>可以使用<strong>专用堆叠线</strong>（如SFP+堆叠电缆）</li>
+<li>也可以使用<strong>网线或光纤</strong>（通过万兆端口）</li>
+</ul>
+<p><strong>堆叠拓扑推荐</strong>：<strong>环形拓扑</strong>（可靠性高于链形，一条链路故障不影响堆叠系统运行）。</p>
+<blockquote>
+<p>📌 一句话总结：堆叠设备之间通过专用堆叠线或光纤/网线连接，推荐使用环形拓扑以提升可靠性。</p>
+</blockquote>
+<h3>4. 堆叠线的作用</h3>
+<ol>
+<li><strong>维持堆叠系统运作</strong>：传输堆叠协议报文，维护IRF成员状态。</li>
+<li><strong>设备间数据转发</strong>：跨设备的流量通过堆叠线转发。</li>
+</ol>
+<blockquote>
+<p>📌 一句话总结：堆叠线同时承载堆叠协议报文（维持系统运作）和跨设备数据转发。</p>
+</blockquote>
+<h3>5. IRF vs VRRP+MSTP 对比</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">对比项</th>
+<th style="text-align: left;"><strong>IRF堆叠</strong></th>
+<th style="text-align: left;"><strong>VRRP + MSTP</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>管理复杂度</strong></td>
+<td style="text-align: left;">简单（统一管理）</td>
+<td style="text-align: left;">复杂（需分别管理多设备）</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>切换速度</strong></td>
+<td style="text-align: left;"><strong>毫秒级（ms）</strong></td>
+<td style="text-align: left;">秒级（s）</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>网络性能</strong></td>
+<td style="text-align: left;">稍高（无协议开销）</td>
+<td style="text-align: left;">稍低（有VRRP/MSTP协议开销）</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>通用性</strong></td>
+<td style="text-align: left;">差——需<strong>同厂商、同系列、同软件版本</strong></td>
+<td style="text-align: left;">强——<strong>不需要同厂商</strong>，不严格要求同型号</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>软件升级</strong></td>
+<td style="text-align: left;">麻烦（需整体升级）</td>
+<td style="text-align: left;">便利（可逐台升级）</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>📌 一句话总结：IRF管理简单、切换快（ms）、性能高，但要求同厂商同型号同版本且升级麻烦；VRRP+MSTP通用性强、升级便利，但管理复杂、切换慢（s）。</p>
+</blockquote>
+<h3>6. IRF配置命令</h3>
+<h4>① 第一台设备（Master）配置</h4>
+<p>bash</p>
+<div class="highlight"><pre><span></span><code><span class="o">[</span><span class="n">S1</span><span class="o">]</span><span class="w"> </span><span class="n">irf</span><span class="w"> </span><span class="k">domain</span><span class="w"> </span><span class="mi">1</span><span class="w">                                    </span><span class="err">#</span><span class="w"> </span><span class="n">创建IRF域</span><span class="err">，</span><span class="n">域名为1</span>
+<span class="o">[</span><span class="n">S1</span><span class="o">]</span><span class="w"> </span><span class="n">irf</span><span class="w"> </span><span class="k">member</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="n">priority</span><span class="w"> </span><span class="mi">32</span><span class="w">                        </span><span class="err">#</span><span class="w"> </span><span class="n">调整本设备优先级为32</span><span class="err">（</span><span class="n">越高越优先成为Master</span><span class="err">）</span>
+
+<span class="err">#</span><span class="w"> </span><span class="n">将物理接口加入堆叠口</span><span class="err">（</span><span class="n">必须先关闭接口</span><span class="err">）</span>
+<span class="o">[</span><span class="n">S1</span><span class="o">]</span><span class="w"> </span><span class="n">interface</span><span class="w"> </span><span class="k">range</span><span class="w"> </span><span class="n">Ten</span><span class="o">-</span><span class="n">GigabitEthernet</span><span class="w"> </span><span class="mi">1</span><span class="o">/</span><span class="mi">0</span><span class="o">/</span><span class="mi">50</span><span class="w"> </span><span class="n">Ten</span><span class="o">-</span><span class="n">GigabitEthernet</span><span class="w"> </span><span class="mi">1</span><span class="o">/</span><span class="mi">0</span><span class="o">/</span><span class="mi">51</span>
+<span class="o">[</span><span class="n">S1-if-range</span><span class="o">]</span><span class="w"> </span><span class="k">shutdown</span><span class="w">                                </span><span class="err">#</span><span class="w"> </span><span class="n">只有接口关闭才能加入堆叠口</span>
+
+<span class="o">[</span><span class="n">S1</span><span class="o">]</span><span class="w"> </span><span class="n">irf</span><span class="o">-</span><span class="n">port</span><span class="w"> </span><span class="mi">1</span><span class="o">/</span><span class="mi">1</span><span class="w">                                    </span><span class="err">#</span><span class="w"> </span><span class="n">创建堆叠口1</span><span class="o">/</span><span class="mi">1</span><span class="err">（</span><span class="n">成员1的堆叠口1</span><span class="err">）</span>
+<span class="o">[</span><span class="n">S1-irf-port1/1</span><span class="o">]</span><span class="w"> </span><span class="n">port</span><span class="w"> </span><span class="k">group</span><span class="w"> </span><span class="n">interface</span><span class="w"> </span><span class="n">Ten</span><span class="o">-</span><span class="n">GigabitEthernet</span><span class="w"> </span><span class="mi">1</span><span class="o">/</span><span class="mi">0</span><span class="o">/</span><span class="mi">50</span><span class="w">   </span><span class="err">#</span><span class="w"> </span><span class="n">将物理接口加入堆叠口</span>
+<span class="o">[</span><span class="n">S1</span><span class="o">]</span><span class="w"> </span><span class="n">irf</span><span class="o">-</span><span class="n">port</span><span class="w"> </span><span class="mi">1</span><span class="o">/</span><span class="mi">2</span><span class="w">                                    </span><span class="err">#</span><span class="w"> </span><span class="n">创建堆叠口1</span><span class="o">/</span><span class="mi">2</span><span class="err">（</span><span class="n">成员1的堆叠口2</span><span class="err">）</span>
+<span class="o">[</span><span class="n">S1-irf-port1/2</span><span class="o">]</span><span class="w"> </span><span class="n">port</span><span class="w"> </span><span class="k">group</span><span class="w"> </span><span class="n">interface</span><span class="w"> </span><span class="n">Ten</span><span class="o">-</span><span class="n">GigabitEthernet</span><span class="w"> </span><span class="mi">1</span><span class="o">/</span><span class="mi">0</span><span class="o">/</span><span class="mi">51</span>
+
+<span class="o">[</span><span class="n">S1</span><span class="o">]</span><span class="w"> </span><span class="n">interface</span><span class="w"> </span><span class="k">range</span><span class="w"> </span><span class="n">Ten</span><span class="o">-</span><span class="n">GigabitEthernet</span><span class="w"> </span><span class="mi">1</span><span class="o">/</span><span class="mi">0</span><span class="o">/</span><span class="mi">50</span><span class="w"> </span><span class="n">Ten</span><span class="o">-</span><span class="n">GigabitEthernet</span><span class="w"> </span><span class="mi">1</span><span class="o">/</span><span class="mi">0</span><span class="o">/</span><span class="mi">51</span>
+<span class="o">[</span><span class="n">S1-if-range</span><span class="o">]</span><span class="w"> </span><span class="n">undo</span><span class="w"> </span><span class="k">shutdown</span><span class="w">                           </span><span class="err">#</span><span class="w"> </span><span class="n">重新打开接口</span>
+
+<span class="o">[</span><span class="n">S1</span><span class="o">]</span><span class="w"> </span><span class="k">save</span><span class="w">                                             </span><span class="err">#</span><span class="w"> </span><span class="err">⚠️</span><span class="w"> </span><span class="n">必须保存</span><span class="err">！</span><span class="n">从设备加入IRF会自动重启</span>
+<span class="o">[</span><span class="n">S1</span><span class="o">]</span><span class="w"> </span><span class="n">irf</span><span class="o">-</span><span class="n">port</span><span class="o">-</span><span class="n">configuration</span><span class="w"> </span><span class="n">active</span><span class="w">                    </span><span class="err">#</span><span class="w"> </span><span class="n">激活IRF端口配置</span>
+</code></pre></div>
+
+<h4>② 第二台设备（Slave）配置</h4>
+<p>bash</p>
+<div class="highlight"><pre><span></span><code><span class="o">[</span><span class="n">H3C</span><span class="o">]</span><span class="w"> </span><span class="n">irf</span><span class="w"> </span><span class="k">member</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="n">renumber</span><span class="w"> </span><span class="mi">2</span><span class="w">                        </span><span class="err">#</span><span class="w"> </span><span class="err">⚠️</span><span class="w"> </span><span class="n">关键步骤</span><span class="err">：</span><span class="n">将成员编号从1改为2</span><span class="err">（</span><span class="n">默认都是1</span><span class="err">，</span><span class="n">冲突</span><span class="err">）</span>
+<span class="err">#</span><span class="w"> </span><span class="n">配置完成后</span><span class="err">，</span><span class="n">保存重启生效</span><span class="err">。</span><span class="n">重启后接口编号变为</span><span class="w"> </span><span class="mi">2</span><span class="o">/</span><span class="mi">0</span><span class="o">/</span><span class="mi">1</span>
+
+<span class="o">[</span><span class="n">H3C</span><span class="o">]</span><span class="w"> </span><span class="n">irf</span><span class="w"> </span><span class="k">domain</span><span class="w"> </span><span class="mi">1</span><span class="w">                                   </span><span class="err">#</span><span class="w"> </span><span class="n">域名必须与Master一致</span>
+
+<span class="o">[</span><span class="n">H3C</span><span class="o">]</span><span class="w"> </span><span class="n">interface</span><span class="w"> </span><span class="k">range</span><span class="w"> </span><span class="n">Ten</span><span class="o">-</span><span class="n">GigabitEthernet</span><span class="w"> </span><span class="mi">2</span><span class="o">/</span><span class="mi">0</span><span class="o">/</span><span class="mi">50</span><span class="w"> </span><span class="n">Ten</span><span class="o">-</span><span class="n">GigabitEthernet</span><span class="w"> </span><span class="mi">2</span><span class="o">/</span><span class="mi">0</span><span class="o">/</span><span class="mi">51</span>
+<span class="o">[</span><span class="n">H3C-if-range</span><span class="o">]</span><span class="w"> </span><span class="k">shutdown</span>
+
+<span class="o">[</span><span class="n">H3C</span><span class="o">]</span><span class="w"> </span><span class="n">irf</span><span class="o">-</span><span class="n">port</span><span class="w"> </span><span class="mi">2</span><span class="o">/</span><span class="mi">1</span>
+<span class="o">[</span><span class="n">H3C-irf-port2/1</span><span class="o">]</span><span class="w"> </span><span class="n">port</span><span class="w"> </span><span class="k">group</span><span class="w"> </span><span class="n">interface</span><span class="w"> </span><span class="n">Ten</span><span class="o">-</span><span class="n">GigabitEthernet</span><span class="w"> </span><span class="mi">2</span><span class="o">/</span><span class="mi">0</span><span class="o">/</span><span class="mi">51</span>
+<span class="o">[</span><span class="n">H3C</span><span class="o">]</span><span class="w"> </span><span class="n">irf</span><span class="o">-</span><span class="n">port</span><span class="w"> </span><span class="mi">2</span><span class="o">/</span><span class="mi">2</span>
+<span class="o">[</span><span class="n">H3C-irf-port2/2</span><span class="o">]</span><span class="w"> </span><span class="n">port</span><span class="w"> </span><span class="k">group</span><span class="w"> </span><span class="n">interface</span><span class="w"> </span><span class="n">Ten</span><span class="o">-</span><span class="n">GigabitEthernet</span><span class="w"> </span><span class="mi">2</span><span class="o">/</span><span class="mi">0</span><span class="o">/</span><span class="mi">50</span><span class="w">    </span><span class="err">#</span><span class="w"> </span><span class="err">⚠️</span><span class="w"> </span><span class="n">注意与对方保持交叉连接</span>
+
+<span class="o">[</span><span class="n">H3C</span><span class="o">]</span><span class="w"> </span><span class="n">interface</span><span class="w"> </span><span class="k">range</span><span class="w"> </span><span class="n">Ten</span><span class="o">-</span><span class="n">GigabitEthernet</span><span class="w"> </span><span class="mi">2</span><span class="o">/</span><span class="mi">0</span><span class="o">/</span><span class="mi">50</span><span class="w"> </span><span class="n">Ten</span><span class="o">-</span><span class="n">GigabitEthernet</span><span class="w"> </span><span class="mi">2</span><span class="o">/</span><span class="mi">0</span><span class="o">/</span><span class="mi">51</span>
+<span class="o">[</span><span class="n">H3C-if-range</span><span class="o">]</span><span class="w"> </span><span class="n">undo</span><span class="w"> </span><span class="k">shutdown</span>
+
+<span class="o">[</span><span class="n">H3C</span><span class="o">]</span><span class="w"> </span><span class="k">save</span>
+<span class="o">[</span><span class="n">H3C</span><span class="o">]</span><span class="w"> </span><span class="n">irf</span><span class="o">-</span><span class="n">port</span><span class="o">-</span><span class="n">configuration</span><span class="w"> </span><span class="n">active</span>
+</code></pre></div>
+
+<blockquote>
+<p><strong>关键配置要点</strong>：</p>
+<ul>
+<li>两台设备编号不能冲突（默认都是1，需修改一台为2）。</li>
+<li>堆叠口连接需<strong>交叉</strong>（设备1的irf-port1接设备2的irf-port2，设备1的irf-port2接设备2的irf-port1）。</li>
+<li><strong>必须先保存再激活</strong>，否则从设备重启后配置丢失。</li>
+</ul>
+<p>📌 一句话总结：IRF配置需修改成员编号避免冲突、配置堆叠口并交叉连接、保存配置后激活；堆叠口操作前必须先shutdown物理接口，完成后undo shutdown。</p>
+</blockquote>
+<h2>二、MAD（多Active检测）</h2>
+<blockquote>
+<p><strong>全称</strong>：Multi-Active Detection（多主检测）</p>
+</blockquote>
+<h3>1. MAD的产生背景</h3>
+<p><strong>问题场景</strong>：IRF堆叠系统发生<strong>分裂</strong>（如堆叠线缆全部断开），原来的一个堆叠系统会变成<strong>两个独立的IRF系统</strong>，且两个系统中都有Master设备，都认为自己是合法的，导致<strong>IP地址冲突、网络震荡</strong>。</p>
+<blockquote>
+<p>📌 一句话总结：IRF分裂后会出现两个独立的Master设备，导致IP地址冲突和网络震荡，MAD用于检测并处理这种分裂场景。</p>
+</blockquote>
+<h3>2. MAD的检测机制</h3>
+<p>MAD检测后，会在两个分裂的IRF系统中<strong>选择一个继续存活（Active）</strong>，另一个迁移为 <strong>Recovery（恢复）</strong> 状态。处于Recovery状态的IRF系统，<strong>除保留口外，其余所有接口全部关闭</strong>，从而避免冲突。</p>
+<h3>3. MAD的检测方式</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">检测方式</th>
+<th style="text-align: left;">原理</th>
+<th style="text-align: left;">是否需要额外线路</th>
+<th style="text-align: left;">限制</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>LACP检测</strong></td>
+<td style="text-align: left;">通过跨IRF成员的LACP聚合链路，检测对方的Domain ID和Active ID</td>
+<td style="text-align: left;">不需要</td>
+<td style="text-align: left;"><strong>必须使用华三设备</strong>（LACP扩展字段非标准）</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>ARP检测</strong></td>
+<td style="text-align: left;">通过ARP报文携带MAD信息进行检测</td>
+<td style="text-align: left;">不需要</td>
+<td style="text-align: left;">—</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>ND检测</strong></td>
+<td style="text-align: left;">通过IPv6 ND报文携带MAD信息进行检测</td>
+<td style="text-align: left;">不需要</td>
+<td style="text-align: left;">—</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>BFD检测</strong></td>
+<td style="text-align: left;">BFD会话UP则说明IRF已分裂</td>
+<td style="text-align: left;"><strong>需要额外线路</strong>（独立的BFD链路）</td>
+<td style="text-align: left;">不需要华三设备（通用性强）</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>判定逻辑</strong>：如果Domain ID相同，但Active ID不同，则认为IRF已分裂。</p>
+<p>📌 一句话总结：MAD通过LACP/ARP/ND（不需要额外线路，但LACP仅限华三设备）或BFD（需额外线路，通用性强）检测IRF分裂，发现分裂后将其中一个系统设为Recovery状态并关闭其所有业务接口。</p>
+</blockquote>
+<h2>三、M-LAG（跨设备链路聚合）</h2>
+<blockquote>
+<p><strong>全称</strong>：Multi-Chassis Link Aggregation（跨设备链路聚合），华三称为M-LAG，华为称为E-Trunk，思科称为vPC</p>
+</blockquote>
+<h3>1. M-LAG的核心思想</h3>
+<p>M-LAG将<strong>两台独立的物理设备</strong>通过<strong>peer-link链路</strong>连接，在逻辑上表现为一台设备，实现<strong>跨设备的链路聚合</strong>。下游设备（如服务器或交换机）通过聚合口同时连接两台设备，实现<strong>设备级冗余</strong>。</p>
+<blockquote>
+<p>📌 一句话总结：M-LAG通过peer-link连接两台独立设备，使下游设备可以通过跨设备链路聚合实现设备级冗余，解决了VRRP中备设备闲置和IRF分裂风险大的问题。</p>
+</blockquote>
+<h3>2. M-LAG的三个核心概念</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">概念</th>
+<th style="text-align: left;">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>peer-link链路</strong></td>
+<td style="text-align: left;">两台M-LAG设备之间的连接链路，用于维持M-LAG系统运行，必要时转发用户数据（通常使用聚合接口）</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>keepalive链路</strong></td>
+<td style="text-align: left;">检测M-LAG分裂问题，但<strong>无法维持M-LAG系统运行</strong>（只做检测，不做同步）</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>M-LAG组</strong></td>
+<td style="text-align: left;">一组跨设备的聚合接口（每台设备上一个聚合口，两者组成一个M-LAG组）</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>📌 一句话总结：M-LAG三大核心——peer-link维持系统运行并转发跨设备数据，keepalive仅检测分裂（不维持系统），M-LAG组由两台设备上的聚合接口共同组成。</p>
+</blockquote>
+<h3>3. M-LAG流量转发原则</h3>
+<h4>原则①：单向隔离</h4>
+<p>从<strong>peer-link链路</strong>接收到的广播/组播/未知单播流量，<strong>不会</strong>再发送给M-LAG接口。这样可以防止同一条广播流量从peer-link和M-LAG接口同时到达下游设备，避免<strong>重复接收广播流量</strong>。</p>
+<blockquote>
+<p>📌 一句话总结：单向隔离——从peer-link收到的广播流量不再发送给M-LAG接口，防止下游设备收到重复广播。</p>
+</blockquote>
+<h4>原则②：本地优先转发</h4>
+<p>本设备能直接转发的流量，<strong>优先从本设备转发</strong>，不会绕行peer-link链路，从而节省peer-link带宽，降低延迟。</p>
+<blockquote>
+<p>📌 一句话总结：本地优先转发——能从本设备直接转发的流量不走peer-link绕行，节省带宽、降低延迟。</p>
+</blockquote>
+<h3>4. M-LAG vs IRF 对比</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">对比项</th>
+<th style="text-align: left;"><strong>M-LAG</strong></th>
+<th style="text-align: left;"><strong>IRF</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>分裂风险</strong></td>
+<td style="text-align: left;">小（分裂后各自独立运行，有MAD检测）</td>
+<td style="text-align: left;">大（堆叠分裂影响面广）</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>升级方式</strong></td>
+<td style="text-align: left;">可<strong>逐台升级</strong>（一台升级时另一台承担流量）</td>
+<td style="text-align: left;">需整体升级，麻烦</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>设备要求</strong></td>
+<td style="text-align: left;">不严格要求同型号（但建议同厂商）</td>
+<td style="text-align: left;">需同厂商、同系列、同版本</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>管理方式</strong></td>
+<td style="text-align: left;">分别管理两台设备</td>
+<td style="text-align: left;">统一管理</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>📌 一句话总结：M-LAG相比IRF分裂风险更小、支持逐台升级，设备要求更灵活，但管理上仍为独立设备。</p>
+</blockquote>
+<h3>5. M-LAG配置命令</h3>
+<h4>① 全局配置（两台设备基本一致）</h4>
+<p><strong>设备S1配置</strong>：</p>
+<p>bash</p>
+<div class="highlight"><pre><span></span><code><span class="o">[</span><span class="n">S1</span><span class="o">]</span><span class="w"> </span><span class="n">m</span><span class="o">-</span><span class="n">lag</span><span class="w"> </span><span class="k">system</span><span class="o">-</span><span class="n">mac</span><span class="w"> </span><span class="mi">0001</span><span class="o">-</span><span class="mi">0001</span><span class="o">-</span><span class="mi">0001</span><span class="w">              </span><span class="err">#</span><span class="w"> </span><span class="n">配置M</span><span class="o">-</span><span class="n">LAG系统MAC</span><span class="err">，</span><span class="n">双方必须一致</span>
+<span class="o">[</span><span class="n">S1</span><span class="o">]</span><span class="w"> </span><span class="n">m</span><span class="o">-</span><span class="n">lag</span><span class="w"> </span><span class="k">system</span><span class="o">-</span><span class="n">number</span><span class="w"> </span><span class="mi">1</span><span class="w">                         </span><span class="err">#</span><span class="w"> </span><span class="n">配置系统编号</span><span class="err">，</span><span class="n">双方不能一致</span><span class="err">（</span><span class="n">S1为1</span><span class="err">，</span><span class="n">S2为2</span><span class="err">）</span>
+<span class="o">[</span><span class="n">S1</span><span class="o">]</span><span class="w"> </span><span class="n">m</span><span class="o">-</span><span class="n">lag</span><span class="w"> </span><span class="k">system</span><span class="o">-</span><span class="n">priority</span><span class="w"> </span><span class="mi">100</span><span class="w">                     </span><span class="err">#</span><span class="w"> </span><span class="n">配置系统优先级</span><span class="err">，</span><span class="n">双方一致</span>
+<span class="o">[</span><span class="n">S1</span><span class="o">]</span><span class="w"> </span><span class="n">m</span><span class="o">-</span><span class="n">lag</span><span class="w"> </span><span class="k">role</span><span class="w"> </span><span class="n">priority</span><span class="w"> </span><span class="mi">0</span><span class="w">                         </span><span class="err">#</span><span class="w"> </span><span class="n">配置角色优先级</span><span class="err">，</span><span class="n">用于选举主备</span><span class="err">（</span><span class="mi">0</span><span class="n">表示不参与选举</span><span class="err">，</span><span class="n">越小越优</span><span class="err">）</span>
+<span class="o">[</span><span class="n">S1</span><span class="o">]</span><span class="w"> </span><span class="n">m</span><span class="o">-</span><span class="n">lag</span><span class="w"> </span><span class="n">consistency</span><span class="o">-</span><span class="k">check</span><span class="w"> </span><span class="n">disable</span><span class="w">               </span><span class="err">#</span><span class="w"> </span><span class="err">⚠️</span><span class="w"> </span><span class="n">关闭一致性检测</span><span class="err">（</span><span class="n">模拟器需要</span><span class="err">，</span><span class="n">真机不需要</span><span class="err">）</span>
+</code></pre></div>
+
+<p><strong>设备S2配置</strong>（仅system-number不同）：</p>
+<p>bash</p>
+<div class="highlight"><pre><span></span><code><span class="o">[</span><span class="n">S2</span><span class="o">]</span><span class="w"> </span><span class="n">m</span><span class="o">-</span><span class="n">lag</span><span class="w"> </span><span class="k">system</span><span class="o">-</span><span class="n">mac</span><span class="w"> </span><span class="mi">0001</span><span class="o">-</span><span class="mi">0001</span><span class="o">-</span><span class="mi">0001</span><span class="w">              </span><span class="err">#</span><span class="w"> </span><span class="n">与S1一致</span>
+<span class="o">[</span><span class="n">S2</span><span class="o">]</span><span class="w"> </span><span class="n">m</span><span class="o">-</span><span class="n">lag</span><span class="w"> </span><span class="k">system</span><span class="o">-</span><span class="n">number</span><span class="w"> </span><span class="mi">2</span><span class="w">                         </span><span class="err">#</span><span class="w"> </span><span class="n">与S1不同</span>
+<span class="o">[</span><span class="n">S2</span><span class="o">]</span><span class="w"> </span><span class="n">m</span><span class="o">-</span><span class="n">lag</span><span class="w"> </span><span class="k">system</span><span class="o">-</span><span class="n">priority</span><span class="w"> </span><span class="mi">100</span><span class="w">                     </span><span class="err">#</span><span class="w"> </span><span class="n">与S1一致</span>
+<span class="o">[</span><span class="n">S2</span><span class="o">]</span><span class="w"> </span><span class="n">m</span><span class="o">-</span><span class="n">lag</span><span class="w"> </span><span class="k">role</span><span class="w"> </span><span class="n">priority</span><span class="w"> </span><span class="mi">1</span><span class="w">                         </span><span class="err">#</span><span class="w"> </span><span class="n">比S1大</span><span class="err">，</span><span class="n">S1成为主设备</span>
+<span class="o">[</span><span class="n">S2</span><span class="o">]</span><span class="w"> </span><span class="n">m</span><span class="o">-</span><span class="n">lag</span><span class="w"> </span><span class="n">consistency</span><span class="o">-</span><span class="k">check</span><span class="w"> </span><span class="n">disable</span>
+</code></pre></div>
+
+<h4>② 配置peer-link链路</h4>
+<p>bash</p>
+<div class="highlight"><pre><span></span><code><span class="o">[</span><span class="n">S1</span><span class="o">]</span><span class="w"> </span><span class="n">interface</span><span class="w"> </span><span class="n">Bridge</span><span class="o">-</span><span class="n">Aggregation</span><span class="w"> </span><span class="mi">100</span><span class="w">              </span><span class="err">#</span><span class="w"> </span><span class="n">创建聚合口100作为peer</span><span class="o">-</span><span class="n">link</span>
+<span class="o">[</span><span class="n">S1-Bridge-Aggregation100</span><span class="o">]</span><span class="w"> </span><span class="n">link</span><span class="o">-</span><span class="n">aggregation</span><span class="w"> </span><span class="n">mode</span><span class="w"> </span><span class="k">dynamic</span><span class="w">   </span><span class="err">#</span><span class="w"> </span><span class="n">动态聚合</span>
+
+<span class="o">[</span><span class="n">S1</span><span class="o">]</span><span class="w"> </span><span class="n">interface</span><span class="w"> </span><span class="k">range</span><span class="w"> </span><span class="n">Ten</span><span class="o">-</span><span class="n">GigabitEthernet</span><span class="w"> </span><span class="mi">1</span><span class="o">/</span><span class="mi">0</span><span class="o">/</span><span class="mi">50</span><span class="w"> </span><span class="n">Ten</span><span class="o">-</span><span class="n">GigabitEthernet</span><span class="w"> </span><span class="mi">1</span><span class="o">/</span><span class="mi">0</span><span class="o">/</span><span class="mi">51</span>
+<span class="o">[</span><span class="n">S1-if-range</span><span class="o">]</span><span class="w"> </span><span class="n">port</span><span class="w"> </span><span class="n">link</span><span class="o">-</span><span class="n">aggregation</span><span class="w"> </span><span class="k">group</span><span class="w"> </span><span class="mi">100</span><span class="w">      </span><span class="err">#</span><span class="w"> </span><span class="n">将物理接口加入聚合口</span>
+
+<span class="o">[</span><span class="n">S1</span><span class="o">]</span><span class="w"> </span><span class="n">interface</span><span class="w"> </span><span class="n">Bridge</span><span class="o">-</span><span class="n">Aggregation</span><span class="w"> </span><span class="mi">100</span>
+<span class="o">[</span><span class="n">S1-Bridge-Aggregation100</span><span class="o">]</span><span class="w"> </span><span class="n">port</span><span class="w"> </span><span class="n">m</span><span class="o">-</span><span class="n">lag</span><span class="w"> </span><span class="n">peer</span><span class="o">-</span><span class="n">link</span><span class="w"> </span><span class="mi">1</span><span class="w">  </span><span class="err">#</span><span class="w"> </span><span class="n">配置该聚合口为peer</span><span class="o">-</span><span class="n">link</span><span class="err">，</span><span class="n">编号1</span>
+</code></pre></div>
+
+<h4>③ 配置M-LAG组（连接下游设备）</h4>
+<p>bash</p>
+<div class="highlight"><pre><span></span><code><span class="o">[</span><span class="n">S1</span><span class="o">]</span><span class="w"> </span><span class="n">interface</span><span class="w"> </span><span class="n">Bridge</span><span class="o">-</span><span class="n">Aggregation</span><span class="w"> </span><span class="mi">1</span><span class="w">                </span><span class="err">#</span><span class="w"> </span><span class="n">创建聚合口1</span>
+<span class="o">[</span><span class="n">S1-Bridge-Aggregation1</span><span class="o">]</span><span class="w"> </span><span class="n">link</span><span class="o">-</span><span class="n">aggregation</span><span class="w"> </span><span class="n">mode</span><span class="w"> </span><span class="k">dynamic</span>
+
+<span class="o">[</span><span class="n">S1</span><span class="o">]</span><span class="w"> </span><span class="n">interface</span><span class="w"> </span><span class="n">GigabitEthernet</span><span class="w"> </span><span class="mi">1</span><span class="o">/</span><span class="mi">0</span><span class="o">/</span><span class="mi">1</span>
+<span class="o">[</span><span class="n">S1-GigabitEthernet1/0/1</span><span class="o">]</span><span class="w"> </span><span class="n">port</span><span class="w"> </span><span class="n">link</span><span class="o">-</span><span class="n">aggregation</span><span class="w"> </span><span class="k">group</span><span class="w"> </span><span class="mi">1</span>
+
+<span class="o">[</span><span class="n">S1</span><span class="o">]</span><span class="w"> </span><span class="n">interface</span><span class="w"> </span><span class="n">Bridge</span><span class="o">-</span><span class="n">Aggregation</span><span class="w"> </span><span class="mi">1</span>
+<span class="o">[</span><span class="n">S1-Bridge-Aggregation1</span><span class="o">]</span><span class="w"> </span><span class="n">port</span><span class="w"> </span><span class="n">m</span><span class="o">-</span><span class="n">lag</span><span class="w"> </span><span class="k">group</span><span class="w"> </span><span class="mi">1</span><span class="w">         </span><span class="err">#</span><span class="w"> </span><span class="n">将该聚合口加入M</span><span class="o">-</span><span class="n">LAG组1</span>
+</code></pre></div>
+
+<blockquote>
+<p>S2上同样创建聚合口1并配置 <code>port m-lag group 1</code>，两台设备组成同一个M-LAG组。</p>
+</blockquote>
+<h4>④ 配置keepalive检测链路</h4>
+<p>bash</p>
+<div class="highlight"><pre><span></span><code><span class="o">[</span><span class="n">S1</span><span class="o">]</span><span class="w"> </span><span class="n">interface</span><span class="w"> </span><span class="n">GigabitEthernet</span><span class="w"> </span><span class="mi">1</span><span class="o">/</span><span class="mi">0</span><span class="o">/</span><span class="mi">9</span>
+<span class="o">[</span><span class="n">S1-GigabitEthernet1/0/9</span><span class="o">]</span><span class="w"> </span><span class="n">port</span><span class="w"> </span><span class="n">link</span><span class="o">-</span><span class="n">mode</span><span class="w"> </span><span class="n">route</span><span class="w">      </span><span class="err">#</span><span class="w"> </span><span class="n">切换为三层模式</span>
+<span class="o">[</span><span class="n">S1-GigabitEthernet1/0/9</span><span class="o">]</span><span class="w"> </span><span class="n">ip</span><span class="w"> </span><span class="n">address</span><span class="w"> </span><span class="mf">192.168.1.1</span><span class="w"> </span><span class="mi">24</span><span class="w">  </span><span class="err">#</span><span class="w"> </span><span class="n">配置检测IP</span><span class="err">（</span><span class="n">不能与内网网段冲突</span><span class="err">）</span>
+
+<span class="o">[</span><span class="n">S1</span><span class="o">]</span><span class="w"> </span><span class="n">m</span><span class="o">-</span><span class="n">lag</span><span class="w"> </span><span class="n">keepalive</span><span class="w"> </span><span class="n">ip</span><span class="w"> </span><span class="n">destination</span><span class="w"> </span><span class="mf">192.168.1.2</span><span class="w"> </span><span class="n">source</span><span class="w"> </span><span class="mf">192.168.1.1</span>
+<span class="err">#</span><span class="w"> </span><span class="n">配置keepalive</span><span class="err">：</span><span class="n">目的IP为对端</span><span class="err">，</span><span class="n">源IP为本端</span>
+</code></pre></div>
+
+<blockquote>
+<p>📌 一句话总结：M-LAG配置分四步——配置系统参数（MAC/编号/优先级）、创建peer-link聚合口、创建M-LAG组连接下游设备、配置keepalive检测链路（用独立三层接口，IP不能与内网冲突）。</p>
+</blockquote>
+<h1>第十一天</h1>
+<blockquote>
+<p>核心内容：组播（IGMP/IGMP Snooping/PIM-DM/PIM-SM）、Monitor Link、BFD（双向转发检测）、NQA（网络质量分析）</p>
+</blockquote>
+<h2>一、组播</h2>
+<h3>1. 组播的特点</h3>
+<p><strong>优点</strong>：</p>
+<ul>
+<li><strong>节约带宽</strong>：相比单播（给N个主机发N份），组播只发送一份数据，网络带宽占用少。</li>
+<li><strong>减轻服务器压力</strong>：服务器只需发送一份数据，无需为每个接收者单独复制。</li>
+<li><strong>可跨广播域</strong>：相比广播（只能在同一个广播域内），组播可以跨路由器转发。</li>
+<li><strong>精准发送</strong>：只发送给加入特定组播组的成员，通信效率高。</li>
+</ul>
+<p><strong>缺点</strong>：</p>
+<ul>
+<li>组播只能基于 <strong>UDP</strong> 进行数据发送，继承了UDP的不可靠性，可能出现<strong>丢包、乱序</strong>等问题。</li>
+</ul>
+<blockquote>
+<p>📌 一句话总结：组播节约带宽、减轻服务器压力、可跨广播域且精准发送，但只能基于UDP，存在丢包和乱序风险。</p>
+</blockquote>
+<h3>2. 组播地址</h3>
+<p><strong>组播IP地址范围</strong>：<code>224.0.0.0 ~ 239.255.255.255</code></p>
+<p><strong>永久组地址（知名组播地址）</strong> ：<code>224.0.0.0 ~ 224.0.1.255</code></p>
+<ul>
+<li>224.0.0.5 → OSPF路由器</li>
+<li>224.0.0.6 → OSPF DR/BDR</li>
+<li>224.0.0.18 → VRRP</li>
+</ul>
+<p><strong>组播MAC地址</strong>：</p>
+<ul>
+<li>固定前缀：<strong>01-00-5E</strong></li>
+<li>只有 <strong>23个位</strong> 可变（组播IP地址有28个位可变）</li>
+<li>结果：<strong>32个组播IP地址映射到同一个组播MAC地址</strong>（存在MAC地址冲突风险）</li>
+</ul>
+<blockquote>
+<p>📌 一句话总结：组播IP范围为224.0.0.0~239.255.255.255，其中224.0.0.0~224.0.1.255为知名组播地址（如224.0.0.5为OSPF）；组播MAC地址固定以01-00-5E开头，因MAC只有23位可变而IP有28位可变，导致32个组播IP映射到同一个组播MAC。</p>
+</blockquote>
+<h3>3. 组播协议体系</h3>
+<p>组播涉及三个层面的协议：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">层面</th>
+<th style="text-align: left;">协议</th>
+<th style="text-align: left;">作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>主机-路由器之间</strong></td>
+<td style="text-align: left;">IGMP（Internet组管理协议）</td>
+<td style="text-align: left;">主机加入/离开组播组，路由器了解组成员关系</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>路由器-路由器之间</strong></td>
+<td style="text-align: left;">PIM（协议无关组播）</td>
+<td style="text-align: left;">构建组播分发树，确定流量转发路径</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>二层交换机</strong></td>
+<td style="text-align: left;">IGMP Snooping</td>
+<td style="text-align: left;">交换机侦听IGMP报文，建立组播MAC表避免泛洪</td>
+</tr>
+</tbody>
+</table>
+<h2>二、IGMP（Internet组管理协议）</h2>
+<blockquote>
+<p><strong>作用</strong>：运行在<strong>主机和组播路由器之间</strong>，用于主机告知路由器自己想加入或离开哪个组播组。</p>
+</blockquote>
+<h3>1. IGMPv2（最常用）</h3>
+<p><strong>IGMPv2的四种报文</strong>：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">报文类型</th>
+<th style="text-align: left;">发送方</th>
+<th style="text-align: left;">作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>普遍组查询</strong></td>
+<td style="text-align: left;">路由器</td>
+<td style="text-align: left;">周期性（默认60秒）查询该网段有哪些组播组成员</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>主机报告</strong></td>
+<td style="text-align: left;">主机</td>
+<td style="text-align: left;">主机回应路由器，报告自己加入的组播组</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>主机离组</strong></td>
+<td style="text-align: left;">主机</td>
+<td style="text-align: left;">主机主动离开组播组时通知路由器</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>特定组查询</strong></td>
+<td style="text-align: left;">路由器</td>
+<td style="text-align: left;">路由器收到离组信息后，只查询特定组是否还有成员</td>
+</tr>
+</tbody>
+</table>
+<p><strong>离组机制（特殊机制）</strong> ：</p>
+<ol>
+<li>主机离开组播组时，<strong>主动向路由器发送离组信息</strong>。</li>
+<li>路由器收到后，<strong>每1秒发送一次特定组查询</strong>（共发2次），查询该组是否还有组成员。</li>
+<li>两次查询都没有收到主机报告 → 认为没有组成员 → <strong>停止发送该组播流量</strong>。</li>
+</ol>
+<blockquote>
+<p>📌 一句话总结：IGMPv2通过普遍组查询、主机报告、主机离组、特定组查询四种报文管理组成员关系，离组后路由器通过两次特定组查询（每秒一次）确认无成员后停止转发组播流量。</p>
+</blockquote>
+<h3>2. IGMPv3</h3>
+<p><strong>核心改进</strong>：增加了<strong>组播源的选择能力</strong>。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">IGMP版本</th>
+<th style="text-align: left;">工作模式</th>
+<th style="text-align: left;">特点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>IGMPv1/v2</strong></td>
+<td style="text-align: left;">ASM（任意源组播）</td>
+<td style="text-align: left;">主机只指定组地址，不关心组播源是谁</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>IGMPv3</strong></td>
+<td style="text-align: left;">SSM（特定源组播）</td>
+<td style="text-align: left;">主机同时指定组地址和组播源地址，可以拒绝或接受特定源的流量</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>📌 一句话总结：IGMPv1/v2工作在ASM（任意源组播，主机只指定组地址），IGMPv3工作在SSM（特定源组播，主机可指定组播源地址，增强安全性）。</p>
+</blockquote>
+<h3>3. IGMP Snooping（侦听）</h3>
+<p><strong>问题</strong>：
+交换机依赖MAC地址表进行转发，但MAC地址表<strong>不会自动学习组播MAC地址</strong>（组播MAC地址01-00-5E开头不会作为源MAC出现）。结果：所有组播流量在二层被<strong>泛洪转发</strong>——不管主机是否想接收，全部都会收到。</p>
+<p><strong>解决方案</strong>：交换机运行 <strong>IGMP Snooping</strong>，通过侦听路由器与主机之间的IGMP报文，自动学习并建立组播MAC地址表。</p>
+<p><strong>工作原理</strong>：</p>
+<ol>
+<li>交换机收到 <strong>普遍组查询</strong> 的接口 → 标记为 <strong>路由器接口</strong>。</li>
+<li>交换机收到 <strong>主机报告</strong> 的接口 → 标记为 <strong>主机接口</strong>。</li>
+<li>根据报告中的组播IP地址，自动计算组播MAC地址，生成MAC地址表项。</li>
+<li>组播流量只向有成员的接口转发，不再泛洪。</li>
+</ol>
+<blockquote>
+<p><strong>组播MAC地址计算</strong>：前25位固定，后23位取组播IP地址的后23位。</p>
+<p>📌 一句话总结：IGMP Snooping让交换机通过侦听IGMP报文自动建立组播MAC地址表（组播MAC前25位固定、后23位取自组播IP），使组播流量只转发给有成员的接口，避免二层泛洪。</p>
+</blockquote>
+<h2>三、组播路由协议（路由器-路由器）</h2>
+<h3>1. 组播分发树与组播路由表</h3>
+<p>组播路由器之间运行PIM协议，构建<strong>组播分发树</strong>，形成组播路由表。</p>
+<p><strong>组播路由表格式</strong> <code>{S, G}</code>：</p>
+<ul>
+<li><strong>S</strong> = 组播源IP地址</li>
+<li><strong>G</strong> = 组播组地址</li>
+</ul>
+<p><strong>路由表关键字段</strong>：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">字段</th>
+<th style="text-align: left;">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>IIF（入接口）</strong></td>
+<td style="text-align: left;">从哪个接口接收组播流量。<strong>只能有1个</strong></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>OIFlist（出接口列表）</strong></td>
+<td style="text-align: left;">向哪些接口转发组播流量。<strong>可以有多个</strong></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>组播流量在网络中每个链路<strong>只出现一份</strong>，因此每个设备只能有一个入接口。</p>
+<p>📌 一句话总结：组播路由器构建分发树形成组播路由表{S,G}，其中IIF（入接口）只能有一个（组播流量每链路只出现一份），OIFlist（出接口列表）可以有多个。</p>
+</blockquote>
+<h3>2. RPF（反向路径转发）—— 确定入接口</h3>
+<p>当一台组播路由器从<strong>多个接口</strong>都收到了同一份组播流量时，需要确定<strong>哪个接口作为入接口</strong>。</p>
+<p><strong>判断依据</strong>：查找<strong>单播路由表</strong>，去往该组播源（S）的<strong>出接口</strong>，就是组播的<strong>入接口（IIF）</strong>。只有从RPF接口收到的组播流量才被转发，其他接口收到的相同流量被丢弃。</p>
+<blockquote>
+<p>📌 一句话总结：RPF通过查询单播路由表确定去往组播源的出接口作为组播入接口（IIF），从非RPF接口收到的组播流量将被丢弃，防止环路。</p>
+</blockquote>
+<h3>3. PIM（协议无关组播）—— 确定出接口</h3>
+<blockquote>
+<p>PIM分为两种模式：<strong>密集模式（PIM-DM）</strong> 和 <strong>稀疏模式（PIM-SM）</strong>。</p>
+</blockquote>
+<h4>PIM-DM（密集模式）</h4>
+<ul>
+<li><strong>核心逻辑</strong>：<strong>模拟所有广播域都有接收者</strong>。</li>
+<li><strong>工作机制</strong>：默认情况下，<strong>除入接口外的所有接口都是出接口</strong>，全部转发组播流量。如果某个网段没有接收者，该网段的路由器会发送<strong>剪枝（Prune）</strong> 消息，逐级剪掉不需要的枝条。</li>
+<li><strong>模式比喻</strong>：<strong>"推"的模式</strong>——先全部推过去，不需要的再剪掉。</li>
+<li><strong>适用场景</strong>：接收者密集的小型网络。</li>
+</ul>
+<h4>PIM-SM（稀疏模式）</h4>
+<ul>
+<li><strong>核心逻辑</strong>：<strong>模拟没有任何接收者</strong>。</li>
+<li><strong>工作机制</strong>：路由器默认不转发任何组播流量。只有接收者主动发送 <strong>加入（Join）</strong> 消息后，沿途路由器才将对应接口加入OIFlist，流量才开始转发。</li>
+<li><strong>模式比喻</strong>：<strong>"拉"的模式</strong>——有需要的人自己来拉取。</li>
+<li><strong>适用场景</strong>：接收者分散的大型网络（如互联网）。</li>
+</ul>
+<blockquote>
+<p>📌 一句话总结：PIM-DM采用"推"模式（先全部转发再剪枝），适用于接收者密集的小型网络；PIM-SM采用"拉"模式（有接收者主动加入才转发），适用于接收者分散的大型网络。</p>
+</blockquote>
+<h2>四、Monitor Link（接口联动）</h2>
+<blockquote>
+<p><strong>作用</strong>：实现接口联动，提高上下行设备的切换速度。</p>
+</blockquote>
+<p>Monitor Link将上行接口和下行接口绑定，当上行接口故障时，自动将下行接口关闭；上行接口恢复时，自动重新打开下行接口，从而触发下游设备快速切换路径。</p>
+<blockquote>
+<p>📌 一句话总结：Monitor Link通过上下行接口联动，上行故障时自动关闭下行接口，触发下游设备快速切换，提高收敛速度。</p>
+</blockquote>
+<h2>五、BFD（双向转发检测）</h2>
+<blockquote>
+<p><strong>全称</strong>：Bidirectional Forwarding Detection（双向转发检测）</p>
+</blockquote>
+<h3>1. BFD的核心特点</h3>
+<ul>
+<li><strong>协议无关</strong>：可以与OSPF、IS-IS、BGP、静态路由等多种协议联动。</li>
+<li><strong>链路无关</strong>：支持各种类型的链路（以太网、MPLS、POS等）。</li>
+<li><strong>检测机制</strong>：采用简单的 <strong>Hello机制</strong>，在规定时间内没有收到对端的BFD报文，则判定链路故障，立即通知上层协议触发切换。</li>
+<li><strong>收敛速度</strong>：可达<strong>毫秒级（ms）</strong>，远快于协议自身的收敛时间（OSPF默认40秒）。</li>
+</ul>
+<blockquote>
+<p>📌 一句话总结：BFD是一种与协议和链路无关的高速检测机制，通过毫秒级Hello报文快速检测链路故障并通知上层协议触发切换。</p>
+</blockquote>
+<h3>2. BFD的重要机制</h3>
+<h4>① BFD无邻居发现机制</h4>
+<p>BFD本身<strong>不会主动发现邻居</strong>，必须<strong>依赖上层协议（如OSPF）指导</strong>完成会话建立。流程：上层协议先通过Hello发现并建立邻居 → BFD再与对应的邻居建立BFD会话。</p>
+<blockquote>
+<p>📌 一句话总结：BFD无邻居发现能力，必须依赖上层协议（如OSPF）先建立邻居后，BFD再与之建立会话。</p>
+</blockquote>
+<h4>② BFD检测特性</h4>
+<ul>
+<li><strong>支持多跳也支持单跳</strong>：单跳是不跨广播域（直连），多跳是跨广播域（非直连）。</li>
+<li><strong>支持回声功能（Echo）</strong> ：对端设备不支持BFD或对端不是自己的设备时，本端发送BFD回声报文，对端直接环回，由本端自行检测链路状态。</li>
+</ul>
+<blockquote>
+<p>📌 一句话总结：BFD支持单跳和多跳检测；回声功能允许本端发送报文、对端环回，由本端自行检测，适用于对端不支持BFD的场景。</p>
+</blockquote>
+<h3>3. BFD联动配置命令</h3>
+<h4>① BFD联动OSPF（接口下开启）</h4>
+<p>bash</p>
+<div class="highlight"><pre><span></span><code><span class="o">[</span><span class="n">R1</span><span class="o">]</span><span class="w"> </span><span class="n">interface</span><span class="w"> </span><span class="n">GigabitEthernet</span><span class="w"> </span><span class="mi">0</span><span class="o">/</span><span class="mi">0</span>
+<span class="o">[</span><span class="n">R1-GigabitEthernet0/0</span><span class="o">]</span><span class="w"> </span><span class="n">ospf</span><span class="w"> </span><span class="n">bfd</span><span class="w"> </span><span class="n">enable</span><span class="w">                    </span><span class="err">#</span><span class="w"> </span><span class="n">接口下开启BFD联动OSPF</span>
+<span class="o">[</span><span class="n">R1-GigabitEthernet0/0</span><span class="o">]</span><span class="w"> </span><span class="n">bfd</span><span class="w"> </span><span class="nf">min</span><span class="o">-</span><span class="n">receive</span><span class="o">-</span><span class="k">interval</span><span class="w"> </span><span class="mi">100</span><span class="w">       </span><span class="err">#</span><span class="w"> </span><span class="n">配置BFD接收间隔</span><span class="err">（</span><span class="n">毫秒</span><span class="err">）</span>
+<span class="o">[</span><span class="n">R1-GigabitEthernet0/0</span><span class="o">]</span><span class="w"> </span><span class="n">bfd</span><span class="w"> </span><span class="nf">min</span><span class="o">-</span><span class="n">transmit</span><span class="o">-</span><span class="k">interval</span><span class="w"> </span><span class="mi">100</span><span class="w">      </span><span class="err">#</span><span class="w"> </span><span class="n">配置BFD发送间隔</span><span class="err">（</span><span class="n">毫秒</span><span class="err">）</span>
+<span class="o">[</span><span class="n">R1-GigabitEthernet0/0</span><span class="o">]</span><span class="w"> </span><span class="n">bfd</span><span class="w"> </span><span class="n">detect</span><span class="o">-</span><span class="n">multiplier</span><span class="w"> </span><span class="mi">3</span><span class="w">            </span><span class="err">#</span><span class="w"> </span><span class="n">配置检测倍数</span><span class="err">（</span><span class="mi">3</span><span class="err">×</span><span class="mi">100</span><span class="n">ms</span><span class="o">=</span><span class="mi">300</span><span class="n">ms检测到故障</span><span class="err">）</span>
+</code></pre></div>
+
+<h4>② 查看BFD会话</h4>
+<p>bash</p>
+<div class="highlight"><pre><span></span><code><span class="o">[</span><span class="n">R1</span><span class="o">]</span><span class="w"> </span><span class="n">display</span><span class="w"> </span><span class="n">bfd</span><span class="w"> </span><span class="k">session</span><span class="w">                                   </span><span class="err">#</span><span class="w"> </span><span class="n">查看BFD会话状态</span>
+</code></pre></div>
+
+<h4>③ BFD回声功能配置</h4>
+<p>bash</p>
+<div class="highlight"><pre><span></span><code><span class="o">[</span><span class="n">R1</span><span class="o">]</span><span class="w"> </span><span class="n">bfd</span><span class="w"> </span><span class="n">echo</span><span class="o">-</span><span class="n">source</span><span class="o">-</span><span class="n">ip</span><span class="w"> </span><span class="mf">100.100.100.100</span><span class="w">                    </span><span class="err">#</span><span class="w"> </span><span class="n">配置回声的源IP</span><span class="err">（</span><span class="n">只要本网络中不存在即可</span><span class="err">）</span>
+<span class="o">[</span><span class="n">R1</span><span class="o">]</span><span class="w"> </span><span class="n">interface</span><span class="w"> </span><span class="n">GigabitEthernet</span><span class="w"> </span><span class="mi">0</span><span class="o">/</span><span class="mi">0</span>
+<span class="o">[</span><span class="n">R1-GigabitEthernet0/0</span><span class="o">]</span><span class="w"> </span><span class="n">ospf</span><span class="w"> </span><span class="n">bfd</span><span class="w"> </span><span class="n">enable</span><span class="w"> </span><span class="n">echo</span>
+<span class="o">[</span><span class="n">R1-GigabitEthernet0/0</span><span class="o">]</span><span class="w"> </span><span class="n">bfd</span><span class="w"> </span><span class="nf">min</span><span class="o">-</span><span class="n">echo</span><span class="o">-</span><span class="n">receive</span><span class="o">-</span><span class="k">interval</span><span class="w"> </span><span class="mi">100</span>
+<span class="o">[</span><span class="n">R1-GigabitEthernet0/0</span><span class="o">]</span><span class="w"> </span><span class="n">bfd</span><span class="w"> </span><span class="n">echo</span><span class="w"> </span><span class="n">enable</span>
+</code></pre></div>
+
+<h4>④ BFD联动静态路由</h4>
+<p>bash</p>
+<div class="highlight"><pre><span></span><code><span class="o">[</span><span class="n">R1</span><span class="o">]</span><span class="w"> </span><span class="n">ip</span><span class="w"> </span><span class="n">route</span><span class="o">-</span><span class="k">static</span><span class="w"> </span><span class="mf">10.2.2.0</span><span class="w"> </span><span class="mi">24</span><span class="w"> </span><span class="mf">192.168.12.2</span><span class="w"> </span><span class="n">bfd</span><span class="w"> </span><span class="n">control</span><span class="o">-</span><span class="n">packet</span><span class="w"> </span><span class="n">bfd</span><span class="o">-</span><span class="n">source</span><span class="w"> </span><span class="mf">192.168.12.1</span>
+<span class="err">#</span><span class="w"> </span><span class="n">配置静态路由联动BFD</span><span class="err">，</span><span class="n">检测到故障时自动撤销该路由</span>
+</code></pre></div>
+
+<blockquote>
+<p>📌 一句话总结：BFD配置需在接口下开启与上层协议的联动（如ospf bfd enable），设置发送/接收间隔和检测倍数；回声功能需配置echo-source-ip；静态路由可通过bfd control-packet参数联动。</p>
+</blockquote>
+<h2>六、NQA（网络质量分析）</h2>
+<blockquote>
+<p><strong>全称</strong>：Network Quality Analyzer（网络质量分析）</p>
+</blockquote>
+<h3>1. NQA与BFD的区别</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">对比项</th>
+<th style="text-align: left;"><strong>BFD</strong></th>
+<th style="text-align: left;"><strong>NQA</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>检测能力</strong></td>
+<td style="text-align: left;">仅检测链路通断（Up/Down）</td>
+<td style="text-align: left;">能检测<strong>网络质量</strong>（延迟、抖动、丢包率）以及<strong>服务状态</strong>（HTTP/FTP/DNS是否可用）</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>配置方式</strong></td>
+<td style="text-align: left;">需两端配置</td>
+<td style="text-align: left;"><strong>只需一端配置</strong>探测信息，对端只需要能回应探测协议（ICMP/TCP/UDP服务开启即可）</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>依赖性</strong></td>
+<td style="text-align: left;">协议无关</td>
+<td style="text-align: left;">依赖于相关协议（ICMP/TCP/UDP等）</td>
+</tr>
+</tbody>
+</table>
+<h3>2. NQA的特点</h3>
+<ul>
+<li>不需要对端设备专门配置NQA，对端只需<strong>支持并开启相关服务</strong>（如ICMP ping响应、TCP端口监听、UDP服务等）。</li>
+<li>可主动探测网络路径的<strong>延迟、抖动、丢包率</strong>，还可探测<strong>服务可用性</strong>（如HTTP 200状态码、DNS解析是否成功）。</li>
+</ul>
+<blockquote>
+<p>📌 一句话总结：NQA相比BFD不仅能检测链路通断，还能检测网络质量（延迟/抖动/丢包）和服务状态（HTTP/DNS等），且只需一端配置探测参数，对端只需正常回应探测协议即可。</p>
+</blockquote>
+        </div>
+    </article>
+</div>
+
+<!-- ===== 右下角返回按钮 ===== -->
+<button id="back-home" onclick="window.location.href='https://codeshy-1119.github.io/'">🏠 返回</button>
+
+<style>
+    /* ===== 全局重置 ===== */
+    html, body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        overflow-y: auto;
+        background: transparent;
+    }
+
+    /* ===== 文章内容（毛玻璃卡片，居中） ===== */
+    #article-content {
+        position: relative;
+        z-index: 1;
+        margin-top: 10vh;
+        margin-bottom: 10vh;
+        max-width: 800px;
+        margin-left: auto;
+        margin-right: auto;
+        padding: 20px;
+    }
+    #article-content article {
+        background: rgba(255, 255, 255, 0.88);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 40px 45px;
+        box-shadow: 0 8px 40px rgba(0,0,0,0.2);
+        color: #222;
+        line-height: 1.8;
+        font-size: 1.05rem;
+    }
+
+    /* ===== 文章标题 ===== */
+    .article-title {
+        font-size: 2.2rem;
+        margin-bottom: 10px;
+        color: #1a3a2a;
+        text-align: left;
+        border-bottom: 3px solid #2a8a5a;
+        padding-bottom: 15px;
+    }
+    .article-meta {
+        font-size: 0.9rem;
+        color: #666;
+        margin-bottom: 25px;
+        text-align: left;
+    }
+    .article-meta a {
+        color: #2a7a5a;
+        text-decoration: none;
+    }
+    .article-meta a:hover {
+        text-decoration: underline;
+    }
+
+    /* ===== 文章正文 ===== */
+    .article-body {
+        text-align: left;
+    }
+    .article-body p {
+        margin-bottom: 1.2em;
+    }
+    .article-body h2, .article-body h3 {
+        margin-top: 1.8em;
+        margin-bottom: 0.6em;
+        color: #1a3a2a;
+    }
+    .article-body img {
+        max-width: 100%;
+        border-radius: 10px;
+        margin: 20px 0;
+        display: block;
+    }
+    .article-body pre, .article-body code {
+        background: #f0f0f0;
+        border-radius: 6px;
+        padding: 2px 6px;
+        font-size: 0.95rem;
+    }
+    .article-body pre {
+        padding: 16px;
+        overflow-x: auto;
+    }
+
+    /* ===== 返回按钮 ===== */
+    #back-home {
+        position: fixed;
+        bottom: 25px;
+        right: 25px;
+        z-index: 10;
+        padding: 14px 22px;
+        background: rgba(42, 157, 143, 0.9);
+        color: #fff;
+        border: none;
+        border-radius: 40px;
+        font-size: 1.1rem;
+        font-weight: bold;
+        cursor: pointer;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        backdrop-filter: blur(4px);
+        transition: background 0.2s, transform 0.2s;
+    }
+    #back-home:hover {
+        background: rgba(42, 157, 143, 1);
+        transform: scale(1.05);
+    }
+    #back-home:active {
+        transform: scale(0.95);
+    }
+
+    /* ============================================================ */
+    /* ===== 目录相关样式 ===== */
+    /* ============================================================ */
+
+    /* ----- 目录切换按钮（固定左侧） ----- */
+    #toc-toggle {
+        position: fixed;
+        left: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 100;
+        padding: 12px 14px;
+        background: rgba(42, 157, 143, 0.85);
+        color: #fff;
+        border: none;
+        border-radius: 30px;
+        font-size: 1.1rem;
+        cursor: pointer;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.25);
+        backdrop-filter: blur(4px);
+        transition: background 0.2s, transform 0.2s;
+        writing-mode: vertical-lr;
+        letter-spacing: 4px;
+        border-radius: 20px;
+    }
+    #toc-toggle:hover {
+        background: rgba(42, 157, 143, 1);
+        transform: translateY(-50%) scale(1.05);
+    }
+
+    /* ----- 目录面板（左侧滑出） ----- */
+    #toc-panel {
+        position: fixed;
+        left: -320px;          /* 默认隐藏 */
+        top: 0;
+        width: 300px;
+        height: 100vh;
+        z-index: 200;
+        background: rgba(20, 30, 25, 0.92);
+        backdrop-filter: blur(12px);
+        box-shadow: 2px 0 30px rgba(0,0,0,0.3);
+        transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        padding: 20px 10px 20px 20px;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        border-right: 1px solid rgba(255,255,255,0.1);
+        overflow: hidden;
+    }
+    #toc-panel.open {
+        left: 0;
+    }
+
+    #toc-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: #e0f0e8;
+        font-size: 1.1rem;
+        font-weight: bold;
+        padding-bottom: 12px;
+        border-bottom: 1px solid rgba(255,255,255,0.15);
+        flex-shrink: 0;
+    }
+    #toc-close {
+        background: none;
+        border: none;
+        color: #ccc;
+        font-size: 1.4rem;
+        cursor: pointer;
+        padding: 0 8px;
+        transition: color 0.2s;
+    }
+    #toc-close:hover {
+        color: #fff;
+    }
+
+    #toc-content {
+        flex: 1;
+        overflow-y: auto;
+        padding-top: 16px;
+        padding-right: 8px;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(255,255,255,0.2) transparent;
+    }
+    #toc-content::-webkit-scrollbar {
+        width: 4px;
+    }
+    #toc-content::-webkit-scrollbar-thumb {
+        background: rgba(255,255,255,0.2);
+        border-radius: 4px;
+    }
+
+    #toc-content ul {
+        list-style: none;
+        padding-left: 0;
+        margin: 0;
+    }
+    #toc-content li {
+        margin-bottom: 6px;
+        line-height: 1.5;
+    }
+    #toc-content a {
+        color: #bdd9d0;
+        text-decoration: none;
+        font-size: 0.92rem;
+        display: block;
+        padding: 4px 10px 4px 6px;
+        border-radius: 6px;
+        transition: background 0.15s, color 0.15s;
+        word-break: break-word;
+    }
+    #toc-content a:hover {
+        background: rgba(255,255,255,0.08);
+        color: #fff;
+    }
+    /* 层级缩进 */
+    #toc-content ul ul {
+        padding-left: 18px;
+    }
+    /* 当前高亮（滚动时） */
+    #toc-content a.active {
+        background: rgba(42, 157, 143, 0.3);
+        color: #7ad0b5;
+        border-left: 3px solid #2a8a5a;
+    }
+
+    /* 移动端适配：窄屏时调整按钮位置和面板宽度 */
+    @media (max-width: 700px) {
+        #toc-toggle {
+            left: 10px;
+            padding: 10px 10px;
+            font-size: 0.9rem;
+            border-radius: 16px;
+        }
+        #toc-panel {
+            width: 260px;
+            left: -280px;
+        }
+        #toc-panel.open {
+            left: 0;
+        }
+        #toc-content a {
+            font-size: 0.85rem;
+        }
+    }
+
+    /* ===== 隐藏原主题侧边栏、footer ===== */
+    .row .col-sm-3,
+    .row .col-md-3,
+    .row .col-lg-3 {
+        display: none !important;
+    }
+    .row .col-sm-9,
+    .row .col-md-9,
+    .row .col-lg-9 {
+        width: 100% !important;
+        max-width: 100% !important;
+        flex: 0 0 100% !important;
+    }
+    footer {
+        display: none !important;
+    }
+</style>
+
+<!-- ===== JavaScript：生成目录 + 交互 ===== -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // ----- 1. 从文章正文提取标题生成目录 -----
+    var articleBody = document.querySelector('.article-body');
+    if (!articleBody) return;
+
+    var headings = articleBody.querySelectorAll('h2, h3, h4, h5, h6');
+    if (headings.length === 0) {
+        // 没有标题则隐藏目录按钮
+        document.getElementById('toc-toggle').style.display = 'none';
+        return;
+    }
+
+    var tocList = document.createElement('ul');
+    var stack = [tocList];
+    var parentLevel = 2; // 从 h2 开始
+
+    headings.forEach(function(heading) {
+        var level = parseInt(heading.tagName.charAt(1));
+        // 跳过 h1（通常只有文章标题）
+        if (level === 1) return;
+
+        // 生成锚点 id（如果没有）
+        if (!heading.id) {
+            heading.id = 'toc-' + heading.textContent.trim()
+                .replace(/\s+/g, '-')
+                .replace(/[^a-zA-Z0-9\u4e00-\u9fa5\-]/g, '');
+        }
+
+        // 调整层级栈
+        while (level > parentLevel) {
+            var newList = document.createElement('ul');
+            var lastLi = stack[stack.length-1].lastElementChild;
+            if (lastLi && lastLi.tagName === 'LI') {
+                lastLi.appendChild(newList);
+                stack.push(newList);
+                parentLevel++;
+            } else {
+                // 如果当前 UL 没有 LI，创建一个占位
+                var li = document.createElement('li');
+                li.style.listStyle = 'none';
+                stack[stack.length-1].appendChild(li);
+                var subUl = document.createElement('ul');
+                li.appendChild(subUl);
+                stack.push(subUl);
+                parentLevel++;
+            }
+        }
+        while (level < parentLevel) {
+            stack.pop();
+            parentLevel--;
+        }
+
+        var li = document.createElement('li');
+        var a = document.createElement('a');
+        a.href = '#' + heading.id;
+        a.textContent = heading.textContent.trim();
+        // 点击平滑滚动
+        a.addEventListener('click', function(e) {
+            e.preventDefault();
+            var target = document.getElementById(this.getAttribute('href').substring(1));
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+            // 点击后自动收起目录（小屏幕可以，但大屏幕可选，我们让它保持打开）
+            // 可根据需要决定是否关闭，这里我们仅高亮当前项
+        });
+        li.appendChild(a);
+        stack[stack.length-1].appendChild(li);
+    });
+
+    // 将生成的目录插入到 toc-content 中
+    var tocContainer = document.getElementById('toc-content');
+    tocContainer.appendChild(tocList);
+
+    // ----- 2. 面板展开/收起 -----
+    var panel = document.getElementById('toc-panel');
+    var toggleBtn = document.getElementById('toc-toggle');
+    var closeBtn = document.getElementById('toc-close');
+
+    function openToc() {
+        panel.classList.add('open');
+    }
+    function closeToc() {
+        panel.classList.remove('open');
+    }
+
+    toggleBtn.addEventListener('click', function() {
+        if (panel.classList.contains('open')) {
+            closeToc();
+        } else {
+            openToc();
+        }
+    });
+    closeBtn.addEventListener('click', closeToc);
+
+    // 点击面板外部关闭（点击页面空白区域）
+    document.addEventListener('click', function(e) {
+        if (panel.classList.contains('open')) {
+            var target = e.target;
+            if (!panel.contains(target) && target !== toggleBtn && !toggleBtn.contains(target)) {
+                closeToc();
+            }
+        }
+    });
+
+    // ----- 3. 滚动时高亮当前标题 -----
+    var tocLinks = tocContainer.querySelectorAll('a');
+    function setActiveLink() {
+        var scrollY = window.scrollY;
+        var activeId = null;
+        // 从后往前找第一个在视口顶部的标题
+        headings.forEach(function(h) {
+            var rect = h.getBoundingClientRect();
+            if (rect.top <= 120) { // 距顶部120px以内认为活跃
+                activeId = h.id;
+            }
+        });
+        tocLinks.forEach(function(link) {
+            link.classList.remove('active');
+            if (activeId && link.getAttribute('href') === '#' + activeId) {
+                link.classList.add('active');
+            }
+        });
+    }
+    window.addEventListener('scroll', setActiveLink);
+    setActiveLink(); // 初始运行一次
+});
+</script>
+
+
+    <!-- ===== 底部版权信息 ===== -->
+    <footer style="text-align:center;padding:20px;background:transparent;color:#fff;text-shadow:0 2px 6px rgba(0,0,0,0.5);position:relative;z-index:1;">
+        <p>&copy; 才华恒毅的blog 2026</p>
+    </footer>
+
+    <style>
+        /* ===== 全局视频背景层 ===== */
+        #global-hero {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        #global-hero video {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            object-fit: cover;
+        }
+
+        /* ===== 导航栏（固定在顶部） ===== */
+        #navbar {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            z-index: 1000 !important;
+            padding: 12px 20px !important;
+            background: rgba(255, 255, 255, 0.15) !important;
+            backdrop-filter: blur(12px) !important;
+            -webkit-backdrop-filter: blur(12px) !important;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.15) !important;
+            box-sizing: border-box !important;
+            transition: background 0.3s !important;
+        }
+        #navbar:hover {
+            background: rgba(255, 255, 255, 0.25) !important;
+        }
+
+        .nav-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px 16px;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+        }
+        .nav-brand {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #fff;
+            text-decoration: none;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.6);
+            letter-spacing: 0.5px;
+        }
+        .nav-brand:hover {
+            color: #d4edda;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 6px 14px;
+            flex-wrap: wrap;
+        }
+        .nav-link {
+            color: rgba(255,255,255,0.85);
+            text-decoration: none;
+            font-size: 0.95rem;
+            padding: 6px 12px;
+            border-radius: 30px;
+            transition: background 0.2s, color 0.2s, transform 0.15s;
+            text-shadow: 0 1px 6px rgba(0,0,0,0.4);
+        }
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+            transform: scale(1.04);
+        }
+        .nav-link.active {
+            background: rgba(255, 255, 255, 0.25);
+            color: #fff;
+        }
+
+        @media (max-width: 640px) {
+            #navbar {
+                padding: 10px 14px !important;
+            }
+            .nav-brand {
+                font-size: 1.05rem;
+            }
+            .nav-link {
+                font-size: 0.8rem;
+                padding: 4px 10px;
+            }
+            .nav-right {
+                gap: 4px 8px;
+            }
+        }
+
+        /* ===== 给页面内容留出顶部空间 ===== */
+        body {
+            padding-top: 70px !important;
+            margin: 0 !important;
+            background: transparent !important;
+        }
+
+        /* ===== 确保所有内容层级在视频之上 ===== */
+        #navbar,
+        #header-fixed,
+        #content-drawer,
+        #archives-header,
+        #timeline,
+        #article-content,
+        #author-section,
+        #article-list,
+        #back-home,
+        #toggle-drawer,
+        footer {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ===== 修复右下角所有按钮的固定位置 ===== */
+        #back-home,
+        #toggle-drawer {
+            position: fixed !important;
+            bottom: 25px !important;
+            right: 25px !important;
+            z-index: 100 !important;
+        }
+
+        /* ===== 页面滚动时保持背景稳定 ===== */
+        html, body {
+            overflow-y: auto;
+        }
+    </style>
+
+    <!-- ===== 随机视频切换脚本 ===== -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var video = document.getElementById('bg-video');
+            if (!video) return;
+
+            var videoList = [
+                '/images/blog.mp4',
+                '/images/blog1.mp4',
+                '/images/blog2.mp4'
+            ];
+
+            var availableVideos = [];
+            var checkCount = 0;
+            if (videoList.length === 0) {
+                videoList.push('/images/blog.mp4');
+            }
+            videoList.forEach(function(src) {
+                var testVideo = document.createElement('video');
+                testVideo.src = src;
+                testVideo.onloadeddata = function() {
+                    availableVideos.push(src);
+                    checkCount++;
+                    if (checkCount === videoList.length) {
+                        applyRandomVideo();
+                    }
+                };
+                testVideo.onerror = function() {
+                    checkCount++;
+                    if (checkCount === videoList.length) {
+                        applyRandomVideo();
+                    }
+                };
+            });
+
+            function applyRandomVideo() {
+                if (availableVideos.length === 0) {
+                    availableVideos = videoList.slice(0, 1);
+                }
+                var randomIndex = Math.floor(Math.random() * availableVideos.length);
+                var selected = availableVideos[randomIndex];
+                video.src = selected;
+                video.load();
+                video.play().catch(function(e) {
+                    console.log('视频自动播放被拦截');
+                });
+            }
+        });
+    </script>
+
+</body>
+</html>

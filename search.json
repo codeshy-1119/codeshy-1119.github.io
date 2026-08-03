@@ -1,0 +1,32 @@
+[
+  {
+    "title": "网络综合设计与仿真实现",
+    "url": "/network-design/",
+    "summary": "项目报告",
+    "image": "/posts/network-design/封面.png"
+  },
+  {
+    "title": "My First Post",
+    "url": "/fist-blog/",
+    "summary": "Welcome to my blog!",
+    "image": "/posts/fist-blog/封面.png"
+  },
+  {
+    "title": "物资管理信息系统 - 数据库课程设计完整报告",
+    "url": "/database-design/",
+    "summary": "---",
+    "image": "/posts/database-design/封面.png"
+  },
+  {
+    "title": "网络自动化实战：用 Python + ENSP 搭建企业级网络运维系统",
+    "url": "/Network_Automation-desigm/",
+    "summary": "",
+    "image": "/posts/Network_Automation-desigm/封面.png"
+  },
+  {
+    "title": "网络培训笔记：从交换到高可用的全栈知识体系",
+    "url": "/network_study/",
+    "summary": "",
+    "image": "/posts/network_study/封面.png"
+  }
+]

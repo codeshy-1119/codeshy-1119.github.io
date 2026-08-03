@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="chinese (simplified)">
+<head>
+    <title> &ndash; Tag 网络自动化</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://codeshy-1119.github.io/theme/css/style.min.css" />
+    <link rel="stylesheet" href="https://codeshy-1119.github.io/theme/css/dark-theme.min.css" />
+    <link rel="stylesheet" href="https://codeshy-1119.github.io/custom.css" />
+</head>
+
+<body>
+
+    <!-- ===== 全局随机视频背景 ===== -->
+    <div id="global-hero">
+        <video autoplay muted loop playsinline id="bg-video"></video>
+    </div>
+
+    <!-- ===== 顶部导航栏（固定） ===== -->
+    <nav id="navbar">
+        <div class="nav-container">
+            <div class="nav-left">
+                <a href="https://codeshy-1119.github.io/" class="nav-brand">才华恒毅的blog</a>
+            </div>
+            <div class="nav-right">
+                <a href="https://codeshy-1119.github.io/" class="nav-link">首页</a>
+                <a href="https://codeshy-1119.github.io/archives.html" class="nav-link">归档</a>
+                <a href="https://codeshy-1119.github.io/categories.html" class="nav-link">分类</a>
+                <a href="https://codeshy-1119.github.io/tags.html" class="nav-link">标签</a>
+                <a href="https://codeshy-1119.github.io/author/cai-hua-heng-yi.html" class="nav-link">关于</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ===== 页面内容（子模板填充） ===== -->
+
+<!-- ===== 标题 + 搜索框 ===== -->
+<div id="header-fixed">
+    <div class="hero-content">
+        <h1 class="hero-title">才华恒毅的blog</h1>
+        <div class="search-container">
+            <input type="text" id="search-input" placeholder="搜索文章..." />
+            <div id="search-results"></div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== 文章抽屉（默认隐藏） ===== -->
+<div id="content-drawer">
+    <div class="container">
+            <article class="article-card card-left">
+                <div class="card-text">
+                    <header>
+                        <h2><a href="https://codeshy-1119.github.io/network-automation/">网络自动化实战：用 Python + ENSP 搭建企业级网络运维系统</a></h2>
+                        <p class="post-meta">
+                            周三 15 七月 2026
+                                · <a href="https://codeshy-1119.github.io/category/ji-zhu.html">技术</a>
+                                · Tagged with
+                                    <a href="https://codeshy-1119.github.io/tag/python.html">Python</a>,                                    <a href="https://codeshy-1119.github.io/tag/wang-luo-zi-dong-hua.html">网络自动化</a>,                                    <a href="https://codeshy-1119.github.io/tag/ensp.html">ENSP</a>,                                    <a href="https://codeshy-1119.github.io/tag/netmiko.html">Netmiko</a>,                                    <a href="https://codeshy-1119.github.io/tag/yun-wei.html">运维</a>                        </p>
+                    </header>
+                    <a href="https://codeshy-1119.github.io/network-automation/" class="read-more">阅读全文 →</a>
+                </div>
+                <div class="card-image">
+                        <img src="https://codeshy-1119.github.io/posts/Network_Automation-desigm/封面.png" alt="网络自动化实战：用 Python + ENSP 搭建企业级网络运维系统">
+                </div>
+            </article>
+    </div>
+</div>
+
+<button id="toggle-drawer">📖 文章</button>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var searchInput = document.getElementById('search-input');
+    var resultsBox = document.getElementById('search-results');
+    var articles = [];
+
+    fetch('https://codeshy-1119.github.io/search.json')
+        .then(response => response.json())
+        .then(data => {
+            articles = data;
+            console.log('搜索索引数据:', data);
+        })
+        .catch(err => console.log('搜索索引加载失败:', err));
+
+    searchInput.addEventListener('input', function() {
+        var query = this.value.trim().toLowerCase();
+        if (query.length < 2) {
+            resultsBox.style.display = 'none';
+            return;
+        }
+        if (!articles || articles.length === 0) {
+            console.log('articles 尚未加载');
+            return;
+        }
+        var matches = articles.filter(function(item) {
+            return (item.title || '').toLowerCase().includes(query);
+        }).slice(0, 10);
+        if (matches.length > 0) {
+            resultsBox.innerHTML = matches.map(function(item) {
+                return '<a href="' + item.url + '" class="result-item">' +
+                    '<strong>' + item.title + '</strong><br>' +
+                    '<small>' + (item.summary || '').substring(0, 80) + '...</small></a>';
+            }).join('');
+            resultsBox.style.display = 'block';
+        } else {
+            resultsBox.innerHTML = '<div class="result-item" style="color:#999;">未找到相关文章</div>';
+            resultsBox.style.display = 'block';
+        }
+    });
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.search-container')) resultsBox.style.display = 'none';
+    });
+
+    var drawer = document.getElementById('content-drawer');
+    var btn = document.getElementById('toggle-drawer');
+    var header = document.getElementById('header-fixed');
+    var isOpen = false;
+
+    btn.addEventListener('click', function() {
+        isOpen = !isOpen;
+        drawer.classList.toggle('open', isOpen);
+        header.classList.toggle('shift-up', isOpen);
+        btn.textContent = isOpen ? '✕ 收起' : '📖 文章';
+    });
+});
+</script>
+
+<style>
+    html, body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        overflow-y: auto;
+        background: transparent;
+    }
+
+    #header-fixed {
+        position: fixed;
+        top: 25%;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 2;
+        width: 90%;
+        max-width: 600px;
+        pointer-events: none;
+        transition: top 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    #header-fixed.shift-up {
+        top: calc(25% - 140px);
+    }
+    #header-fixed .hero-content {
+        pointer-events: auto;
+        text-align: center;
+        color: #fff;
+        padding: 20px;
+        background: transparent;
+        text-shadow: 0 2px 10px rgba(0,0,0,0.8);
+    }
+    .hero-title {
+        font-size: 3rem;
+        margin-bottom: 20px;
+        text-shadow: 2px 2px 8px rgba(0,0,0,0.8);
+    }
+
+    .search-container {
+        position: relative;
+        width: 100%;
+    }
+    #search-input {
+        width: 100%;
+        padding: 12px 20px;
+        font-size: 1.1rem;
+        border: none;
+        border-radius: 30px;
+        background: rgba(255, 255, 255, 0.55);
+        backdrop-filter: blur(10px);
+        outline: none;
+        color: #333;
+        box-sizing: border-box;
+    }
+    #search-input:focus {
+        background: rgba(255, 255, 255, 0.8);
+        box-shadow: 0 0 20px rgba(255,255,255,0.3);
+    }
+
+    #search-results {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100% !important;
+        min-width: 100% !important;
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 10px;
+        margin-top: 10px;
+        max-height: 300px;
+        overflow-y: auto;
+        display: none;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+        box-sizing: border-box;
+    }
+    #search-results .result-item {
+        padding: 10px 20px;
+        border-bottom: 1px solid #eee;
+        color: #333;
+        text-decoration: none;
+        display: block;
+    }
+    #search-results .result-item:hover {
+        background: #f0f0f0;
+    }
+
+    /* ===== 超强覆盖：强制抽屉固定定位并完全隐藏 ===== */
+    html body #content-drawer {
+        position: fixed !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        height: 60vh !important;
+        z-index: 3 !important;
+        background: rgba(255, 255, 255, 0.95) !important;
+        backdrop-filter: blur(8px) !important;
+        padding: 30px 20px 20px 20px !important;
+        box-sizing: border-box !important;
+        border-radius: 20px 20px 0 0 !important;
+        box-shadow: 0 -4px 20px rgba(0,0,0,0.2) !important;
+        overflow-y: auto !important;
+        transform: translateY(100%) !important;
+        transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    }
+    html body #content-drawer.open {
+        transform: translateY(0) !important;
+    }
+    #content-drawer .container {
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+
+    .article-card {
+        display: flex;
+        align-items: stretch;
+        background: rgba(255, 255, 255, 0.85);
+        border-radius: 16px;
+        overflow: hidden;
+        margin-bottom: 30px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        transition: transform 0.2s, box-shadow 0.2s;
+        height: 200px;
+    }
+    .article-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+    }
+
+    .card-text {
+        flex: 1.2;
+        padding: 20px 28px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        overflow: hidden;
+    }
+    .card-text h2 {
+        margin: 0 0 4px 0;
+    }
+    .card-text h2 a {
+        color: #1a3a2a;
+        text-decoration: none;
+        font-size: 1.2rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+    .card-text h2 a:hover {
+        color: #2a7a5a;
+        text-decoration: underline;
+    }
+    .post-meta {
+        font-size: 0.8rem;
+        color: #777;
+        margin-bottom: 8px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .post-meta a {
+        color: #2a7a5a;
+        text-decoration: none;
+    }
+    .post-meta a:hover {
+        text-decoration: underline;
+    }
+    .read-more {
+        display: inline-block;
+        margin-top: 6px;
+        color: #2a7a5a;
+        font-weight: 600;
+        text-decoration: none;
+        align-self: flex-start;
+    }
+    .read-more:hover {
+        text-decoration: underline;
+    }
+
+    .card-image {
+        flex: 1;
+        min-width: 0;
+        height: 200px;
+        background: #e8ece8;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+    }
+    .card-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    .placeholder-img {
+        font-size: 4rem;
+        opacity: 0.25;
+    }
+
+    .article-card.card-left .card-image {
+        order: 2;
+    }
+    .article-card.card-left .card-text {
+        order: 1;
+    }
+    .article-card.card-right .card-image {
+        order: 1;
+    }
+    .article-card.card-right .card-text {
+        order: 2;
+    }
+
+    #toggle-drawer {
+        position: fixed;
+        bottom: 25px;
+        right: 25px;
+        z-index: 10;
+        padding: 14px 22px;
+        background: rgba(42, 157, 143, 0.9);
+        color: #fff;
+        border: none;
+        border-radius: 40px;
+        font-size: 1.1rem;
+        font-weight: bold;
+        cursor: pointer;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        backdrop-filter: blur(4px);
+        transition: background 0.2s, transform 0.2s;
+    }
+    #toggle-drawer:hover {
+        background: rgba(42, 157, 143, 1);
+        transform: scale(1.05);
+    }
+    #toggle-drawer:active {
+        transform: scale(0.95);
+    }
+
+    @media (max-width: 700px) {
+        .article-card {
+            flex-direction: column;
+            height: auto;
+            min-height: 280px;
+        }
+        .article-card.card-left .card-image,
+        .article-card.card-right .card-image {
+            order: 0;
+            height: 160px;
+        }
+        .article-card.card-left .card-text,
+        .article-card.card-right .card-text {
+            order: 1;
+        }
+        .card-text {
+            padding: 16px 20px;
+        }
+        .card-text h2 a {
+            font-size: 1.0rem;
+        }
+        .hero-title {
+            font-size: 2.2rem;
+        }
+        #header-fixed {
+            top: 18%;
+        }
+        html body #content-drawer {
+            height: 75vh !important;
+        }
+        #toggle-drawer {
+            bottom: 15px;
+            right: 15px;
+            padding: 12px 18px;
+            font-size: 0.95rem;
+        }
+    }
+
+    /* ===== 强制首页导航栏固定 ===== */
+    #navbar {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        z-index: 1000 !important;
+        padding: 12px 20px !important;
+        background: rgba(255, 255, 255, 0.15) !important;
+        backdrop-filter: blur(12px) !important;
+        -webkit-backdrop-filter: blur(12px) !important;
+        box-shadow: 0 2px 20px rgba(0,0,0,0.15) !important;
+        box-sizing: border-box !important;
+        transition: background 0.3s !important;
+    }
+    #navbar:hover {
+        background: rgba(255, 255, 255, 0.25) !important;
+    }
+
+    /* ===== 隐藏原主题侧边栏、footer ===== */
+    .row .col-sm-3,
+    .row .col-md-3,
+    .row .col-lg-3 {
+        display: none !important;
+    }
+    .row .col-sm-9,
+    .row .col-md-9,
+    .row .col-lg-9 {
+        width: 100% !important;
+        max-width: 100% !important;
+        flex: 0 0 100% !important;
+    }
+    footer {
+        display: none !important;
+    }
+</style>
+
+
+    <!-- ===== 底部版权信息 ===== -->
+    <footer style="text-align:center;padding:20px;background:transparent;color:#fff;text-shadow:0 2px 6px rgba(0,0,0,0.5);position:relative;z-index:1;">
+        <p>&copy; 才华恒毅的blog 2026</p>
+    </footer>
+
+    <style>
+        /* ===== 全局视频背景层 ===== */
+        #global-hero {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        #global-hero video {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            object-fit: cover;
+        }
+
+        /* ===== 导航栏（固定在顶部） ===== */
+        #navbar {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            z-index: 1000 !important;
+            padding: 12px 20px !important;
+            background: rgba(255, 255, 255, 0.15) !important;
+            backdrop-filter: blur(12px) !important;
+            -webkit-backdrop-filter: blur(12px) !important;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.15) !important;
+            box-sizing: border-box !important;
+            transition: background 0.3s !important;
+        }
+        #navbar:hover {
+            background: rgba(255, 255, 255, 0.25) !important;
+        }
+
+        .nav-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px 16px;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+        }
+        .nav-brand {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #fff;
+            text-decoration: none;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.6);
+            letter-spacing: 0.5px;
+        }
+        .nav-brand:hover {
+            color: #d4edda;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 6px 14px;
+            flex-wrap: wrap;
+        }
+        .nav-link {
+            color: rgba(255,255,255,0.85);
+            text-decoration: none;
+            font-size: 0.95rem;
+            padding: 6px 12px;
+            border-radius: 30px;
+            transition: background 0.2s, color 0.2s, transform 0.15s;
+            text-shadow: 0 1px 6px rgba(0,0,0,0.4);
+        }
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+            transform: scale(1.04);
+        }
+        .nav-link.active {
+            background: rgba(255, 255, 255, 0.25);
+            color: #fff;
+        }
+
+        @media (max-width: 640px) {
+            #navbar {
+                padding: 10px 14px !important;
+            }
+            .nav-brand {
+                font-size: 1.05rem;
+            }
+            .nav-link {
+                font-size: 0.8rem;
+                padding: 4px 10px;
+            }
+            .nav-right {
+                gap: 4px 8px;
+            }
+        }
+
+        /* ===== 给页面内容留出顶部空间 ===== */
+        body {
+            padding-top: 70px !important;
+            margin: 0 !important;
+            background: transparent !important;
+        }
+
+        /* ===== 确保所有内容层级在视频之上 ===== */
+        #navbar,
+        #header-fixed,
+        #content-drawer,
+        #archives-header,
+        #timeline,
+        #article-content,
+        #author-section,
+        #article-list,
+        #back-home,
+        #toggle-drawer,
+        footer {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ===== 修复右下角所有按钮的固定位置 ===== */
+        #back-home,
+        #toggle-drawer {
+            position: fixed !important;
+            bottom: 25px !important;
+            right: 25px !important;
+            z-index: 100 !important;
+        }
+
+        /* ===== 页面滚动时保持背景稳定 ===== */
+        html, body {
+            overflow-y: auto;
+        }
+    </style>
+
+    <!-- ===== 随机视频切换脚本 ===== -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var video = document.getElementById('bg-video');
+            if (!video) return;
+
+            var videoList = [
+                '/images/blog.mp4',
+                '/images/blog1.mp4',
+                '/images/blog2.mp4'
+            ];
+
+            var availableVideos = [];
+            var checkCount = 0;
+            if (videoList.length === 0) {
+                videoList.push('/images/blog.mp4');
+            }
+            videoList.forEach(function(src) {
+                var testVideo = document.createElement('video');
+                testVideo.src = src;
+                testVideo.onloadeddata = function() {
+                    availableVideos.push(src);
+                    checkCount++;
+                    if (checkCount === videoList.length) {
+                        applyRandomVideo();
+                    }
+                };
+                testVideo.onerror = function() {
+                    checkCount++;
+                    if (checkCount === videoList.length) {
+                        applyRandomVideo();
+                    }
+                };
+            });
+
+            function applyRandomVideo() {
+                if (availableVideos.length === 0) {
+                    availableVideos = videoList.slice(0, 1);
+                }
+                var randomIndex = Math.floor(Math.random() * availableVideos.length);
+                var selected = availableVideos[randomIndex];
+                video.src = selected;
+                video.load();
+                video.play().catch(function(e) {
+                    console.log('视频自动播放被拦截');
+                });
+            }
+        });
+    </script>
+
+</body>
+</html>

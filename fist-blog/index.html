@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="chinese (simplified)">
+<head>
+    <title>才华恒毅的blog</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://codeshy-1119.github.io/theme/css/style.min.css" />
+    <link rel="stylesheet" href="https://codeshy-1119.github.io/theme/css/dark-theme.min.css" />
+    <link rel="stylesheet" href="https://codeshy-1119.github.io/custom.css" />
+</head>
+
+<body>
+
+    <!-- ===== 全局随机视频背景 ===== -->
+    <div id="global-hero">
+        <video autoplay muted loop playsinline id="bg-video"></video>
+    </div>
+
+    <!-- ===== 顶部导航栏（固定） ===== -->
+    <nav id="navbar">
+        <div class="nav-container">
+            <div class="nav-left">
+                <a href="https://codeshy-1119.github.io/" class="nav-brand">才华恒毅的blog</a>
+            </div>
+            <div class="nav-right">
+                <a href="https://codeshy-1119.github.io/" class="nav-link">首页</a>
+                <a href="https://codeshy-1119.github.io/archives.html" class="nav-link">归档</a>
+                <a href="https://codeshy-1119.github.io/categories.html" class="nav-link">分类</a>
+                <a href="https://codeshy-1119.github.io/tags.html" class="nav-link">标签</a>
+                <a href="https://codeshy-1119.github.io/author/cai-hua-heng-yi.html" class="nav-link">关于</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ===== 页面内容（子模板填充） ===== -->
+
+<!-- ===== 目录切换按钮（固定在左侧） ===== -->
+<button id="toc-toggle">📑 目录</button>
+
+<!-- ===== 目录面板（左侧滑出） ===== -->
+<div id="toc-panel">
+    <div id="toc-header">
+        <span>📖 文章目录</span>
+        <button id="toc-close">✕</button>
+    </div>
+    <nav id="toc-content"></nav>
+</div>
+
+<!-- ===== 文章内容（浮在背景上的卡片） ===== -->
+<div id="article-content">
+    <article>
+        <header>
+            <h1 class="article-title">My First Post</h1>
+            <p class="article-meta">
+                周二 23 六月 2026
+                    · <a href="https://codeshy-1119.github.io/category/essay.html">Essay</a>
+                    · Tagged with
+                        <a href="https://codeshy-1119.github.io/tag/python.html">python</a>,                        <a href="https://codeshy-1119.github.io/tag/pelican.html">pelican</a>            </p>
+        </header>
+        <div class="article-body">
+            <p>Welcome to my blog!</p>
+        </div>
+    </article>
+</div>
+
+<!-- ===== 右下角返回按钮 ===== -->
+<button id="back-home" onclick="window.location.href='https://codeshy-1119.github.io/'">🏠 返回</button>
+
+<style>
+    /* ===== 全局重置 ===== */
+    html, body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        overflow-y: auto;
+        background: transparent;
+    }
+
+    /* ===== 文章内容（毛玻璃卡片，居中） ===== */
+    #article-content {
+        position: relative;
+        z-index: 1;
+        margin-top: 10vh;
+        margin-bottom: 10vh;
+        max-width: 800px;
+        margin-left: auto;
+        margin-right: auto;
+        padding: 20px;
+    }
+    #article-content article {
+        background: rgba(255, 255, 255, 0.88);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 40px 45px;
+        box-shadow: 0 8px 40px rgba(0,0,0,0.2);
+        color: #222;
+        line-height: 1.8;
+        font-size: 1.05rem;
+    }
+
+    /* ===== 文章标题 ===== */
+    .article-title {
+        font-size: 2.2rem;
+        margin-bottom: 10px;
+        color: #1a3a2a;
+        text-align: left;
+        border-bottom: 3px solid #2a8a5a;
+        padding-bottom: 15px;
+    }
+    .article-meta {
+        font-size: 0.9rem;
+        color: #666;
+        margin-bottom: 25px;
+        text-align: left;
+    }
+    .article-meta a {
+        color: #2a7a5a;
+        text-decoration: none;
+    }
+    .article-meta a:hover {
+        text-decoration: underline;
+    }
+
+    /* ===== 文章正文 ===== */
+    .article-body {
+        text-align: left;
+    }
+    .article-body p {
+        margin-bottom: 1.2em;
+    }
+    .article-body h2, .article-body h3 {
+        margin-top: 1.8em;
+        margin-bottom: 0.6em;
+        color: #1a3a2a;
+    }
+    .article-body img {
+        max-width: 100%;
+        border-radius: 10px;
+        margin: 20px 0;
+        display: block;
+    }
+    .article-body pre, .article-body code {
+        background: #f0f0f0;
+        border-radius: 6px;
+        padding: 2px 6px;
+        font-size: 0.95rem;
+    }
+    .article-body pre {
+        padding: 16px;
+        overflow-x: auto;
+    }
+
+    /* ===== 返回按钮 ===== */
+    #back-home {
+        position: fixed;
+        bottom: 25px;
+        right: 25px;
+        z-index: 10;
+        padding: 14px 22px;
+        background: rgba(42, 157, 143, 0.9);
+        color: #fff;
+        border: none;
+        border-radius: 40px;
+        font-size: 1.1rem;
+        font-weight: bold;
+        cursor: pointer;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        backdrop-filter: blur(4px);
+        transition: background 0.2s, transform 0.2s;
+    }
+    #back-home:hover {
+        background: rgba(42, 157, 143, 1);
+        transform: scale(1.05);
+    }
+    #back-home:active {
+        transform: scale(0.95);
+    }
+
+    /* ============================================================ */
+    /* ===== 目录相关样式 ===== */
+    /* ============================================================ */
+
+    /* ----- 目录切换按钮（固定左侧） ----- */
+    #toc-toggle {
+        position: fixed;
+        left: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 100;
+        padding: 12px 14px;
+        background: rgba(42, 157, 143, 0.85);
+        color: #fff;
+        border: none;
+        border-radius: 30px;
+        font-size: 1.1rem;
+        cursor: pointer;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.25);
+        backdrop-filter: blur(4px);
+        transition: background 0.2s, transform 0.2s;
+        writing-mode: vertical-lr;
+        letter-spacing: 4px;
+        border-radius: 20px;
+    }
+    #toc-toggle:hover {
+        background: rgba(42, 157, 143, 1);
+        transform: translateY(-50%) scale(1.05);
+    }
+
+    /* ----- 目录面板（左侧滑出） ----- */
+    #toc-panel {
+        position: fixed;
+        left: -320px;          /* 默认隐藏 */
+        top: 0;
+        width: 300px;
+        height: 100vh;
+        z-index: 200;
+        background: rgba(20, 30, 25, 0.92);
+        backdrop-filter: blur(12px);
+        box-shadow: 2px 0 30px rgba(0,0,0,0.3);
+        transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        padding: 20px 10px 20px 20px;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        border-right: 1px solid rgba(255,255,255,0.1);
+        overflow: hidden;
+    }
+    #toc-panel.open {
+        left: 0;
+    }
+
+    #toc-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: #e0f0e8;
+        font-size: 1.1rem;
+        font-weight: bold;
+        padding-bottom: 12px;
+        border-bottom: 1px solid rgba(255,255,255,0.15);
+        flex-shrink: 0;
+    }
+    #toc-close {
+        background: none;
+        border: none;
+        color: #ccc;
+        font-size: 1.4rem;
+        cursor: pointer;
+        padding: 0 8px;
+        transition: color 0.2s;
+    }
+    #toc-close:hover {
+        color: #fff;
+    }
+
+    #toc-content {
+        flex: 1;
+        overflow-y: auto;
+        padding-top: 16px;
+        padding-right: 8px;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(255,255,255,0.2) transparent;
+    }
+    #toc-content::-webkit-scrollbar {
+        width: 4px;
+    }
+    #toc-content::-webkit-scrollbar-thumb {
+        background: rgba(255,255,255,0.2);
+        border-radius: 4px;
+    }
+
+    #toc-content ul {
+        list-style: none;
+        padding-left: 0;
+        margin: 0;
+    }
+    #toc-content li {
+        margin-bottom: 6px;
+        line-height: 1.5;
+    }
+    #toc-content a {
+        color: #bdd9d0;
+        text-decoration: none;
+        font-size: 0.92rem;
+        display: block;
+        padding: 4px 10px 4px 6px;
+        border-radius: 6px;
+        transition: background 0.15s, color 0.15s;
+        word-break: break-word;
+    }
+    #toc-content a:hover {
+        background: rgba(255,255,255,0.08);
+        color: #fff;
+    }
+    /* 层级缩进 */
+    #toc-content ul ul {
+        padding-left: 18px;
+    }
+    /* 当前高亮（滚动时） */
+    #toc-content a.active {
+        background: rgba(42, 157, 143, 0.3);
+        color: #7ad0b5;
+        border-left: 3px solid #2a8a5a;
+    }
+
+    /* 移动端适配：窄屏时调整按钮位置和面板宽度 */
+    @media (max-width: 700px) {
+        #toc-toggle {
+            left: 10px;
+            padding: 10px 10px;
+            font-size: 0.9rem;
+            border-radius: 16px;
+        }
+        #toc-panel {
+            width: 260px;
+            left: -280px;
+        }
+        #toc-panel.open {
+            left: 0;
+        }
+        #toc-content a {
+            font-size: 0.85rem;
+        }
+    }
+
+    /* ===== 隐藏原主题侧边栏、footer ===== */
+    .row .col-sm-3,
+    .row .col-md-3,
+    .row .col-lg-3 {
+        display: none !important;
+    }
+    .row .col-sm-9,
+    .row .col-md-9,
+    .row .col-lg-9 {
+        width: 100% !important;
+        max-width: 100% !important;
+        flex: 0 0 100% !important;
+    }
+    footer {
+        display: none !important;
+    }
+</style>
+
+<!-- ===== JavaScript：生成目录 + 交互 ===== -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // ----- 1. 从文章正文提取标题生成目录 -----
+    var articleBody = document.querySelector('.article-body');
+    if (!articleBody) return;
+
+    var headings = articleBody.querySelectorAll('h2, h3, h4, h5, h6');
+    if (headings.length === 0) {
+        // 没有标题则隐藏目录按钮
+        document.getElementById('toc-toggle').style.display = 'none';
+        return;
+    }
+
+    var tocList = document.createElement('ul');
+    var stack = [tocList];
+    var parentLevel = 2; // 从 h2 开始
+
+    headings.forEach(function(heading) {
+        var level = parseInt(heading.tagName.charAt(1));
+        // 跳过 h1（通常只有文章标题）
+        if (level === 1) return;
+
+        // 生成锚点 id（如果没有）
+        if (!heading.id) {
+            heading.id = 'toc-' + heading.textContent.trim()
+                .replace(/\s+/g, '-')
+                .replace(/[^a-zA-Z0-9\u4e00-\u9fa5\-]/g, '');
+        }
+
+        // 调整层级栈
+        while (level > parentLevel) {
+            var newList = document.createElement('ul');
+            var lastLi = stack[stack.length-1].lastElementChild;
+            if (lastLi && lastLi.tagName === 'LI') {
+                lastLi.appendChild(newList);
+                stack.push(newList);
+                parentLevel++;
+            } else {
+                // 如果当前 UL 没有 LI，创建一个占位
+                var li = document.createElement('li');
+                li.style.listStyle = 'none';
+                stack[stack.length-1].appendChild(li);
+                var subUl = document.createElement('ul');
+                li.appendChild(subUl);
+                stack.push(subUl);
+                parentLevel++;
+            }
+        }
+        while (level < parentLevel) {
+            stack.pop();
+            parentLevel--;
+        }
+
+        var li = document.createElement('li');
+        var a = document.createElement('a');
+        a.href = '#' + heading.id;
+        a.textContent = heading.textContent.trim();
+        // 点击平滑滚动
+        a.addEventListener('click', function(e) {
+            e.preventDefault();
+            var target = document.getElementById(this.getAttribute('href').substring(1));
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+            // 点击后自动收起目录（小屏幕可以，但大屏幕可选，我们让它保持打开）
+            // 可根据需要决定是否关闭，这里我们仅高亮当前项
+        });
+        li.appendChild(a);
+        stack[stack.length-1].appendChild(li);
+    });
+
+    // 将生成的目录插入到 toc-content 中
+    var tocContainer = document.getElementById('toc-content');
+    tocContainer.appendChild(tocList);
+
+    // ----- 2. 面板展开/收起 -----
+    var panel = document.getElementById('toc-panel');
+    var toggleBtn = document.getElementById('toc-toggle');
+    var closeBtn = document.getElementById('toc-close');
+
+    function openToc() {
+        panel.classList.add('open');
+    }
+    function closeToc() {
+        panel.classList.remove('open');
+    }
+
+    toggleBtn.addEventListener('click', function() {
+        if (panel.classList.contains('open')) {
+            closeToc();
+        } else {
+            openToc();
+        }
+    });
+    closeBtn.addEventListener('click', closeToc);
+
+    // 点击面板外部关闭（点击页面空白区域）
+    document.addEventListener('click', function(e) {
+        if (panel.classList.contains('open')) {
+            var target = e.target;
+            if (!panel.contains(target) && target !== toggleBtn && !toggleBtn.contains(target)) {
+                closeToc();
+            }
+        }
+    });
+
+    // ----- 3. 滚动时高亮当前标题 -----
+    var tocLinks = tocContainer.querySelectorAll('a');
+    function setActiveLink() {
+        var scrollY = window.scrollY;
+        var activeId = null;
+        // 从后往前找第一个在视口顶部的标题
+        headings.forEach(function(h) {
+            var rect = h.getBoundingClientRect();
+            if (rect.top <= 120) { // 距顶部120px以内认为活跃
+                activeId = h.id;
+            }
+        });
+        tocLinks.forEach(function(link) {
+            link.classList.remove('active');
+            if (activeId && link.getAttribute('href') === '#' + activeId) {
+                link.classList.add('active');
+            }
+        });
+    }
+    window.addEventListener('scroll', setActiveLink);
+    setActiveLink(); // 初始运行一次
+});
+</script>
+
+
+    <!-- ===== 底部版权信息 ===== -->
+    <footer style="text-align:center;padding:20px;background:transparent;color:#fff;text-shadow:0 2px 6px rgba(0,0,0,0.5);position:relative;z-index:1;">
+        <p>&copy; 才华恒毅的blog 2026</p>
+    </footer>
+
+    <style>
+        /* ===== 全局视频背景层 ===== */
+        #global-hero {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        #global-hero video {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            object-fit: cover;
+        }
+
+        /* ===== 导航栏（固定在顶部） ===== */
+        #navbar {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            z-index: 1000 !important;
+            padding: 12px 20px !important;
+            background: rgba(255, 255, 255, 0.15) !important;
+            backdrop-filter: blur(12px) !important;
+            -webkit-backdrop-filter: blur(12px) !important;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.15) !important;
+            box-sizing: border-box !important;
+            transition: background 0.3s !important;
+        }
+        #navbar:hover {
+            background: rgba(255, 255, 255, 0.25) !important;
+        }
+
+        .nav-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px 16px;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+        }
+        .nav-brand {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #fff;
+            text-decoration: none;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.6);
+            letter-spacing: 0.5px;
+        }
+        .nav-brand:hover {
+            color: #d4edda;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 6px 14px;
+            flex-wrap: wrap;
+        }
+        .nav-link {
+            color: rgba(255,255,255,0.85);
+            text-decoration: none;
+            font-size: 0.95rem;
+            padding: 6px 12px;
+            border-radius: 30px;
+            transition: background 0.2s, color 0.2s, transform 0.15s;
+            text-shadow: 0 1px 6px rgba(0,0,0,0.4);
+        }
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+            transform: scale(1.04);
+        }
+        .nav-link.active {
+            background: rgba(255, 255, 255, 0.25);
+            color: #fff;
+        }
+
+        @media (max-width: 640px) {
+            #navbar {
+                padding: 10px 14px !important;
+            }
+            .nav-brand {
+                font-size: 1.05rem;
+            }
+            .nav-link {
+                font-size: 0.8rem;
+                padding: 4px 10px;
+            }
+            .nav-right {
+                gap: 4px 8px;
+            }
+        }
+
+        /* ===== 给页面内容留出顶部空间 ===== */
+        body {
+            padding-top: 70px !important;
+            margin: 0 !important;
+            background: transparent !important;
+        }
+
+        /* ===== 确保所有内容层级在视频之上 ===== */
+        #navbar,
+        #header-fixed,
+        #content-drawer,
+        #archives-header,
+        #timeline,
+        #article-content,
+        #author-section,
+        #article-list,
+        #back-home,
+        #toggle-drawer,
+        footer {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ===== 修复右下角所有按钮的固定位置 ===== */
+        #back-home,
+        #toggle-drawer {
+            position: fixed !important;
+            bottom: 25px !important;
+            right: 25px !important;
+            z-index: 100 !important;
+        }
+
+        /* ===== 页面滚动时保持背景稳定 ===== */
+        html, body {
+            overflow-y: auto;
+        }
+    </style>
+
+    <!-- ===== 随机视频切换脚本 ===== -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var video = document.getElementById('bg-video');
+            if (!video) return;
+
+            var videoList = [
+                '/images/blog.mp4',
+                '/images/blog1.mp4',
+                '/images/blog2.mp4'
+            ];
+
+            var availableVideos = [];
+            var checkCount = 0;
+            if (videoList.length === 0) {
+                videoList.push('/images/blog.mp4');
+            }
+            videoList.forEach(function(src) {
+                var testVideo = document.createElement('video');
+                testVideo.src = src;
+                testVideo.onloadeddata = function() {
+                    availableVideos.push(src);
+                    checkCount++;
+                    if (checkCount === videoList.length) {
+                        applyRandomVideo();
+                    }
+                };
+                testVideo.onerror = function() {
+                    checkCount++;
+                    if (checkCount === videoList.length) {
+                        applyRandomVideo();
+                    }
+                };
+            });
+
+            function applyRandomVideo() {
+                if (availableVideos.length === 0) {
+                    availableVideos = videoList.slice(0, 1);
+                }
+                var randomIndex = Math.floor(Math.random() * availableVideos.length);
+                var selected = availableVideos[randomIndex];
+                video.src = selected;
+                video.load();
+                video.play().catch(function(e) {
+                    console.log('视频自动播放被拦截');
+                });
+            }
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,1088 @@
+<!DOCTYPE html>
+<html lang="chinese (simplified)">
+<head>
+    <title>才华恒毅的blog</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://codeshy-1119.github.io/theme/css/style.min.css" />
+    <link rel="stylesheet" href="https://codeshy-1119.github.io/theme/css/dark-theme.min.css" />
+    <link rel="stylesheet" href="https://codeshy-1119.github.io/custom.css" />
+</head>
+
+<body>
+
+    <!-- ===== 全局随机视频背景 ===== -->
+    <div id="global-hero">
+        <video autoplay muted loop playsinline id="bg-video"></video>
+    </div>
+
+    <!-- ===== 顶部导航栏（固定） ===== -->
+    <nav id="navbar">
+        <div class="nav-container">
+            <div class="nav-left">
+                <a href="https://codeshy-1119.github.io/" class="nav-brand">才华恒毅的blog</a>
+            </div>
+            <div class="nav-right">
+                <a href="https://codeshy-1119.github.io/" class="nav-link">首页</a>
+                <a href="https://codeshy-1119.github.io/archives.html" class="nav-link">归档</a>
+                <a href="https://codeshy-1119.github.io/categories.html" class="nav-link">分类</a>
+                <a href="https://codeshy-1119.github.io/tags.html" class="nav-link">标签</a>
+                <a href="https://codeshy-1119.github.io/author/cai-hua-heng-yi.html" class="nav-link">关于</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ===== 页面内容（子模板填充） ===== -->
+
+<!-- ===== 目录切换按钮（固定在左侧） ===== -->
+<button id="toc-toggle">📑 目录</button>
+
+<!-- ===== 目录面板（左侧滑出） ===== -->
+<div id="toc-panel">
+    <div id="toc-header">
+        <span>📖 文章目录</span>
+        <button id="toc-close">✕</button>
+    </div>
+    <nav id="toc-content"></nav>
+</div>
+
+<!-- ===== 文章内容（浮在背景上的卡片） ===== -->
+<div id="article-content">
+    <article>
+        <header>
+            <h1 class="article-title">网络自动化实战：用 Python + ENSP 搭建企业级网络运维系统</h1>
+            <p class="article-meta">
+                周三 15 七月 2026
+                    · <a href="https://codeshy-1119.github.io/category/ji-zhu.html">技术</a>
+                    · Tagged with
+                        <a href="https://codeshy-1119.github.io/tag/python.html">Python</a>,                        <a href="https://codeshy-1119.github.io/tag/wang-luo-zi-dong-hua.html">网络自动化</a>,                        <a href="https://codeshy-1119.github.io/tag/ensp.html">ENSP</a>,                        <a href="https://codeshy-1119.github.io/tag/netmiko.html">Netmiko</a>,                        <a href="https://codeshy-1119.github.io/tag/yun-wei.html">运维</a>            </p>
+        </header>
+        <div class="article-body">
+            <h1>网络自动化实战：用 Python + ENSP 搭建企业级网络运维系统</h1>
+<blockquote>
+<p>从零开始，手把手教你用 Python 批量管理华为交换机</p>
+</blockquote>
+<p>作为一名网络工程师，你是否遇到过这样的场景：</p>
+<ul>
+<li>公司新上线一个业务，需要在 10 台交换机上同时创建 VLAN？</li>
+<li>每天早上需要手动登录每台设备检查 CPU 和内存使用率？</li>
+<li>设备配置变更后忘记备份，出了问题只能凭记忆恢复？</li>
+</ul>
+<p>如果有，那么<strong>网络自动化</strong>就是你需要的解决方案。</p>
+<p>本文将带你从零开始，使用 <strong>华为 ENSP 模拟器</strong> 和 <strong>Python</strong> 搭建一个企业级的网络自动化运维系统。你将学会：</p>
+<ul>
+<li>✅ 使用 Python 批量连接多台交换机</li>
+<li>✅ 一键在 5 台设备上批量执行任意命令</li>
+<li>✅ 自动备份所有设备的配置文件</li>
+<li>✅ 生成自动化巡检报告</li>
+</ul>
+<p>全部代码已在真实 ENSP 环境中验证通过，你可以直接复现。</p>
+<hr>
+<h2>🛠 环境准备</h2>
+<h3>硬件与软件</h3>
+<table>
+<thead>
+<tr>
+<th>项目</th>
+<th>版本</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>操作系统</td>
+<td>Windows 10/11</td>
+</tr>
+<tr>
+<td>网络模拟器</td>
+<td>华为 ENSP V1R3</td>
+</tr>
+<tr>
+<td>Python</td>
+<td>3.10</td>
+</tr>
+<tr>
+<td>核心库</td>
+<td>Netmiko 4.7.0, Paramiko 4.0.0</td>
+</tr>
+</tbody>
+</table>
+<h3>Python 依赖安装</h3>
+<div class="highlight"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span>netmiko<span class="w"> </span>paramiko<span class="w"> </span>pyyaml
+</code></pre></div>
+
+<h3>ENSP 拓扑设计</h3>
+<p>我搭建了一个<strong>三层架构</strong>的企业网络，包含 5 台交换机和 1 台 Cloud 设备：</p>
+<div class="highlight"><pre><span></span><code><span class="w">        </span><span class="o">[</span><span class="n">你的电脑（Python脚本）</span><span class="o">]</span>
+<span class="w">              </span><span class="err">│</span>
+<span class="w">          </span><span class="o">[</span><span class="n">Cloud设备</span><span class="o">]</span>
+<span class="w">              </span><span class="err">│</span>
+<span class="w">         </span><span class="n">Core</span><span class="o">-</span><span class="n">SW</span><span class="w"> </span><span class="p">(</span><span class="n">S5700</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="nl">管理IP</span><span class="p">:</span><span class="w"> </span><span class="mf">192.168.56.10</span>
+<span class="w">           </span><span class="o">/</span><span class="w">        </span><span class="err">\</span>
+<span class="w">    </span><span class="n">Agg</span><span class="o">-</span><span class="n">SW1</span><span class="w">        </span><span class="n">Agg</span><span class="o">-</span><span class="n">SW2</span>
+<span class="w">   </span><span class="p">(</span><span class="n">S5700</span><span class="p">)</span><span class="w">        </span><span class="p">(</span><span class="n">S5700</span><span class="p">)</span>
+<span class="w">  </span><span class="nl">管理IP</span><span class="p">:</span><span class="w">         </span><span class="nl">管理IP</span><span class="p">:</span>
+<span class="w"> </span><span class="mf">192.168.56.20</span><span class="w">   </span><span class="mf">192.168.56.21</span>
+<span class="w">      </span><span class="o">|</span><span class="w">               </span><span class="o">|</span>
+<span class="w">  </span><span class="n">Access</span><span class="o">-</span><span class="n">SW1</span><span class="w">     </span><span class="n">Access</span><span class="o">-</span><span class="n">SW2</span>
+<span class="w">   </span><span class="p">(</span><span class="n">S3700</span><span class="p">)</span><span class="w">        </span><span class="p">(</span><span class="n">S3700</span><span class="p">)</span>
+<span class="w">  </span><span class="nl">管理IP</span><span class="p">:</span><span class="w">         </span><span class="nl">管理IP</span><span class="p">:</span>
+<span class="w"> </span><span class="mf">192.168.56.30</span><span class="w">   </span><span class="mf">192.168.56.31</span>
+</code></pre></div>
+
+<p><img alt="" src="/posts/Network_Automation-desigm/拓扑图.png"></p>
+<p><img alt="" src="/posts/Network_Automation-desigm/连通性.png"></p>
+<p>每台交换机配置一个管理 VLAN 10，并开启 SSH 服务。</p>
+<hr>
+<h2>📂 项目结构</h2>
+<div class="highlight"><pre><span></span><code>F:\eNSP网络自动化项目\
+│
+├──ensp_auto\                     # 代码主目录
+│   │
+│   ├──config\
+│   │   └──devices.yaml           # 设备清单（IP、账号、角色）
+│   │
+│   ├──core\
+│   │   └──connector.py           # 批量连接核心函数
+│   │
+│   ├──scripts\
+│   │   ├──batch_command.py       # 批量执行命令
+│   │   ├──batch_backup.py        # 批量备份配置
+│   │   └──health_check.py        # 自动化巡检
+│   │
+│   └──test_ssh.py                # SSH 连接测试
+│
+├──venv\                          # Python 虚拟环境
+│
+└──reports\                       # 备份文件和巡检报告（自动生成）
+</code></pre></div>
+
+<hr>
+<h2>🔌 核心功能一：批量连接所有设备</h2>
+<h3>设备清单 <code>config/devices.yaml</code></h3>
+<div class="highlight"><pre><span></span><code><span class="nt">devices</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">192.168.56.10</span>
+<span class="w">    </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">admin</span>
+<span class="w">    </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">huawei@123</span>
+<span class="w">    </span><span class="nt">device_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">huawei</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Core-SW</span>
+<span class="w">    </span><span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">core</span>
+
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">192.168.56.20</span>
+<span class="w">    </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">admin</span>
+<span class="w">    </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">huawei@123</span>
+<span class="w">    </span><span class="nt">device_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">huawei</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Agg-SW1</span>
+<span class="w">    </span><span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">aggregation</span>
+
+<span class="w">  </span><span class="c1"># ... 其余 3 台设备</span>
+</code></pre></div>
+
+<h3>连接函数 <code>core/connector.py</code></h3>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">netmiko</span> <span class="kn">import</span> <span class="n">ConnectHandler</span>
+<span class="kn">import</span> <span class="nn">paramiko</span>
+<span class="kn">import</span> <span class="nn">yaml</span>
+
+<span class="c1"># 修复 Python 3.10 与 ENSP 旧版 SSH 算法的兼容性</span>
+<span class="n">paramiko</span><span class="o">.</span><span class="n">Transport</span><span class="o">.</span><span class="n">_preferred_kex</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="s1">&#39;diffie-hellman-group1-sha1&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;diffie-hellman-group14-sha1&#39;</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">load_devices</span><span class="p">():</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;config/devices.yaml&#39;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;devices&#39;</span><span class="p">,</span> <span class="p">[])</span>
+
+<span class="k">def</span> <span class="nf">connect_all_devices</span><span class="p">(</span><span class="n">devices</span><span class="p">):</span>
+    <span class="n">connections</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">device</span> <span class="ow">in</span> <span class="n">devices</span><span class="p">:</span>
+        <span class="n">netmiko_params</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;device_type&#39;</span><span class="p">:</span> <span class="n">device</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;device_type&#39;</span><span class="p">,</span> <span class="s1">&#39;huawei&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;host&#39;</span><span class="p">:</span> <span class="n">device</span><span class="p">[</span><span class="s1">&#39;host&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;username&#39;</span><span class="p">:</span> <span class="n">device</span><span class="p">[</span><span class="s1">&#39;username&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;password&#39;</span><span class="p">:</span> <span class="n">device</span><span class="p">[</span><span class="s1">&#39;password&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;port&#39;</span><span class="p">:</span> <span class="n">device</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;port&#39;</span><span class="p">,</span> <span class="mi">22</span><span class="p">),</span>
+        <span class="p">}</span>
+        <span class="n">conn</span> <span class="o">=</span> <span class="n">ConnectHandler</span><span class="p">(</span><span class="o">**</span><span class="n">netmiko_params</span><span class="p">)</span>
+        <span class="n">connections</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+            <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">device</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;host&#39;</span><span class="p">:</span> <span class="n">device</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;host&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;connection&#39;</span><span class="p">:</span> <span class="n">conn</span>
+        <span class="p">})</span>
+    <span class="k">return</span> <span class="n">connections</span>
+</code></pre></div>
+
+<h3>运行效果</h3>
+<div class="highlight"><pre><span></span><code>📋 共加载 5 台设备
+🔌 正在连接 Core-SW (192.168.56.10)...
+🔌 正在连接 Agg-SW1 (192.168.56.20)...
+🔌 正在连接 Agg-SW2 (192.168.56.21)...
+🔌 正在连接 Access-SW1 (192.168.56.30)...
+🔌 正在连接 Access-SW2 (192.168.56.31)...
+✅ 成功连接 5 台设备
+</code></pre></div>
+
+<p><img alt="" src="/posts/Network_Automation-desigm/批量连接功能验证.png"></p>
+<hr>
+<h2>📋 核心功能二：批量执行任意命令</h2>
+<h3>脚本 <code>scripts/batch_command.py</code></h3>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">batch_send_command</span><span class="p">(</span><span class="n">connections</span><span class="p">,</span> <span class="n">command</span><span class="p">):</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">connections</span><span class="p">:</span>
+        <span class="n">conn</span> <span class="o">=</span> <span class="n">item</span><span class="p">[</span><span class="s1">&#39;connection&#39;</span><span class="p">]</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">item</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">send_command</span><span class="p">(</span><span class="n">command</span><span class="p">)</span>
+        <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">name</span><span class="p">,</span> <span class="s1">&#39;output&#39;</span><span class="p">:</span> <span class="n">output</span><span class="p">})</span>
+    <span class="k">return</span> <span class="n">results</span>
+</code></pre></div>
+
+<h3>使用场景：查看所有交换机的 VLAN</h3>
+<div class="highlight"><pre><span></span><code>python<span class="w"> </span>scripts/batch_command.py
+</code></pre></div>
+
+<h3>运行效果</h3>
+<div class="highlight"><pre><span></span><code>📝 正在向所有设备发送命令: display vlan
+✅ Core-SW (192.168.56.10) 命令执行成功
+✅ Agg-SW1 (192.168.56.20) 命令执行成功
+✅ Agg-SW2 (192.168.56.21) 命令执行成功
+✅ Access-SW1 (192.168.56.30) 命令执行成功
+✅ Access-SW2 (192.168.56.31) 命令执行成功
+
+============================================================
+📋 批量命令执行结果汇总
+============================================================
+✅ 成功: 5 台
+❌ 失败: 0 台
+</code></pre></div>
+
+<p><img src="/posts/Network_Automation-desigm/批量vlan显示.png" style="zoom:50%;" /></p>
+<p><img src="/posts/Network_Automation-desigm/1display_vlan.png" style="zoom:50%;" /></p>
+<p><img src="/posts/Network_Automation-desigm/2display_vlan.png" style="zoom:50%;" /></p>
+<p><img src="/posts/Network_Automation-desigm/3display_vlan.png" style="zoom:50%;" /></p>
+<p><img src="/posts/Network_Automation-desigm/4display_vlan.png" style="zoom:50%;" /></p>
+<p><img src="/posts/Network_Automation-desigm/5display_vlan.png" style="zoom:50%;" /></p>
+<h3>价值分析</h3>
+<table>
+<thead>
+<tr>
+<th>场景</th>
+<th>传统手动方式</th>
+<th>自动化方式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>查看 5 台设备 VLAN</td>
+<td>依次登录 5 次，约 10 分钟</td>
+<td>一键执行，&lt; 10 秒</td>
+</tr>
+<tr>
+<td>跨设备对比配置</td>
+<td>人工记忆或翻找记录</td>
+<td>汇总展示，一目了然</td>
+</tr>
+<tr>
+<td>排错排查</td>
+<td>逐个设备追溯</td>
+<td>一次性并行收集</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2>💾 核心功能三：批量备份配置</h2>
+<h3>脚本 <code>scripts/batch_backup.py</code></h3>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">backup_config</span><span class="p">(</span><span class="n">connections</span><span class="p">):</span>
+    <span class="n">timestamp</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y%m</span><span class="si">%d</span><span class="s2">_%H%M%S&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">connections</span><span class="p">:</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">item</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">timestamp</span><span class="si">}</span><span class="s2">.txt&quot;</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">send_command</span><span class="p">(</span><span class="s1">&#39;display current-configuration&#39;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+</code></pre></div>
+
+<h3>备份文件命名规范</h3>
+<div class="highlight"><pre><span></span><code>Core-SW_20260716_134848.txt
+Agg-SW1_20260716_134848.txt
+Agg-SW2_20260716_134848.txt
+Access-SW1_20260716_134848.txt
+Access-SW2_20260716_134848.txt
+</code></pre></div>
+
+<h3>运行效果</h3>
+<div class="highlight"><pre><span></span><code>![批量备份结果](F:\blog\my-blog\content\posts\Network_Automation-desigm\批量备份结果.png)📥 正在备份 Core-SW (192.168.56.10)...
+✅ Core-SW 备份成功 → Core-SW_20260716_134848.txt
+📥 正在备份 Agg-SW1 (192.168.56.20)...
+✅ Agg-SW1 备份成功 → Agg-SW1_20260716_134848.txt
+...
+📊 备份完成！成功: 5, 失败: 0
+📁 备份文件保存在: F:\eNSP网络自动化项目\ensp_auto\reports
+</code></pre></div>
+
+<p><img alt="" src="/posts/Network_Automation-desigm/批量备份结果.png"></p>
+<p><img src="/posts/Network_Automation-desigm/批量备份.png" style="zoom:50%;" /></p>
+<h3>实际应用价值</h3>
+<ul>
+<li>✅ 定时备份所有设备配置（配合 Windows 任务计划）</li>
+<li>✅ 配置变更前后自动备份，便于回滚</li>
+<li>✅ 所有备份文件集中存储，方便审计</li>
+</ul>
+<hr>
+<h2>🏥 核心功能四：自动化巡检</h2>
+<h3>脚本 <code>scripts/health_check.py</code></h3>
+<p>自动收集每台设备的：
+- CPU 使用率
+- 内存使用率
+- 接口状态
+- 系统时间</p>
+<p>并生成一份完整的巡检报告。</p>
+<h3>巡检报告示例</h3>
+<div class="highlight"><pre><span></span><code>============================================================
+  网络设备自动化巡检报告
+============================================================
+巡检时间: 2026-07-16 13:50:00
+设备总数: 5
+成功检查: 5
+检查失败: 0
+============================================================
+
+============================================================
+设备名称: Core-SW
+设备 IP : 192.168.56.10
+状态    : success
+
+--- CPU ---
+CPU usage: 12%
+
+--- MEMORY ---
+Memory usage: 38%
+
+--- INTERFACE ---
+GigabitEthernet0/0/1    UP
+GigabitEthernet0/0/2    UP
+GigabitEthernet0/0/3    UP
+...
+</code></pre></div>
+
+<p><img alt="" src="/posts/Network_Automation-desigm/巡检报告.png"></p>
+<hr>
+<h2>📊 功能对比：手动 vs 自动化</h2>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>手动（5台设备）</th>
+<th>自动化（Python脚本）</th>
+<th>效率提升</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>查看设备信息</td>
+<td>5次登录 × 2分钟 = 10分钟</td>
+<td>一键执行，10秒</td>
+<td><strong>60倍</strong></td>
+</tr>
+<tr>
+<td>批量备份配置</td>
+<td>5次登录 + 5次复制 = 15分钟</td>
+<td>一键执行，15秒</td>
+<td><strong>60倍</strong></td>
+</tr>
+<tr>
+<td>每日巡检报告</td>
+<td>5次登录 + 手工整理 = 30分钟</td>
+<td>一键执行，30秒</td>
+<td><strong>60倍</strong></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2>💡 关键技术要点</h2>
+<h3>1. Python 3.10 与 ENSP 旧版 SSH 的兼容性</h3>
+<p>ENSP 默认使用较旧的 SSH 加密算法，Python 3.10 默认禁用了这些算法。需要在代码中手动启用：</p>
+<div class="highlight"><pre><span></span><code><span class="n">paramiko</span><span class="o">.</span><span class="n">Transport</span><span class="o">.</span><span class="n">_preferred_kex</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="s1">&#39;diffie-hellman-group1-sha1&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;diffie-hellman-group14-sha1&#39;</span><span class="p">,</span>
+<span class="p">)</span>
+</code></pre></div>
+
+<h3>2. Cloud 设备端口映射</h3>
+<p>ENSP 的 Cloud 设备使用 UDP 隧道转发数据，Python 脚本连接的是交换机的 SSH 端口（TCP 22），Cloud 会自动完成 UDP↔TCP 转换。</p>
+<h3>3. 端口互联必须划入同一 VLAN</h3>
+<p>VLANIF 接口要 UP，必须满足两个条件：
+- VLAN 已创建
+- VLAN 下至少有一个物理端口处于 UP 状态</p>
+<hr>
+<h2>🚀 扩展方向</h2>
+<p>本项目已经具备基础框架，未来可以继续扩展：</p>
+<table>
+<thead>
+<tr>
+<th>扩展方向</th>
+<th>技术方案</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Web 可视化</td>
+<td>用 Flask/Django 搭建管理界面</td>
+</tr>
+<tr>
+<td>定时任务</td>
+<td>配合 Windows 任务计划或 Linux Cron</td>
+</tr>
+<tr>
+<td>配置模板化</td>
+<td>使用 Jinja2 生成标准化配置</td>
+</tr>
+<tr>
+<td>告警通知</td>
+<td>集成企业微信/钉钉机器人</td>
+</tr>
+<tr>
+<td>NETCONF/YANG</td>
+<td>基于华为设备的标准化接口</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2>📝 总结</h2>
+<p>通过这个项目，我实现了：</p>
+<ol>
+<li>✅ <strong>从零搭建</strong>一个包含 5 台交换机的企业级网络拓扑</li>
+<li>✅ <strong>用 Python + Netmiko</strong> 实现批量设备连接和管理</li>
+<li>✅ <strong>一键执行</strong>任意命令、批量备份配置、自动生成巡检报告</li>
+<li>✅ <strong>效率提升 60 倍</strong>，将重复性工作完全交给代码</li>
+</ol>
+<p>网络自动化的核心价值在于：<strong>将工程师从重复劳动中解放出来，专注于更有创造性的工作。</strong></p>
+<hr>
+<h2>🔗 参考资料</h2>
+<ul>
+<li><a href="https://github.com/ktbyers/netmiko">Netmiko 官方文档</a></li>
+<li><a href="https://support.huawei.com/enterprise/zh/enterprise-network/ensp-pid-23438496">华为 ENSP 模拟器</a></li>
+<li><a href="https://www.paramiko.org/">Paramiko 文档</a></li>
+</ul>
+<hr>
+<blockquote>
+<p>📅 本文发布于 2026 年 7 月，全部代码已在 ENSP + Python 3.10 环境中验证通过。</p>
+</blockquote>
+        </div>
+    </article>
+</div>
+
+<!-- ===== 右下角返回按钮 ===== -->
+<button id="back-home" onclick="window.location.href='https://codeshy-1119.github.io/'">🏠 返回</button>
+
+<style>
+    /* ===== 全局重置 ===== */
+    html, body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        overflow-y: auto;
+        background: transparent;
+    }
+
+    /* ===== 文章内容（毛玻璃卡片，居中） ===== */
+    #article-content {
+        position: relative;
+        z-index: 1;
+        margin-top: 10vh;
+        margin-bottom: 10vh;
+        max-width: 800px;
+        margin-left: auto;
+        margin-right: auto;
+        padding: 20px;
+    }
+    #article-content article {
+        background: rgba(255, 255, 255, 0.88);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 40px 45px;
+        box-shadow: 0 8px 40px rgba(0,0,0,0.2);
+        color: #222;
+        line-height: 1.8;
+        font-size: 1.05rem;
+    }
+
+    /* ===== 文章标题 ===== */
+    .article-title {
+        font-size: 2.2rem;
+        margin-bottom: 10px;
+        color: #1a3a2a;
+        text-align: left;
+        border-bottom: 3px solid #2a8a5a;
+        padding-bottom: 15px;
+    }
+    .article-meta {
+        font-size: 0.9rem;
+        color: #666;
+        margin-bottom: 25px;
+        text-align: left;
+    }
+    .article-meta a {
+        color: #2a7a5a;
+        text-decoration: none;
+    }
+    .article-meta a:hover {
+        text-decoration: underline;
+    }
+
+    /* ===== 文章正文 ===== */
+    .article-body {
+        text-align: left;
+    }
+    .article-body p {
+        margin-bottom: 1.2em;
+    }
+    .article-body h2, .article-body h3 {
+        margin-top: 1.8em;
+        margin-bottom: 0.6em;
+        color: #1a3a2a;
+    }
+    .article-body img {
+        max-width: 100%;
+        border-radius: 10px;
+        margin: 20px 0;
+        display: block;
+    }
+    .article-body pre, .article-body code {
+        background: #f0f0f0;
+        border-radius: 6px;
+        padding: 2px 6px;
+        font-size: 0.95rem;
+    }
+    .article-body pre {
+        padding: 16px;
+        overflow-x: auto;
+    }
+
+    /* ===== 返回按钮 ===== */
+    #back-home {
+        position: fixed;
+        bottom: 25px;
+        right: 25px;
+        z-index: 10;
+        padding: 14px 22px;
+        background: rgba(42, 157, 143, 0.9);
+        color: #fff;
+        border: none;
+        border-radius: 40px;
+        font-size: 1.1rem;
+        font-weight: bold;
+        cursor: pointer;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        backdrop-filter: blur(4px);
+        transition: background 0.2s, transform 0.2s;
+    }
+    #back-home:hover {
+        background: rgba(42, 157, 143, 1);
+        transform: scale(1.05);
+    }
+    #back-home:active {
+        transform: scale(0.95);
+    }
+
+    /* ============================================================ */
+    /* ===== 目录相关样式 ===== */
+    /* ============================================================ */
+
+    /* ----- 目录切换按钮（固定左侧） ----- */
+    #toc-toggle {
+        position: fixed;
+        left: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 100;
+        padding: 12px 14px;
+        background: rgba(42, 157, 143, 0.85);
+        color: #fff;
+        border: none;
+        border-radius: 30px;
+        font-size: 1.1rem;
+        cursor: pointer;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.25);
+        backdrop-filter: blur(4px);
+        transition: background 0.2s, transform 0.2s;
+        writing-mode: vertical-lr;
+        letter-spacing: 4px;
+        border-radius: 20px;
+    }
+    #toc-toggle:hover {
+        background: rgba(42, 157, 143, 1);
+        transform: translateY(-50%) scale(1.05);
+    }
+
+    /* ----- 目录面板（左侧滑出） ----- */
+    #toc-panel {
+        position: fixed;
+        left: -320px;          /* 默认隐藏 */
+        top: 0;
+        width: 300px;
+        height: 100vh;
+        z-index: 200;
+        background: rgba(20, 30, 25, 0.92);
+        backdrop-filter: blur(12px);
+        box-shadow: 2px 0 30px rgba(0,0,0,0.3);
+        transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        padding: 20px 10px 20px 20px;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        border-right: 1px solid rgba(255,255,255,0.1);
+        overflow: hidden;
+    }
+    #toc-panel.open {
+        left: 0;
+    }
+
+    #toc-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: #e0f0e8;
+        font-size: 1.1rem;
+        font-weight: bold;
+        padding-bottom: 12px;
+        border-bottom: 1px solid rgba(255,255,255,0.15);
+        flex-shrink: 0;
+    }
+    #toc-close {
+        background: none;
+        border: none;
+        color: #ccc;
+        font-size: 1.4rem;
+        cursor: pointer;
+        padding: 0 8px;
+        transition: color 0.2s;
+    }
+    #toc-close:hover {
+        color: #fff;
+    }
+
+    #toc-content {
+        flex: 1;
+        overflow-y: auto;
+        padding-top: 16px;
+        padding-right: 8px;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(255,255,255,0.2) transparent;
+    }
+    #toc-content::-webkit-scrollbar {
+        width: 4px;
+    }
+    #toc-content::-webkit-scrollbar-thumb {
+        background: rgba(255,255,255,0.2);
+        border-radius: 4px;
+    }
+
+    #toc-content ul {
+        list-style: none;
+        padding-left: 0;
+        margin: 0;
+    }
+    #toc-content li {
+        margin-bottom: 6px;
+        line-height: 1.5;
+    }
+    #toc-content a {
+        color: #bdd9d0;
+        text-decoration: none;
+        font-size: 0.92rem;
+        display: block;
+        padding: 4px 10px 4px 6px;
+        border-radius: 6px;
+        transition: background 0.15s, color 0.15s;
+        word-break: break-word;
+    }
+    #toc-content a:hover {
+        background: rgba(255,255,255,0.08);
+        color: #fff;
+    }
+    /* 层级缩进 */
+    #toc-content ul ul {
+        padding-left: 18px;
+    }
+    /* 当前高亮（滚动时） */
+    #toc-content a.active {
+        background: rgba(42, 157, 143, 0.3);
+        color: #7ad0b5;
+        border-left: 3px solid #2a8a5a;
+    }
+
+    /* 移动端适配：窄屏时调整按钮位置和面板宽度 */
+    @media (max-width: 700px) {
+        #toc-toggle {
+            left: 10px;
+            padding: 10px 10px;
+            font-size: 0.9rem;
+            border-radius: 16px;
+        }
+        #toc-panel {
+            width: 260px;
+            left: -280px;
+        }
+        #toc-panel.open {
+            left: 0;
+        }
+        #toc-content a {
+            font-size: 0.85rem;
+        }
+    }
+
+    /* ===== 隐藏原主题侧边栏、footer ===== */
+    .row .col-sm-3,
+    .row .col-md-3,
+    .row .col-lg-3 {
+        display: none !important;
+    }
+    .row .col-sm-9,
+    .row .col-md-9,
+    .row .col-lg-9 {
+        width: 100% !important;
+        max-width: 100% !important;
+        flex: 0 0 100% !important;
+    }
+    footer {
+        display: none !important;
+    }
+</style>
+
+<!-- ===== JavaScript：生成目录 + 交互 ===== -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // ----- 1. 从文章正文提取标题生成目录 -----
+    var articleBody = document.querySelector('.article-body');
+    if (!articleBody) return;
+
+    var headings = articleBody.querySelectorAll('h2, h3, h4, h5, h6');
+    if (headings.length === 0) {
+        // 没有标题则隐藏目录按钮
+        document.getElementById('toc-toggle').style.display = 'none';
+        return;
+    }
+
+    var tocList = document.createElement('ul');
+    var stack = [tocList];
+    var parentLevel = 2; // 从 h2 开始
+
+    headings.forEach(function(heading) {
+        var level = parseInt(heading.tagName.charAt(1));
+        // 跳过 h1（通常只有文章标题）
+        if (level === 1) return;
+
+        // 生成锚点 id（如果没有）
+        if (!heading.id) {
+            heading.id = 'toc-' + heading.textContent.trim()
+                .replace(/\s+/g, '-')
+                .replace(/[^a-zA-Z0-9\u4e00-\u9fa5\-]/g, '');
+        }
+
+        // 调整层级栈
+        while (level > parentLevel) {
+            var newList = document.createElement('ul');
+            var lastLi = stack[stack.length-1].lastElementChild;
+            if (lastLi && lastLi.tagName === 'LI') {
+                lastLi.appendChild(newList);
+                stack.push(newList);
+                parentLevel++;
+            } else {
+                // 如果当前 UL 没有 LI，创建一个占位
+                var li = document.createElement('li');
+                li.style.listStyle = 'none';
+                stack[stack.length-1].appendChild(li);
+                var subUl = document.createElement('ul');
+                li.appendChild(subUl);
+                stack.push(subUl);
+                parentLevel++;
+            }
+        }
+        while (level < parentLevel) {
+            stack.pop();
+            parentLevel--;
+        }
+
+        var li = document.createElement('li');
+        var a = document.createElement('a');
+        a.href = '#' + heading.id;
+        a.textContent = heading.textContent.trim();
+        // 点击平滑滚动
+        a.addEventListener('click', function(e) {
+            e.preventDefault();
+            var target = document.getElementById(this.getAttribute('href').substring(1));
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+            // 点击后自动收起目录（小屏幕可以，但大屏幕可选，我们让它保持打开）
+            // 可根据需要决定是否关闭，这里我们仅高亮当前项
+        });
+        li.appendChild(a);
+        stack[stack.length-1].appendChild(li);
+    });
+
+    // 将生成的目录插入到 toc-content 中
+    var tocContainer = document.getElementById('toc-content');
+    tocContainer.appendChild(tocList);
+
+    // ----- 2. 面板展开/收起 -----
+    var panel = document.getElementById('toc-panel');
+    var toggleBtn = document.getElementById('toc-toggle');
+    var closeBtn = document.getElementById('toc-close');
+
+    function openToc() {
+        panel.classList.add('open');
+    }
+    function closeToc() {
+        panel.classList.remove('open');
+    }
+
+    toggleBtn.addEventListener('click', function() {
+        if (panel.classList.contains('open')) {
+            closeToc();
+        } else {
+            openToc();
+        }
+    });
+    closeBtn.addEventListener('click', closeToc);
+
+    // 点击面板外部关闭（点击页面空白区域）
+    document.addEventListener('click', function(e) {
+        if (panel.classList.contains('open')) {
+            var target = e.target;
+            if (!panel.contains(target) && target !== toggleBtn && !toggleBtn.contains(target)) {
+                closeToc();
+            }
+        }
+    });
+
+    // ----- 3. 滚动时高亮当前标题 -----
+    var tocLinks = tocContainer.querySelectorAll('a');
+    function setActiveLink() {
+        var scrollY = window.scrollY;
+        var activeId = null;
+        // 从后往前找第一个在视口顶部的标题
+        headings.forEach(function(h) {
+            var rect = h.getBoundingClientRect();
+            if (rect.top <= 120) { // 距顶部120px以内认为活跃
+                activeId = h.id;
+            }
+        });
+        tocLinks.forEach(function(link) {
+            link.classList.remove('active');
+            if (activeId && link.getAttribute('href') === '#' + activeId) {
+                link.classList.add('active');
+            }
+        });
+    }
+    window.addEventListener('scroll', setActiveLink);
+    setActiveLink(); // 初始运行一次
+});
+</script>
+
+
+    <!-- ===== 底部版权信息 ===== -->
+    <footer style="text-align:center;padding:20px;background:transparent;color:#fff;text-shadow:0 2px 6px rgba(0,0,0,0.5);position:relative;z-index:1;">
+        <p>&copy; 才华恒毅的blog 2026</p>
+    </footer>
+
+    <style>
+        /* ===== 全局视频背景层 ===== */
+        #global-hero {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        #global-hero video {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            object-fit: cover;
+        }
+
+        /* ===== 导航栏（固定在顶部） ===== */
+        #navbar {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            z-index: 1000 !important;
+            padding: 12px 20px !important;
+            background: rgba(255, 255, 255, 0.15) !important;
+            backdrop-filter: blur(12px) !important;
+            -webkit-backdrop-filter: blur(12px) !important;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.15) !important;
+            box-sizing: border-box !important;
+            transition: background 0.3s !important;
+        }
+        #navbar:hover {
+            background: rgba(255, 255, 255, 0.25) !important;
+        }
+
+        .nav-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px 16px;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+        }
+        .nav-brand {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #fff;
+            text-decoration: none;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.6);
+            letter-spacing: 0.5px;
+        }
+        .nav-brand:hover {
+            color: #d4edda;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 6px 14px;
+            flex-wrap: wrap;
+        }
+        .nav-link {
+            color: rgba(255,255,255,0.85);
+            text-decoration: none;
+            font-size: 0.95rem;
+            padding: 6px 12px;
+            border-radius: 30px;
+            transition: background 0.2s, color 0.2s, transform 0.15s;
+            text-shadow: 0 1px 6px rgba(0,0,0,0.4);
+        }
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+            transform: scale(1.04);
+        }
+        .nav-link.active {
+            background: rgba(255, 255, 255, 0.25);
+            color: #fff;
+        }
+
+        @media (max-width: 640px) {
+            #navbar {
+                padding: 10px 14px !important;
+            }
+            .nav-brand {
+                font-size: 1.05rem;
+            }
+            .nav-link {
+                font-size: 0.8rem;
+                padding: 4px 10px;
+            }
+            .nav-right {
+                gap: 4px 8px;
+            }
+        }
+
+        /* ===== 给页面内容留出顶部空间 ===== */
+        body {
+            padding-top: 70px !important;
+            margin: 0 !important;
+            background: transparent !important;
+        }
+
+        /* ===== 确保所有内容层级在视频之上 ===== */
+        #navbar,
+        #header-fixed,
+        #content-drawer,
+        #archives-header,
+        #timeline,
+        #article-content,
+        #author-section,
+        #article-list,
+        #back-home,
+        #toggle-drawer,
+        footer {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ===== 修复右下角所有按钮的固定位置 ===== */
+        #back-home,
+        #toggle-drawer {
+            position: fixed !important;
+            bottom: 25px !important;
+            right: 25px !important;
+            z-index: 100 !important;
+        }
+
+        /* ===== 页面滚动时保持背景稳定 ===== */
+        html, body {
+            overflow-y: auto;
+        }
+    </style>
+
+    <!-- ===== 随机视频切换脚本 ===== -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var video = document.getElementById('bg-video');
+            if (!video) return;
+
+            var videoList = [
+                '/images/blog.mp4',
+                '/images/blog1.mp4',
+                '/images/blog2.mp4'
+            ];
+
+            var availableVideos = [];
+            var checkCount = 0;
+            if (videoList.length === 0) {
+                videoList.push('/images/blog.mp4');
+            }
+            videoList.forEach(function(src) {
+                var testVideo = document.createElement('video');
+                testVideo.src = src;
+                testVideo.onloadeddata = function() {
+                    availableVideos.push(src);
+                    checkCount++;
+                    if (checkCount === videoList.length) {
+                        applyRandomVideo();
+                    }
+                };
+                testVideo.onerror = function() {
+                    checkCount++;
+                    if (checkCount === videoList.length) {
+                        applyRandomVideo();
+                    }
+                };
+            });
+
+            function applyRandomVideo() {
+                if (availableVideos.length === 0) {
+                    availableVideos = videoList.slice(0, 1);
+                }
+                var randomIndex = Math.floor(Math.random() * availableVideos.length);
+                var selected = availableVideos[randomIndex];
+                video.src = selected;
+                video.load();
+                video.play().catch(function(e) {
+                    console.log('视频自动播放被拦截');
+                });
+            }
+        });
+    </script>
+
+</body>
+</html>
