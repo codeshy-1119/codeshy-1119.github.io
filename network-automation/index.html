@@ -756,21 +756,18 @@ document.addEventListener('DOMContentLoaded', function() {
     var articleBody = document.querySelector('.article-body');
     if (!articleBody) return;
 
-    var headings = articleBody.querySelectorAll('h2, h3, h4, h5, h6');
+    var headings = articleBody.querySelectorAll('h1, h2, h3, h4, h5, h6');
     if (headings.length === 0) {
-        // 没有标题则隐藏目录按钮
         document.getElementById('toc-toggle').style.display = 'none';
         return;
     }
 
     var tocList = document.createElement('ul');
     var stack = [tocList];
-    var parentLevel = 2; // 从 h2 开始
+    var parentLevel = 1; // 从 h1 开始
 
     headings.forEach(function(heading) {
         var level = parseInt(heading.tagName.charAt(1));
-        // 跳过 h1（通常只有文章标题）
-        if (level === 1) return;
 
         // 生成锚点 id（如果没有）
         if (!heading.id) {
@@ -788,7 +785,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 stack.push(newList);
                 parentLevel++;
             } else {
-                // 如果当前 UL 没有 LI，创建一个占位
                 var li = document.createElement('li');
                 li.style.listStyle = 'none';
                 stack[stack.length-1].appendChild(li);
@@ -807,21 +803,17 @@ document.addEventListener('DOMContentLoaded', function() {
         var a = document.createElement('a');
         a.href = '#' + heading.id;
         a.textContent = heading.textContent.trim();
-        // 点击平滑滚动
         a.addEventListener('click', function(e) {
             e.preventDefault();
             var target = document.getElementById(this.getAttribute('href').substring(1));
             if (target) {
                 target.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
-            // 点击后自动收起目录（小屏幕可以，但大屏幕可选，我们让它保持打开）
-            // 可根据需要决定是否关闭，这里我们仅高亮当前项
         });
         li.appendChild(a);
         stack[stack.length-1].appendChild(li);
     });
 
-    // 将生成的目录插入到 toc-content 中
     var tocContainer = document.getElementById('toc-content');
     tocContainer.appendChild(tocList);
 
@@ -846,7 +838,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     closeBtn.addEventListener('click', closeToc);
 
-    // 点击面板外部关闭（点击页面空白区域）
     document.addEventListener('click', function(e) {
         if (panel.classList.contains('open')) {
             var target = e.target;
@@ -859,12 +850,10 @@ document.addEventListener('DOMContentLoaded', function() {
     // ----- 3. 滚动时高亮当前标题 -----
     var tocLinks = tocContainer.querySelectorAll('a');
     function setActiveLink() {
-        var scrollY = window.scrollY;
         var activeId = null;
-        // 从后往前找第一个在视口顶部的标题
         headings.forEach(function(h) {
             var rect = h.getBoundingClientRect();
-            if (rect.top <= 120) { // 距顶部120px以内认为活跃
+            if (rect.top <= 120) {
                 activeId = h.id;
             }
         });
@@ -876,7 +865,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     window.addEventListener('scroll', setActiveLink);
-    setActiveLink(); // 初始运行一次
+    setActiveLink();
 });
 </script>
 
