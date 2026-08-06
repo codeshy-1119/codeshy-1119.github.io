@@ -3248,6 +3248,618 @@ VRRP的Master和MSTP的根桥必须<strong>在同一台设备上</strong>。如�
 <p><strong>顺序</strong>：<strong>OSPF区域内 &gt; OSPF区域间 &gt; OSPF外部路由一类 &gt; OSPF外部路由二类</strong></p>
 <p>📌 一句话总结：OSPF路由优先级从高到低为：区域内（O_INTRA）&gt; 区域间（O_INTER）&gt; 外部一类（O_ASE1）&gt; 外部二类（O_ASE2）。</p>
 </blockquote>
+<h1>第十四天</h1>
+<blockquote>
+<p>核心内容：OSPF特殊区域（Stub/Totally Stub/NSSA/Totally NSSA）、OSPF路由聚合、OSPF安全机制（认证/静默端口/路由过滤）</p>
+</blockquote>
+<h2>一、OSPF特殊区域</h2>
+<h3>1. 特殊区域的产生背景</h3>
+<p>OSPF划分区域之后，路由器只维护自己区域的<strong>拓扑信息</strong>，但<strong>仍然要维护所有的路由信息</strong>。对于末端路由器来说，路由表的规模仍然很大，压力依然存在。</p>
+<p><strong>特殊区域的核心思想</strong>：拒绝某些LSA进入本区域，从而<strong>减小路由表</strong>，用<strong>一条默认路由</strong>取代所有被拒绝的外部/区域间路由信息。</p>
+<p><strong>配置限制</strong>：特殊区域<strong>只能配置在末端区域</strong>（Area 0 和虚链路穿越的区域不能配置特殊区域）。</p>
+<blockquote>
+<p>📌 一句话总结：OSPF特殊区域通过拒绝部分LSA进入末端区域来减小路由表，用一条默认路由取代所有外部/区域间路由，但只能配置在非骨干且无虚链路的末端区域。</p>
+</blockquote>
+<h3>2. Stub区域（末节区域）</h3>
+<p><strong>拒绝的LSA</strong>：<strong>4类、5类LSA</strong>（外部路由）</p>
+<p><strong>允许的LSA</strong>：1类、2类、3类LSA</p>
+<p><strong>默认路由</strong>：由 <strong>ABR自动产生</strong> 一条默认路由（3类LSA），用于访问外部网络。</p>
+<p><strong>功能丧失</strong>：Stub区域<strong>不能引入外部路由</strong>（不能连接外部网络）。</p>
+<p><strong>配置要求</strong>：本区域<strong>所有路由器</strong>（包括ABR）都必须配置 <code>stub</code>。</p>
+<p><strong>配置命令</strong>：</p>
+<p>bash</p>
+<div class="highlight"><pre><span></span><code><span class="o">[</span><span class="n">R3</span><span class="o">]</span><span class="w"> </span><span class="n">ospf</span><span class="w"> </span><span class="mi">1</span>
+<span class="o">[</span><span class="n">R3-ospf-1</span><span class="o">]</span><span class="w"> </span><span class="n">area</span><span class="w"> </span><span class="mi">1</span>
+<span class="o">[</span><span class="n">R3-ospf-1-area-0.0.0.1</span><span class="o">]</span><span class="w"> </span><span class="n">stub</span>
+<span class="err">#</span><span class="w"> </span><span class="n">区域内所有路由器都需要配置</span>
+</code></pre></div>
+
+<blockquote>
+<p>📌 一句话总结：Stub区域拒绝4/5类LSA（外部路由），ABR自动生成默认路由替代，区域内所有路由器均需配置stub，且丧失引入外部路由功能。</p>
+</blockquote>
+<h3>3. Totally Stub区域（完全末节区域）</h3>
+<p><strong>拒绝的LSA</strong>：<strong>3类、4类、5类LSA</strong>（区域间路由 + 外部路由全部拒绝）</p>
+<p><strong>允许的LSA</strong>：1类、2类LSA</p>
+<p><strong>默认路由</strong>：由 <strong>ABR自动产生</strong> 一条默认路由（3类LSA），用于访问区域外所有网络。</p>
+<p><strong>功能丧失</strong>：完全Stub区域<strong>不能引入外部路由</strong>。</p>
+<p><strong>配置要求</strong>：</p>
+<ul>
+<li>本区域<strong>所有路由器</strong>配置 <code>stub</code></li>
+<li><strong>ABR</strong> 上额外增加 <code>no-summary</code> 参数</li>
+</ul>
+<p><strong>配置命令</strong>：</p>
+<p>bash</p>
+<div class="highlight"><pre><span></span><code><span class="o">[</span><span class="n">R3</span><span class="o">]</span><span class="w"> </span><span class="n">ospf</span><span class="w"> </span><span class="mi">1</span>
+<span class="o">[</span><span class="n">R3-ospf-1</span><span class="o">]</span><span class="w"> </span><span class="n">area</span><span class="w"> </span><span class="mi">1</span>
+<span class="o">[</span><span class="n">R3-ospf-1-area-0.0.0.1</span><span class="o">]</span><span class="w"> </span><span class="n">stub</span><span class="w"> </span><span class="k">no</span><span class="o">-</span><span class="n">summary</span>
+<span class="err">#</span><span class="w"> </span><span class="n">只在ABR上添加no</span><span class="o">-</span><span class="n">summary</span><span class="err">，</span><span class="n">其他路由器只配置stub即可</span>
+</code></pre></div>
+
+<blockquote>
+<p>📌 一句话总结：Totally Stub在Stub基础上进一步拒绝3类LSA（区域间路由），ABR加no-summary参数后生成默认路由替代所有区域外路由，区域内只保留1/2类LSA。</p>
+</blockquote>
+<h3>4. NSSA区域（次末节区域）</h3>
+<blockquote>
+<p><strong>全称</strong>：Not-So-Stubby Area</p>
+</blockquote>
+<p><strong>拒绝的LSA</strong>：<strong>4类、5类LSA</strong>（外部路由不能从外部进入）</p>
+<p><strong>特殊能力</strong>：本区域<strong>引入的外部路由</strong>可以以 <strong>7类LSA</strong> 的方式在本区域内传递。即NSSA区域是<strong>唯一一个能产生自己外部路由的特殊区域</strong>。</p>
+<p><strong>7类LSA特点</strong>：</p>
+<ul>
+<li>由NSSA区域的 <strong>ASBR</strong> 产生</li>
+<li>只在 <strong>NSSA区域内部</strong> 传递</li>
+<li>一旦传出NSSA区域，<strong>恢复为5类LSA</strong> 的身份</li>
+</ul>
+<p><strong>默认路由</strong>：NSSA区域是<strong>唯一不会自动产生默认路由</strong>的特殊区域，需要在ABR上手工配置 <code>default-route-advertise</code>。</p>
+<p><strong>配置命令</strong>：</p>
+<p>bash</p>
+<div class="highlight"><pre><span></span><code><span class="o">[</span><span class="n">R3</span><span class="o">]</span><span class="w"> </span><span class="n">ospf</span><span class="w"> </span><span class="mi">1</span>
+<span class="o">[</span><span class="n">R3-ospf-1</span><span class="o">]</span><span class="w"> </span><span class="n">area</span><span class="w"> </span><span class="mi">1</span>
+<span class="o">[</span><span class="n">R3-ospf-1-area-0.0.0.1</span><span class="o">]</span><span class="w"> </span><span class="n">nssa</span><span class="w"> </span><span class="k">default</span><span class="o">-</span><span class="n">route</span><span class="o">-</span><span class="n">advertise</span><span class="w">   </span><span class="err">#</span><span class="w"> </span><span class="n">ABR上需加此参数</span>
+<span class="err">#</span><span class="w"> </span><span class="n">其他设备只配置</span><span class="w"> </span><span class="n">nssa</span><span class="w"> </span><span class="n">即可</span>
+</code></pre></div>
+
+<p>bash</p>
+<div class="highlight"><pre><span></span><code><span class="o">[</span><span class="n">R4</span><span class="o">]</span><span class="w"> </span><span class="n">ospf</span><span class="w"> </span><span class="mi">1</span>
+<span class="o">[</span><span class="n">R4-ospf-1</span><span class="o">]</span><span class="w"> </span><span class="n">area</span><span class="w"> </span><span class="mi">1</span>
+<span class="o">[</span><span class="n">R4-ospf-1-area-0.0.0.1</span><span class="o">]</span><span class="w"> </span><span class="n">nssa</span>
+<span class="err">#</span><span class="w"> </span><span class="n">非ABR设备只配置nssa</span>
+</code></pre></div>
+
+<blockquote>
+<p>📌 一句话总结：NSSA拒绝4/5类LSA进入，但允许本区域ASBR产生7类LSA引入外部路由（仅在NSSA内传递，传出恢复为5类），且是唯一不自动产生默认路由的特殊区域，需在ABR手工指定default-route-advertise。</p>
+</blockquote>
+<h3>5. Totally NSSA区域（完全次末节区域）</h3>
+<p><strong>拒绝的LSA</strong>：<strong>3类、4类、5类LSA</strong>（区域间路由 + 外部路由全部拒绝）</p>
+<p><strong>特殊能力</strong>：本区域引入的外部路由仍可以以 <strong>7类LSA</strong> 进入。</p>
+<p><strong>默认路由</strong>：由 <strong>ABR自动产生</strong> 一条默认路由。</p>
+<p><strong>配置命令</strong>：</p>
+<p>bash</p>
+<div class="highlight"><pre><span></span><code><span class="o">[</span><span class="n">R3</span><span class="o">]</span><span class="w"> </span><span class="n">ospf</span><span class="w"> </span><span class="mi">1</span>
+<span class="o">[</span><span class="n">R3-ospf-1</span><span class="o">]</span><span class="w"> </span><span class="n">area</span><span class="w"> </span><span class="mi">1</span>
+<span class="o">[</span><span class="n">R3-ospf-1-area-0.0.0.1</span><span class="o">]</span><span class="w"> </span><span class="n">nssa</span><span class="w"> </span><span class="k">no</span><span class="o">-</span><span class="n">summary</span>
+<span class="err">#</span><span class="w"> </span><span class="n">ABR上添加no</span><span class="o">-</span><span class="n">summary</span>
+</code></pre></div>
+
+<p>bash</p>
+<div class="highlight"><pre><span></span><code><span class="o">[</span><span class="n">R4</span><span class="o">]</span><span class="w"> </span><span class="n">ospf</span><span class="w"> </span><span class="mi">1</span>
+<span class="o">[</span><span class="n">R4-ospf-1</span><span class="o">]</span><span class="w"> </span><span class="n">area</span><span class="w"> </span><span class="mi">1</span>
+<span class="o">[</span><span class="n">R4-ospf-1-area-0.0.0.1</span><span class="o">]</span><span class="w"> </span><span class="n">nssa</span>
+<span class="err">#</span><span class="w"> </span><span class="n">非ABR设备只配置nssa</span>
+</code></pre></div>
+
+<blockquote>
+<p>📌 一句话总结：Totally NSSA在NSSA基础上增加拒绝3类LSA，ABR加no-summary后自动生成默认路由，既支持本区域引入外部路由（7类LSA）又减少路由条目。</p>
+</blockquote>
+<h3>6. 四种特殊区域对比总结</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">区域类型</th>
+<th style="text-align: left;">拒绝的LSA</th>
+<th style="text-align: left;">默认路由</th>
+<th style="text-align: left;">能否引入外部路由</th>
+<th style="text-align: left;">配置要点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Stub</strong></td>
+<td style="text-align: left;">4、5类</td>
+<td style="text-align: left;">ABR自动生成</td>
+<td style="text-align: left;">❌ 不能</td>
+<td style="text-align: left;">所有路由器配置 <code>stub</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Totally Stub</strong></td>
+<td style="text-align: left;">3、4、5类</td>
+<td style="text-align: left;">ABR自动生成</td>
+<td style="text-align: left;">❌ 不能</td>
+<td style="text-align: left;">ABR加 <code>no-summary</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>NSSA</strong></td>
+<td style="text-align: left;">4、5类（从外进入）</td>
+<td style="text-align: left;"><strong>不自动生成</strong>，需手工</td>
+<td style="text-align: left;">✅ 能（7类LSA）</td>
+<td style="text-align: left;">ABR加 <code>default-route-advertise</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Totally NSSA</strong></td>
+<td style="text-align: left;">3、4、5类（从外进入）</td>
+<td style="text-align: left;">ABR自动生成</td>
+<td style="text-align: left;">✅ 能（7类LSA）</td>
+<td style="text-align: left;">ABR加 <code>no-summary</code></td>
+</tr>
+</tbody>
+</table>
+<h2>二、OSPF路由聚合</h2>
+<blockquote>
+<p>OSPF<strong>只能</strong>在区域间和外部路由两个位置实现路由聚合。</p>
+</blockquote>
+<h3>1. 区域间路由聚合（ABR上配置）</h3>
+<p><strong>配置位置</strong>：只能在 <strong>ABR</strong> 上进行配置。</p>
+<p><strong>配置命令</strong>：</p>
+<p>bash</p>
+<div class="highlight"><pre><span></span><code><span class="o">[</span><span class="n">R3</span><span class="o">]</span><span class="w"> </span><span class="n">ospf</span><span class="w"> </span><span class="mi">1</span>
+<span class="o">[</span><span class="n">R3-ospf-1</span><span class="o">]</span><span class="w"> </span><span class="n">area</span><span class="w"> </span><span class="mi">0</span><span class="w">                              </span><span class="err">#</span><span class="w"> </span><span class="n">要汇总的路由条目所在的区域</span>
+<span class="o">[</span><span class="n">R3-ospf-1-area-0.0.0.0</span><span class="o">]</span><span class="w"> </span><span class="n">abr</span><span class="o">-</span><span class="n">summary</span><span class="w"> </span><span class="mf">10.2.2.0</span><span class="w"> </span><span class="mf">255.255.254.0</span>
+<span class="err">#</span><span class="w"> </span><span class="n">将区域0中的路由聚合为10</span><span class="mf">.2.2.0</span><span class="o">/</span><span class="mi">23</span>
+</code></pre></div>
+
+<h3>2. 外部路由聚合（ASBR上配置）</h3>
+<p><strong>配置位置</strong>：只能在 <strong>ASBR</strong> 上配置。</p>
+<p><strong>配置命令</strong>：</p>
+<p>bash</p>
+<div class="highlight"><pre><span></span><code><span class="o">[</span><span class="n">R2</span><span class="o">]</span><span class="w"> </span><span class="n">ospf</span><span class="w"> </span><span class="mi">1</span>
+<span class="o">[</span><span class="n">R2-ospf-1</span><span class="o">]</span><span class="w"> </span><span class="n">asbr</span><span class="o">-</span><span class="n">summary</span><span class="w"> </span><span class="mf">10.1.0.0</span><span class="w"> </span><span class="mf">255.255.252.0</span>
+<span class="err">#</span><span class="w"> </span><span class="n">将引入的外部路由聚合为10</span><span class="mf">.1.0.0</span><span class="o">/</span><span class="mi">22</span>
+</code></pre></div>
+
+<h3>3. 防环机制</h3>
+<p>配置OSPF汇总后，设备会自动产生一条<strong>指向null0</strong>的汇总路由，用于<strong>防止路由环路</strong>。</p>
+<blockquote>
+<p>📌 一句话总结：OSPF路由聚合分两种——ABR上使用abr-summary聚合区域间路由，ASBR上使用asbr-summary聚合外部路由，配置后自动生成指向null0的防环路由。</p>
+</blockquote>
+<h2>三、OSPF安全机制</h2>
+<h3>1. 认证</h3>
+<p>OSPF支持<strong>明文认证</strong>和<strong>MD5认证</strong>，按影响范围分为<strong>接口认证</strong>和<strong>区域认证</strong>。</p>
+<p>bash</p>
+<div class="highlight"><pre><span></span><code><span class="cp"># 接口明文认证</span>
+<span class="p">[</span><span class="n">R1</span><span class="o">-</span><span class="n">GigabitEthernet0</span><span class="o">/</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="n">ospf</span><span class="w"> </span><span class="n">authentication</span><span class="o">-</span><span class="n">mode</span><span class="w"> </span><span class="n">simple</span><span class="w"> </span><span class="n">plain</span><span class="w"> </span><span class="n">shangwen</span>
+
+<span class="cp"># 区域MD5认证</span>
+<span class="p">[</span><span class="n">R2</span><span class="p">]</span><span class="w"> </span><span class="n">ospf</span><span class="w"> </span><span class="mi">1</span>
+<span class="p">[</span><span class="n">R2</span><span class="o">-</span><span class="n">ospf</span><span class="mi">-1</span><span class="p">]</span><span class="w"> </span><span class="n">area</span><span class="w"> </span><span class="mi">0</span>
+<span class="p">[</span><span class="n">R2</span><span class="o">-</span><span class="n">ospf</span><span class="mi">-1</span><span class="o">-</span><span class="n">area</span><span class="mf">-0.0.0.0</span><span class="p">]</span><span class="w"> </span><span class="n">authentication</span><span class="o">-</span><span class="n">mode</span><span class="w"> </span><span class="n">md5</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="n">plain</span><span class="w"> </span><span class="n">shangwen</span><span class="mi">@123</span>
+</code></pre></div>
+
+<blockquote>
+<p>📌 一句话总结：OSPF认证分明文和MD5两种，可配置在接口级或区域级，接口认证优先级高于区域认证。</p>
+</blockquote>
+<h3>2. 静默端口（Silent-Interface）</h3>
+<p><strong>功能</strong>：配置静默端口后，该接口<strong>只发布网段信息</strong>，<strong>不建立OSPF邻居</strong>，<strong>不发送Hello包</strong>。</p>
+<p><strong>适用场景</strong>：</p>
+<ul>
+<li>连接PC的接口（无需建立OSPF邻居）</li>
+<li>保证网络安全，只允许特定接口建立OSPF邻居</li>
+</ul>
+<p><strong>配置命令</strong>：</p>
+<p>bash</p>
+<div class="highlight"><pre><span></span><code><span class="o">[</span><span class="n">R1</span><span class="o">]</span><span class="w"> </span><span class="n">ospf</span><span class="w"> </span><span class="mi">1</span>
+<span class="o">[</span><span class="n">R1-ospf-1</span><span class="o">]</span><span class="w"> </span><span class="n">silent</span><span class="o">-</span><span class="n">interface</span><span class="w"> </span><span class="n">GigabitEthernet</span><span class="w"> </span><span class="mi">0</span><span class="o">/</span><span class="mi">0</span>
+<span class="err">#</span><span class="w"> </span><span class="n">将G0</span><span class="o">/</span><span class="mi">0</span><span class="n">设为静默端口</span><span class="err">，</span><span class="n">只发布网段</span><span class="err">，</span><span class="n">不建立邻居</span>
+</code></pre></div>
+
+<p>bash</p>
+<div class="highlight"><pre><span></span><code><span class="o">[</span><span class="n">R1</span><span class="o">]</span><span class="w"> </span><span class="n">ospf</span><span class="w"> </span><span class="mi">1</span>
+<span class="o">[</span><span class="n">R1-ospf-1</span><span class="o">]</span><span class="w"> </span><span class="n">silent</span><span class="o">-</span><span class="n">interface</span><span class="w"> </span><span class="ow">all</span>
+<span class="o">[</span><span class="n">R1-ospf-1</span><span class="o">]</span><span class="w"> </span><span class="n">undo</span><span class="w"> </span><span class="n">silent</span><span class="o">-</span><span class="n">interface</span><span class="w"> </span><span class="n">GigabitEthernet</span><span class="w"> </span><span class="mi">0</span><span class="o">/</span><span class="mi">0</span>
+<span class="err">#</span><span class="w"> </span><span class="n">除G0</span><span class="o">/</span><span class="mi">0</span><span class="n">外所有接口均不建立OSPF邻居</span>
+</code></pre></div>
+
+<blockquote>
+<p>📌 一句话总结：静默端口只发布网段信息但不建立OSPF邻居（不发送Hello），常用于连接终端的接口，也可通过silent-interface all+undo实现白名单效果。</p>
+</blockquote>
+<h3>3. 路由过滤（Filter-Policy）</h3>
+<p><strong>目标</strong>：实现IT部门不能访问财务部门，可以从两个层面实现：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">层面</th>
+<th style="text-align: left;">实现方式</th>
+<th style="text-align: left;">效果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>转发平面</strong></td>
+<td style="text-align: left;">使用ACL拒绝IT访问财务</td>
+<td style="text-align: left;">路由表不变，在数据转发时拦截</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>控制平面</strong></td>
+<td style="text-align: left;">使用Filter-Policy过滤路由</td>
+<td style="text-align: left;">IT路由器学习不到财务路由，路由表不存在则自动丢弃</td>
+</tr>
+</tbody>
+</table>
+<p><strong>OSPF Filter-Policy的局限性</strong>：</p>
+<ul>
+<li><strong>Import方向</strong>：<strong>可以生效</strong>——不影响LSA进入，但<strong>阻止该LSA生成路由表</strong></li>
+<li><strong>Export方向</strong>：<strong>对3类LSA无效</strong>，<strong>对5类LSA有效</strong>（且只能在ASBR上配置）</li>
+</ul>
+<p><strong>核心原理</strong>：Filter-Policy无法过滤LSA本身，只是阻止LSA在本设备生成路由表。如果后续还有其他路由器，仍然可以收到被过滤的路由信息。</p>
+<p><strong>配置命令</strong>：</p>
+<p>bash</p>
+<div class="highlight"><pre><span></span><code><span class="o">[</span><span class="n">R2</span><span class="o">]</span><span class="w"> </span><span class="n">acl</span><span class="w"> </span><span class="n">basic</span><span class="w"> </span><span class="mi">2000</span>
+<span class="o">[</span><span class="n">R2-acl-ipv4-basic-2000</span><span class="o">]</span><span class="w"> </span><span class="k">rule</span><span class="w"> </span><span class="k">deny</span><span class="w"> </span><span class="n">source</span><span class="w"> </span><span class="mf">10.1.2.1</span><span class="w"> </span><span class="mf">0.0.0.0</span>
+<span class="o">[</span><span class="n">R2-acl-ipv4-basic-2000</span><span class="o">]</span><span class="w"> </span><span class="k">rule</span><span class="w"> </span><span class="n">permit</span><span class="w"> </span><span class="n">source</span><span class="w"> </span><span class="ow">any</span>
+
+<span class="o">[</span><span class="n">R2</span><span class="o">]</span><span class="w"> </span><span class="n">ospf</span><span class="w"> </span><span class="mi">1</span>
+<span class="o">[</span><span class="n">R2-ospf-1</span><span class="o">]</span><span class="w"> </span><span class="k">filter</span><span class="o">-</span><span class="n">policy</span><span class="w"> </span><span class="mi">2000</span><span class="w"> </span><span class="n">import</span>
+<span class="err">#</span><span class="w"> </span><span class="n">阻止10</span><span class="mf">.1.2.1</span><span class="n">对应的LSA生成路由表</span>
+</code></pre></div>
+
+<p><strong>不同LSA在Filter-Policy Export方向的效果</strong>：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">LSA类型</th>
+<th style="text-align: left;">Export方向是否生效</th>
+<th style="text-align: left;">生效位置</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">3类LSA</td>
+<td style="text-align: left;">❌ <strong>不生效</strong></td>
+<td style="text-align: left;">—</td>
+</tr>
+<tr>
+<td style="text-align: left;">5类LSA</td>
+<td style="text-align: left;">✅ <strong>生效</strong></td>
+<td style="text-align: left;">只能在ASBR上配置</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>📌 一句话总结：Filter-Policy在Import方向阻止LSA生成路由表（但不阻止LSA进入）；在Export方向对3类LSA无效、对5类LSA有效（仅ASBR）；本质是控制平面过滤，被过滤路由后续路由器仍可能收到。</p>
+</blockquote>
+<h2>四、ISIS协议</h2>
+<blockquote>
+<p><strong>全称</strong>：Intermediate System to Intermediate System（中间系统到中间系统协议）</p>
+</blockquote>
+<h3>1. ISIS与OSPF的宏观对比</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">对比项</th>
+<th style="text-align: left;"><strong>ISIS</strong></th>
+<th style="text-align: left;"><strong>OSPF</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>协议起源</strong></td>
+<td style="text-align: left;">为OSI模型中的<strong>CLNP协议</strong>提供服务，后兼容IP协议</td>
+<td style="text-align: left;">专门为TCP/IP协议栈设计</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>兼容性</strong></td>
+<td style="text-align: left;"><strong>兼容性很好</strong>，天然支持多种网络层协议</td>
+<td style="text-align: left;">仅支持IP协议</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>适用场景</strong></td>
+<td style="text-align: left;">更适合<strong>扁平化的运营商网络</strong></td>
+<td style="text-align: left;">更适合<strong>灵活多变的园区网</strong></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>区域划分</strong></td>
+<td style="text-align: left;">基于<strong>设备</strong>（整台设备属于一个区域）</td>
+<td style="text-align: left;">基于<strong>接口</strong>（不同接口可在不同区域）</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>层次结构</strong></td>
+<td style="text-align: left;">Level 1（非骨干）/ Level 2（骨干）/ Level 1-2（边界）</td>
+<td style="text-align: left;">Area 0（骨干）/ 非骨干区域</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>网络层</strong></td>
+<td style="text-align: left;">基于<strong>数据链路层</strong>（直接封装在二层帧中）</td>
+<td style="text-align: left;">基于<strong>网络层</strong>（封装在IP包中，协议号89）</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>网络类型</strong></td>
+<td style="text-align: left;">只有<strong>点到点</strong>和<strong>广播型</strong>两种</td>
+<td style="text-align: left;">五种（Broadcast/P2P/NBMA/P2MP/Loopback）</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>📌 一句话总结：ISIS兼容性好且更适用于扁平化运营商网络，基于设备划分区域（整台设备一个区域）、基于数据链路层工作；OSPF更适用于灵活园区网，基于接口划分区域、基于IP层工作。</p>
+</blockquote>
+<h3>2. ISIS区域与邻居规则</h3>
+<p><strong>ISIS区域特点</strong>：</p>
+<ul>
+<li><strong>Level 1区域</strong>：由所有Level 1路由器组成，<strong>建立邻居要求区域ID必须一致</strong>。</li>
+<li><strong>Level 2区域</strong>：由所有Level 2路由器组成，<strong>建立邻居区域ID不需要一致</strong>。</li>
+<li><strong>Level 1-2路由器</strong>：连接Level 1和Level 2区域，相当于OSPF的ABR。</li>
+</ul>
+<blockquote>
+<p>📌 一句话总结：ISIS的Level 1建邻居要求区域ID一致，Level 2不要求一致，与OSPF的"非骨干必须直连骨干"机制不同。</p>
+</blockquote>
+<h3>3. ISIS角色与OSPF对照</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">ISIS角色</th>
+<th style="text-align: left;">对应OSPF角色</th>
+<th style="text-align: left;">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Level 1</strong></td>
+<td style="text-align: left;">非骨干区域路由器</td>
+<td style="text-align: left;">只维护本区域LSDB，通过Level 1-2访问外部</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Level 2</strong></td>
+<td style="text-align: left;">骨干区域路由器</td>
+<td style="text-align: left;">维护骨干层LSDB，所有Level 2路由器共同组成骨干</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Level 1-2</strong></td>
+<td style="text-align: left;"><strong>ABR</strong></td>
+<td style="text-align: left;">同时连接Level 1和Level 2，进行区域间路由传递</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>📌 一句话总结：ISIS角色分Level 1（非骨干）、Level 2（骨干）、Level 1-2（ABR），Level 2所有路由器共同组成骨干区域，与区域ID无关。</p>
+</blockquote>
+<h3>4. ISIS术语对照</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">ISIS术语</th>
+<th style="text-align: left;">OSPF对应术语</th>
+<th style="text-align: left;">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>IS</strong>（Intermediate System）</td>
+<td style="text-align: left;"><strong>Router</strong></td>
+<td style="text-align: left;">中间系统=路由器</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>ES</strong>（End System）</td>
+<td style="text-align: left;"><strong>PC/终端</strong></td>
+<td style="text-align: left;">终端系统=主机设备</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>IIH</strong>（IS-IS Hello）</td>
+<td style="text-align: left;"><strong>Hello包</strong></td>
+<td style="text-align: left;">发现和维护邻居关系</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>LSP</strong>（Link State PDU）</td>
+<td style="text-align: left;"><strong>LSA</strong></td>
+<td style="text-align: left;">链路状态协议数据单元，携带拓扑和路由信息</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>CSNP</strong>（Complete SNP）</td>
+<td style="text-align: left;"><strong>DBD</strong></td>
+<td style="text-align: left;">完整的链路状态摘要，DIS周期性发送</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>PSNP</strong>（Partial SNP）</td>
+<td style="text-align: left;"><strong>LSR + LSACK</strong></td>
+<td style="text-align: left;">部分的链路状态摘要，用于请求和确认LSP</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>📌 一句话总结：ISIS的IS=路由器、ES=终端、IIH=Hello、LSP=LSA、CSNP=DBD、PSNP=LSR+LSACK。</p>
+</blockquote>
+<h3>5. NET地址（网络实体标题）</h3>
+<blockquote>
+<p><strong>全称</strong>：Network Entity Title</p>
+</blockquote>
+<p><strong>格式</strong>：<code>区域ID + System-ID + SEL</code></p>
+<p><strong>示例</strong>：<code>49.0001.0000.0000.0001.00</code></p>
+<p><strong>从后往前解析</strong>：</p>
+<ul>
+<li><code>00</code> → <strong>SEL</strong>（Selector），固定为 <code>00</code>，表示网络层服务</li>
+<li><code>0000.0000.0001</code> → <strong>System-ID</strong>（6字节），等同于Router-ID，<strong>全网唯一</strong></li>
+<li><code>49.0001</code> → <strong>区域ID</strong>（变长，1-13字节）</li>
+</ul>
+<p><strong>NET地址要点</strong>：</p>
+<ul>
+<li>区域ID是<strong>变长</strong>的（1-13字节）</li>
+<li>System-ID固定为6字节，<strong>不能重复</strong></li>
+<li>SEL固定为 <code>00</code></li>
+</ul>
+<blockquote>
+<p>📌 一句话总结：ISIS的NET地址格式为"区域ID+System-ID+00"，从后往前解析：SEL固定00、System-ID六字节全网唯一、区域ID变长；不同设备的System-ID必须唯一。</p>
+</blockquote>
+<h3>6. ISIS基本配置命令</h3>
+<h4>① 全局启用ISIS并配置NET地址</h4>
+<p>bash</p>
+<div class="highlight"><pre><span></span><code><span class="o">[</span><span class="n">R1</span><span class="o">]</span><span class="w"> </span><span class="n">isis</span><span class="w"> </span><span class="mi">1</span>
+<span class="o">[</span><span class="n">R1-isis-1</span><span class="o">]</span><span class="w"> </span><span class="n">network</span><span class="o">-</span><span class="n">entity</span><span class="w"> </span><span class="mf">49.0001.0000.0000.0001.00</span>
+<span class="o">[</span><span class="n">R1-isis-1</span><span class="o">]</span><span class="w"> </span><span class="k">is</span><span class="o">-</span><span class="k">level</span><span class="w"> </span><span class="k">level</span><span class="o">-</span><span class="mi">1</span><span class="w">                        </span><span class="err">#</span><span class="w"> </span><span class="n">调整路由器角色</span><span class="err">，</span><span class="n">默认是level</span><span class="o">-</span><span class="mi">1</span><span class="o">-</span><span class="mi">2</span>
+</code></pre></div>
+
+<h4>② 接口下启用ISIS（无宣告命令）</h4>
+<p>bash</p>
+<div class="highlight"><pre><span></span><code><span class="o">[</span><span class="n">R1</span><span class="o">]</span><span class="w"> </span><span class="n">interface</span><span class="w"> </span><span class="k">range</span><span class="w"> </span><span class="n">GigabitEthernet</span><span class="w"> </span><span class="mi">0</span><span class="o">/</span><span class="mi">0</span><span class="w"> </span><span class="n">LoopBack</span><span class="w"> </span><span class="mi">0</span>
+<span class="o">[</span><span class="n">R1-if-range</span><span class="o">]</span><span class="w"> </span><span class="n">isis</span><span class="w"> </span><span class="n">enable</span><span class="w"> </span><span class="mi">1</span><span class="w">                         </span><span class="err">#</span><span class="w"> </span><span class="n">ISIS只能基于接口配置</span><span class="err">，</span><span class="n">没有network宣告</span>
+</code></pre></div>
+
+<blockquote>
+<p><strong>关键区别</strong>：OSPF需要在接口下network宣告网段，ISIS直接在接口下 <code>isis enable</code> 即可，宣告接口本身。</p>
+</blockquote>
+<h4>③ 调整接口网络类型</h4>
+<p>bash</p>
+<div class="highlight"><pre><span></span><code><span class="p">[</span><span class="nx">R5</span><span class="o">-</span><span class="nx">GigabitEthernet0</span><span class="o">/</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="nx">isis</span><span class="w"> </span><span class="nx">circuit</span><span class="o">-</span><span class="k">type</span><span class="w"> </span><span class="nx">p2p</span><span class="w">       </span><span class="err">#</span><span class="w"> </span><span class="nx">调整为点到点类型</span><span class="err">（</span><span class="nx">默认根据封装自动判断</span><span class="err">）</span>
+</code></pre></div>
+
+<h4>④ 调整DIS优先级</h4>
+<p>bash</p>
+<div class="highlight"><pre><span></span><code>[R1-GigabitEthernet0/0] isis dis-priority 100       # 调整DIS优先级，越大越好，默认64
+</code></pre></div>
+
+<blockquote>
+<p>📌 一句话总结：ISIS配置分三步——全局创建ISIS进程并配置NET地址、调整路由器角色（可选）、在接口下isis enable启用协议（无需network宣告）；接口类型和DIS优先级可单独调整。</p>
+</blockquote>
+<h3>7. ISIS邻居状态</h3>
+<p>ISIS的邻居关系只有三个状态，<strong>没有邻居和邻接之分</strong>：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">状态</th>
+<th style="text-align: left;">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>DOWN</strong></td>
+<td style="text-align: left;">关闭状态</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>INIT</strong></td>
+<td style="text-align: left;">收到IIH，开始协商</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>UP</strong></td>
+<td style="text-align: left;">邻居关系完全建立</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>等同于OSPF的 DOWN → INIT → 2-Way（直接进入FULL）</p>
+<p>📌 一句话总结：ISIS邻居状态只有DOWN-INIT-UP三级，没有OSPF中邻居与邻接的区分，建立后即为FULL状态。</p>
+</blockquote>
+<h3>8. ISIS的DIS（指定中间系统）</h3>
+<blockquote>
+<p><strong>全称</strong>：Designated Intermediate System，相当于OSPF的DR</p>
+</blockquote>
+<p><strong>DIS与OSPF DR的核心差异</strong>：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">对比项</th>
+<th style="text-align: left;"><strong>ISIS DIS</strong></th>
+<th style="text-align: left;"><strong>OSPF DR</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>作用</strong></td>
+<td style="text-align: left;"><strong>周期性发送CSNP</strong>（完整LSP摘要）</td>
+<td style="text-align: left;">负责LSA同步，减少更新量</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>邻居关系</strong></td>
+<td style="text-align: left;"><strong>所有路由器直接建立邻接关系</strong></td>
+<td style="text-align: left;">所有路由器只与DR/BDR建立邻接</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>选举优先级</strong></td>
+<td style="text-align: left;">先比<strong>优先级</strong>（默认64），再比<strong>MAC地址</strong>（越大越好）</td>
+<td style="text-align: left;">先比优先级（默认1），再比Router-ID（越大越好）</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>优先级为0</strong></td>
+<td style="text-align: left;"><strong>0也参与选举</strong>（优先级最低而已）</td>
+<td style="text-align: left;">0表示<strong>不参与选举</strong></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>备份机制</strong></td>
+<td style="text-align: left;"><strong>没有BDIS</strong>（无备份DIS，直接重选）</td>
+<td style="text-align: left;">有BDR作为备份</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>抢占机制</strong></td>
+<td style="text-align: left;"><strong>支持抢占</strong>（新加入高优先级设备可抢占）</td>
+<td style="text-align: left;"><strong>非抢占</strong>（DR选定后不重选）</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Hello间隔</strong></td>
+<td style="text-align: left;">DIS的Hello时间是普通路由器的 <strong>1/3</strong></td>
+<td style="text-align: left;">DR和普通路由器Hello时间相同</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>故障检测</strong></td>
+<td style="text-align: left;">三次没有收到DIS的Hello则认为DIS失效，<strong>重新选举</strong></td>
+<td style="text-align: left;">BDR检测到DR失效后接替</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>📌 一句话总结：ISIS的DIS选举看优先级（0也参与）和MAC，支持抢占、无BDR备份；作用为周期性发送CSNP，所有路由器可直接建立邻接；DIS的Hello时间为普通路由器的1/3，三次未收到则重新选举。</p>
+</blockquote>
+<h2>五、ISIS vs OSPF 全面对比总结</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">对比项</th>
+<th style="text-align: left;"><strong>ISIS</strong></th>
+<th style="text-align: left;"><strong>OSPF</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>协议起源</strong></td>
+<td style="text-align: left;">为OSI CLNP设计，后兼容IP</td>
+<td style="text-align: left;">专为TCP/IP设计</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>适用场景</strong></td>
+<td style="text-align: left;">扁平化运营商网络</td>
+<td style="text-align: left;">灵活多变的园区网</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>区域划分</strong></td>
+<td style="text-align: left;">基于<strong>设备</strong></td>
+<td style="text-align: left;">基于<strong>接口</strong></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>骨干区域</strong></td>
+<td style="text-align: left;">Level 2（所有L2路由器组成，与区域ID无关）</td>
+<td style="text-align: left;">Area 0（需直连）</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>邻居状态</strong></td>
+<td style="text-align: left;">DOWN → INIT → UP（3状态，无邻接区分）</td>
+<td style="text-align: left;">7状态（有邻居/邻接区分）</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>网络类型</strong></td>
+<td style="text-align: left;">仅2种（P2P/Broadcast）</td>
+<td style="text-align: left;">5种</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>DIS/DR</strong></td>
+<td style="text-align: left;">有抢占，无BDR，优先级0可参与</td>
+<td style="text-align: left;">非抢占，有BDR，优先级0不参与</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>工作层次</strong></td>
+<td style="text-align: left;">数据链路层</td>
+<td style="text-align: left;">网络层</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>配置方式</strong></td>
+<td style="text-align: left;">接口下 <code>isis enable</code></td>
+<td style="text-align: left;">接口下 <code>network</code> 宣告网段</td>
+</tr>
+</tbody>
+</table>
         </div>
     </article>
 </div>
