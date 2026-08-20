@@ -74,7 +74,7 @@
 	.archive-header h1 { margin: 8px 0 6px; font-size: clamp(2rem, 5vw, 3.2rem); }
 	.archive-header p { margin: 0; opacity: .82; }
 	.article-list { display: flex; flex-direction: column; gap: 20px; }
-	.article-card { display: flex; min-height: 220px; overflow: hidden; background: rgba(255,255,255,.92); border-radius: 16px; box-shadow: 0 8px 28px rgba(0,0,0,.15); transition: transform .2s, box-shadow .2s; }
+	.article-card { display: flex; flex-direction: row-reverse; min-height: 220px; overflow: hidden; background: rgba(255,255,255,.92); border-radius: 16px; box-shadow: 0 8px 28px rgba(0,0,0,.15); transition: transform .2s, box-shadow .2s; }
 	.article-card:hover { transform: translateY(-4px); box-shadow: 0 12px 34px rgba(0,0,0,.22); }
 	.card-text { flex: 1; padding: 25px 30px; }
 	.card-number { color: #2a9d8f; font: 700 1rem Georgia, serif; }
@@ -89,8 +89,8 @@
 	.card-image { flex: 0 0 34%; order: 0; background: #dce9e3; }
 	.card-image img { width: 100%; height: 100%; display: block; object-fit: cover; }
 	.card-image span { display: grid; height: 100%; place-items: center; color: #6d8379; font-size: .75rem; letter-spacing: .12em; }
-	.image-right .card-image { order: 2; }
-	@media (max-width: 640px) { .archive-page { margin-top: 5vh; padding: 0 16px; } .article-card, .image-right { flex-direction: column; } .card-image, .image-right .card-image { order: 0; flex-basis: 150px; } .card-text { padding: 22px; } }
+	.image-right { flex-direction: row; }
+	@media (max-width: 640px) { .archive-page { margin-top: 5vh; padding: 0 16px; } .article-card, .image-right { flex-direction: column; } .card-image, .image-right .card-image { flex-basis: 150px; } .card-text { padding: 22px; } }
 </style>
 
     <!-- ===== 底部版权信息 ===== -->
