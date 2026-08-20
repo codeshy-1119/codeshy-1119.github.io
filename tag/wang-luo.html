@@ -52,7 +52,7 @@
 			<a class="card-image" href="https://codeshy-1119.github.io/network-training-notes/">
 <img src="https://codeshy-1119.github.io/posts/network_study/封面.png" alt="网络培训笔记：从交换到高可用的全栈知识体系">			</a>
 		</article>
-		<article class="article-card image-left">
+		<article class="article-card image-right">
 			<div class="card-text">
 				<span class="card-number">02</span>
 				<h2><a href="https://codeshy-1119.github.io/network-design/">网络综合设计与仿真实现</a></h2>
@@ -86,11 +86,11 @@
 	.card-tags { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0 18px; }
 	.card-tags a { color: #2a806f; font-size: .78rem; text-decoration: none; }
 	.read-more { color: #1e7868; font-weight: 700; font-size: .88rem; text-decoration: none; }
-	.card-image { flex: 0 0 34%; order: 2; background: #dce9e3; }
+	.card-image { flex: 0 0 34%; order: 0; background: #dce9e3; }
 	.card-image img { width: 100%; height: 100%; display: block; object-fit: cover; }
 	.card-image span { display: grid; height: 100%; place-items: center; color: #6d8379; font-size: .75rem; letter-spacing: .12em; }
-	.image-left .card-image { order: 0; }
-	@media (max-width: 640px) { .archive-page { margin-top: 5vh; padding: 0 16px; } .article-card, .image-left { flex-direction: column; } .card-image, .image-left .card-image { order: 0; flex-basis: 150px; } .card-text { padding: 22px; } }
+	.image-right .card-image { order: 2; }
+	@media (max-width: 640px) { .archive-page { margin-top: 5vh; padding: 0 16px; } .article-card, .image-right { flex-direction: column; } .card-image, .image-right .card-image { order: 0; flex-basis: 150px; } .card-text { padding: 22px; } }
 </style>
 
     <!-- ===== 底部版权信息 ===== -->
