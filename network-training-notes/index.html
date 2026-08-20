@@ -3526,7 +3526,110 @@ VRRP的Master和MSTP的根桥必须<strong>在同一台设备上</strong>。如�
 <blockquote>
 <p>📌 一句话总结：Filter-Policy在Import方向阻止LSA生成路由表（但不阻止LSA进入）；在Export方向对3类LSA无效、对5类LSA有效（仅ASBR）；本质是控制平面过滤，被过滤路由后续路由器仍可能收到。</p>
 </blockquote>
-<h2>四、ISIS协议</h2>
+<h2>四、优化技术总结表</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">优化目标</th>
+<th style="text-align: left;">技术</th>
+<th style="text-align: left;">关键配置</th>
+<th style="text-align: left;">优先级</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">加快收敛</td>
+<td style="text-align: left;">BFD联动</td>
+<td style="text-align: left;"><code>ospf bfd enable</code></td>
+<td style="text-align: left;">⭐⭐⭐</td>
+</tr>
+<tr>
+<td style="text-align: left;">加快收敛</td>
+<td style="text-align: left;">P2P网络类型</td>
+<td style="text-align: left;"><code>ospf network-type p2p</code></td>
+<td style="text-align: left;">⭐⭐⭐</td>
+</tr>
+<tr>
+<td style="text-align: left;">加快收敛</td>
+<td style="text-align: left;">调整计时器</td>
+<td style="text-align: left;"><code>ospf timer hello 5</code></td>
+<td style="text-align: left;">⭐⭐</td>
+</tr>
+<tr>
+<td style="text-align: left;">减小路由表</td>
+<td style="text-align: left;">路由聚合（ABR）</td>
+<td style="text-align: left;"><code>abr-summary</code></td>
+<td style="text-align: left;">⭐⭐⭐</td>
+</tr>
+<tr>
+<td style="text-align: left;">减小路由表</td>
+<td style="text-align: left;">Stub/Totally Stub</td>
+<td style="text-align: left;"><code>stub</code> / <code>stub no-summary</code></td>
+<td style="text-align: left;">⭐⭐⭐</td>
+</tr>
+<tr>
+<td style="text-align: left;">减小路由表</td>
+<td style="text-align: left;">NSSA/Totally NSSA</td>
+<td style="text-align: left;"><code>nssa</code> / <code>nssa no-summary</code></td>
+<td style="text-align: left;">⭐⭐</td>
+</tr>
+<tr>
+<td style="text-align: left;">减小路由表</td>
+<td style="text-align: left;">Filter-Policy</td>
+<td style="text-align: left;"><code>filter-policy 2000 import</code></td>
+<td style="text-align: left;">⭐⭐</td>
+</tr>
+<tr>
+<td style="text-align: left;">节省资源</td>
+<td style="text-align: left;">合理划分区域</td>
+<td style="text-align: left;"><code>area X</code> 规划</td>
+<td style="text-align: left;">⭐⭐⭐</td>
+</tr>
+<tr>
+<td style="text-align: left;">节省资源+安全</td>
+<td style="text-align: left;">静默端口</td>
+<td style="text-align: left;"><code>silent-interface G0/0</code></td>
+<td style="text-align: left;">⭐⭐⭐</td>
+</tr>
+<tr>
+<td style="text-align: left;">链路负载</td>
+<td style="text-align: left;">调整OSPF开销</td>
+<td style="text-align: left;"><code>ospf cost 30</code></td>
+<td style="text-align: left;">⭐⭐</td>
+</tr>
+<tr>
+<td style="text-align: left;">链路负载</td>
+<td style="text-align: left;">路由引入度量调整</td>
+<td style="text-align: left;"><code>import-route type 1 cost 100</code></td>
+<td style="text-align: left;">⭐⭐</td>
+</tr>
+<tr>
+<td style="text-align: left;">安全</td>
+<td style="text-align: left;">OSPF认证</td>
+<td style="text-align: left;"><code>authentication-mode md5</code></td>
+<td style="text-align: left;">⭐⭐⭐</td>
+</tr>
+<tr>
+<td style="text-align: left;">安全</td>
+<td style="text-align: left;">路由过滤</td>
+<td style="text-align: left;"><code>filter-policy</code></td>
+<td style="text-align: left;">⭐⭐</td>
+</tr>
+<tr>
+<td style="text-align: left;">可靠</td>
+<td style="text-align: left;">虚链路</td>
+<td style="text-align: left;"><code>vlink-peer</code></td>
+<td style="text-align: left;">⭐⭐</td>
+</tr>
+<tr>
+<td style="text-align: left;">可靠</td>
+<td style="text-align: left;">多ABR/ASBR冗余</td>
+<td style="text-align: left;">架构设计</td>
+<td style="text-align: left;">⭐⭐⭐</td>
+</tr>
+</tbody>
+</table>
+<h2>五、ISIS协议</h2>
 <blockquote>
 <p><strong>全称</strong>：Intermediate System to Intermediate System（中间系统到中间系统协议）</p>
 </blockquote>
@@ -3860,6 +3963,1825 @@ VRRP的Master和MSTP的根桥必须<strong>在同一台设备上</strong>。如�
 </tr>
 </tbody>
 </table>
+<h1>第十五天</h1>
+<blockquote>
+<p>核心内容：ISIS协议（认证、路由汇总、路由泄露）、路由匹配工具（ACL/前缀列表/Route-Policy）、双点双向重分布（次优路径/环路/Tag解决）</p>
+</blockquote>
+<h2>一、ISIS认证（三种层次）</h2>
+<p>ISIS认证分为三个层次，<strong>接口认证影响邻居建立，区域认证和路由域认证只影响路由学习</strong>。</p>
+<h3>1. 接口认证（邻居认证）</h3>
+<p><strong>原理</strong>：认证密钥在 <strong>IIH（Hello）信息</strong> 中携带，<strong>直接影响邻居建立</strong>。两端密码不一致则无法建立邻居关系。</p>
+<p>bash</p>
+<div class="highlight"><pre><span></span><code>[R4-GigabitEthernet0/0] isis authentication-mode md5 plain shangwen
+</code></pre></div>
+
+<h3>2. 区域认证（Level 1认证）</h3>
+<p><strong>原理</strong>：认证密钥在 <strong>Level 1的LSP、CSNP、PSNP</strong> 中携带，<strong>不影响邻居建立</strong>，但<strong>影响路由学习</strong>（LSP无法通过认证则不能同步）。</p>
+<p>bash</p>
+<div class="highlight"><pre><span></span><code><span class="o">[</span><span class="n">R1</span><span class="o">]</span><span class="w"> </span><span class="n">isis</span><span class="w"> </span><span class="mi">1</span>
+<span class="o">[</span><span class="n">R1-isis-1</span><span class="o">]</span><span class="w"> </span><span class="n">area</span><span class="o">-</span><span class="n">authentication</span><span class="o">-</span><span class="n">mode</span><span class="w"> </span><span class="n">md5</span><span class="w"> </span><span class="n">plain</span><span class="w"> </span><span class="n">shangwen</span>
+</code></pre></div>
+
+<h3>3. 路由域认证（Level 2认证）</h3>
+<p><strong>原理</strong>：认证密钥在 <strong>Level 2的LSP、CSNP、PSNP</strong> 中携带，<strong>不影响邻居建立</strong>，但<strong>影响路由学习</strong>。</p>
+<p>bash</p>
+<div class="highlight"><pre><span></span><code><span class="o">[</span><span class="n">R4</span><span class="o">]</span><span class="w"> </span><span class="n">isis</span><span class="w"> </span><span class="mi">1</span>
+<span class="o">[</span><span class="n">R4-isis-1</span><span class="o">]</span><span class="w"> </span><span class="k">domain</span><span class="o">-</span><span class="n">authentication</span><span class="o">-</span><span class="n">mode</span><span class="w"> </span><span class="n">md5</span><span class="w"> </span><span class="n">plain</span><span class="w"> </span><span class="n">shangwen</span>
+</code></pre></div>
+
+<blockquote>
+<p>📌 一句话总结：ISIS认证分三层——接口认证在IIH中携带影响邻居建立，区域认证（Level 1）和路由域认证（Level 2）在LSP/CSNP/PSNP中携带，不影响邻居但影响路由学习。</p>
+</blockquote>
+<h2>二、ISIS路由汇总</h2>
+<p><strong>原理</strong>：在ISIS中配置路由汇总，减小路由表规模，同时自动生成指向null0的防环路由。</p>
+<p>bash</p>
+<div class="highlight"><pre><span></span><code><span class="o">[</span><span class="n">R1</span><span class="o">]</span><span class="w"> </span><span class="n">isis</span><span class="w"> </span><span class="mi">1</span>
+<span class="o">[</span><span class="n">R1-isis-1</span><span class="o">]</span><span class="w"> </span><span class="n">address</span><span class="o">-</span><span class="n">family</span><span class="w"> </span><span class="n">ipv4</span>
+<span class="o">[</span><span class="n">R1-isis-1-ipv4</span><span class="o">]</span><span class="w"> </span><span class="n">summary</span><span class="w"> </span><span class="mf">10.1.0.0</span><span class="w"> </span><span class="mf">255.255.252.0</span><span class="w"> </span><span class="k">level</span><span class="o">-</span><span class="mi">1</span><span class="w"> </span><span class="n">generate_null0_route</span>
+</code></pre></div>
+
+<p><strong>参数说明</strong>：</p>
+<ul>
+<li><code>level-1</code>：默认只对Level 2汇总，加此参数后同时对Level 1汇总</li>
+<li><code>generate_null0_route</code>：产生指向null0的防环路由</li>
+</ul>
+<blockquote>
+<p>📌 一句话总结：ISIS路由汇总在IPv4地址族下用summary命令配置，默认只对Level 2汇总，可加level-1同时对Level 1汇总，并自动生成null0防环路由。</p>
+</blockquote>
+<h2>三、ISIS路由泄露（Level 2 → Level 1）</h2>
+<h3>问题背景</h3>
+<ul>
+<li><strong>Level 2</strong> 路由器可以接收所有区域的路由信息。</li>
+<li><strong>Level 1</strong> 路由器只能接收本区域的路由信息，<strong>通过一条默认路由访问其他区域</strong>。</li>
+<li>由于Level 1无法学习Level 2的明细路由，会<strong>忽略Level 2区域的开销</strong>，导致<strong>次优路径</strong>问题。</li>
+</ul>
+<h3>解决方案：路由泄露</h3>
+<p>将Level 2的<strong>明细路由</strong>泄露到Level 1区域，使Level 1路由器能够根据真实开销选择最优路径。</p>
+<p>bash</p>
+<div class="highlight"><pre><span></span><code><span class="o">[</span><span class="n">R3</span><span class="o">]</span><span class="w"> </span><span class="n">isis</span><span class="w"> </span><span class="mi">1</span>
+<span class="o">[</span><span class="n">R3-isis-1</span><span class="o">]</span><span class="w"> </span><span class="n">address</span><span class="o">-</span><span class="n">family</span><span class="w"> </span><span class="n">ipv4</span>
+<span class="o">[</span><span class="n">R3-isis-1-ipv4</span><span class="o">]</span><span class="w"> </span><span class="n">import</span><span class="o">-</span><span class="n">route</span><span class="w"> </span><span class="n">isis</span><span class="w"> </span><span class="k">level</span><span class="o">-</span><span class="mi">2</span><span class="w"> </span><span class="k">into</span><span class="w"> </span><span class="k">level</span><span class="o">-</span><span class="mi">1</span>
+</code></pre></div>
+
+<blockquote>
+<p>📌 一句话总结：ISIS的Level 1只能通过默认路由访问其他区域，无法感知Level 2开销导致次优路径，需通过路由泄露（将Level 2路由引入Level 1）解决。</p>
+</blockquote>
+<h2>四、路由匹配工具</h2>
+<h3>1. ACL匹配路由（局限性）</h3>
+<p><strong>特点</strong>：</p>
+<ul>
+<li>可以匹配<strong>路由</strong>和<strong>数据</strong>（两者都能用）</li>
+<li>通过<strong>源地址部分</strong>匹配网段</li>
+<li><strong>ACL无法匹配掩码</strong> → <code>192.168.1.0/24</code> 和 <code>192.168.1.0/27</code> 无法分开匹配</li>
+</ul>
+<h3>2. 前缀列表（Prefix-List）</h3>
+<p><strong>特点</strong>：</p>
+<ul>
+<li><strong>只能匹配路由</strong>（不能匹配数据）</li>
+<li>相比ACL，<strong>增加了掩码的匹配能力</strong></li>
+</ul>
+<p><strong>基础格式</strong>：</p>
+<p>bash</p>
+<div class="highlight"><pre><span></span><code>ip prefix-list test index 20 permit 192.168.1.0 24 greater-equal 25 less-equal 32
+</code></pre></div>
+
+<ul>
+<li><code>test</code> → 列表名称</li>
+<li><code>20</code> → 匹配顺序（从小到大）</li>
+<li>匹配 <code>192.168.1.X</code>，<strong>掩码 &gt;=25 且 &lt;=32</strong></li>
+</ul>
+<p><strong>缩写规则</strong>：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">写法</th>
+<th style="text-align: left;">含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>permit 192.168.1.0 24 gre 27</code></td>
+<td style="text-align: left;">掩码 &gt;=27 且 &lt;=32</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>permit 192.168.1.0 24 le 27</code></td>
+<td style="text-align: left;">掩码 &gt;=24 且 &lt;=27</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>permit 192.168.1.0 24</code></td>
+<td style="text-align: left;">掩码 &gt;=24 且 &lt;=24（精确匹配/24）</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>permit 0.0.0.0 0</code></td>
+<td style="text-align: left;">匹配默认路由（0.0.0.0/0）</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>permit 0.0.0.0 0 le 32</code></td>
+<td style="text-align: left;">匹配所有路由</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>permit 0.0.0.0 0 gre 32</code></td>
+<td style="text-align: left;">匹配所有主机路由（掩码为32）</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>规则</strong>：只有单独不写 <code>le</code> 时 <code>le</code> 等于32，其余时候 <code>le</code> 都等于前面写的掩码值。</p>
+<p>📌 一句话总结：ACL匹配路由无法区分掩码（/24和/27分不开），前缀列表专用于路由匹配且支持掩码范围控制（通过ge/le参数），写法上"permit 0.0.0.0 0"匹配默认路由、"permit 0.0.0.0 0 le 32"匹配所有路由。</p>
+</blockquote>
+<h2>五、Route-Policy（路由策略）</h2>
+<blockquote>
+<p><strong>功能</strong>：相比 <code>filter-policy</code> 只能允许或拒绝路由条目，<code>route-policy</code> 除了允许/拒绝外，<strong>还可以调整路由的属性</strong>（开销、类型、Tag、优先级等）。</p>
+</blockquote>
+<h3>1. Route-Policy的基本结构</h3>
+<p>text</p>
+<div class="highlight"><pre><span></span><code><span class="nv">route</span><span class="o">-</span><span class="nv">policy</span><span class="w"> </span>名称<span class="w"> </span><span class="nv">permit</span><span class="o">/</span><span class="nv">deny</span><span class="w"> </span><span class="nv">node</span><span class="w"> </span>节点号
+<span class="w">  </span><span class="k">if</span><span class="o">-</span><span class="nv">match</span><span class="w"> </span>条件<span class="w">        </span>#<span class="w"> </span>匹配条件（可多个，<span class="nv">AND</span>关系）
+<span class="w">  </span><span class="nv">apply</span><span class="w"> </span>动作<span class="w">            </span>#<span class="w"> </span>执行动作（修改属性）
+</code></pre></div>
+
+<h3>2. 匹配条件（if-match）</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">匹配方式</th>
+<th style="text-align: left;">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>if-match ip address prefix-list XXX</code></td>
+<td style="text-align: left;">匹配前缀列表</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>if-match ip address acl XXX</code></td>
+<td style="text-align: left;">匹配ACL</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>if-match tag XXX</code></td>
+<td style="text-align: left;">匹配Tag值</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>if-match cost XXX</code></td>
+<td style="text-align: left;">匹配开销值</td>
+</tr>
+</tbody>
+</table>
+<h3>3. 执行动作（apply）</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">动作</th>
+<th style="text-align: left;">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>apply cost XXX</code></td>
+<td style="text-align: left;">修改开销值</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>apply cost-type type-1/type-2</code></td>
+<td style="text-align: left;">修改外部路由类型</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>apply tag XXX</code></td>
+<td style="text-align: left;">修改Tag值（用于防环）</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>apply preference XXX</code></td>
+<td style="text-align: left;">修改协议优先级</td>
+</tr>
+</tbody>
+</table>
+<h3>4. Route-Policy配置示例</h3>
+<p><strong>需求</strong>：</p>
+<ul>
+<li><code>10.1.1.1/32</code> → type 2, cost 10</li>
+<li><code>10.1.2.0/27</code> 和 <code>10.1.3.0/24</code> → type 1, cost 100</li>
+<li><code>10.2.2.2/32</code> → type 2, cost 10</li>
+<li><code>192.168.12.0/24</code> → <strong>拒绝</strong></li>
+<li>利用route-policy默认拒绝所有的特性，拒绝<code>192.168.12.0/24</code></li>
+</ul>
+<p><strong>配置</strong>：</p>
+<p>bash</p>
+<div class="highlight"><pre><span></span><code><span class="o">[</span><span class="n">R2</span><span class="o">]</span><span class="w"> </span><span class="n">ip</span><span class="w"> </span><span class="k">prefix</span><span class="o">-</span><span class="n">list</span><span class="w"> </span><span class="k">host</span><span class="w"> </span><span class="n">permit</span><span class="w"> </span><span class="mf">0.0.0.0</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="n">greater</span><span class="o">-</span><span class="n">equal</span><span class="w"> </span><span class="mi">32</span>
+<span class="o">[</span><span class="n">R2</span><span class="o">]</span><span class="w"> </span><span class="n">ip</span><span class="w"> </span><span class="k">prefix</span><span class="o">-</span><span class="n">list</span><span class="w"> </span><span class="n">host2</span><span class="w"> </span><span class="n">permit</span><span class="w"> </span><span class="mf">10.1.0.0</span><span class="w"> </span><span class="mi">16</span><span class="w"> </span><span class="n">greater</span><span class="o">-</span><span class="n">equal</span><span class="w"> </span><span class="mi">24</span><span class="w"> </span><span class="k">less</span><span class="o">-</span><span class="n">equal</span><span class="w"> </span><span class="mi">27</span>
+
+<span class="o">[</span><span class="n">R2</span><span class="o">]</span><span class="w"> </span><span class="n">route</span><span class="o">-</span><span class="n">policy</span><span class="w"> </span><span class="n">shangwen</span><span class="w"> </span><span class="n">permit</span><span class="w"> </span><span class="n">node</span><span class="w"> </span><span class="mi">10</span>
+<span class="o">[</span><span class="n">R2-route-policy-shangwen-10</span><span class="o">]</span><span class="w"> </span><span class="k">if</span><span class="o">-</span><span class="k">match</span><span class="w"> </span><span class="n">ip</span><span class="w"> </span><span class="n">address</span><span class="w"> </span><span class="k">prefix</span><span class="o">-</span><span class="n">list</span><span class="w"> </span><span class="k">host</span>
+<span class="o">[</span><span class="n">R2-route-policy-shangwen-10</span><span class="o">]</span><span class="w"> </span><span class="n">apply</span><span class="w"> </span><span class="n">cost</span><span class="w"> </span><span class="mi">10</span>
+
+<span class="o">[</span><span class="n">R2</span><span class="o">]</span><span class="w"> </span><span class="n">route</span><span class="o">-</span><span class="n">policy</span><span class="w"> </span><span class="n">shangwen</span><span class="w"> </span><span class="n">permit</span><span class="w"> </span><span class="n">node</span><span class="w"> </span><span class="mi">20</span>
+<span class="o">[</span><span class="n">R2-route-policy-shangwen-20</span><span class="o">]</span><span class="w"> </span><span class="k">if</span><span class="o">-</span><span class="k">match</span><span class="w"> </span><span class="n">ip</span><span class="w"> </span><span class="n">address</span><span class="w"> </span><span class="k">prefix</span><span class="o">-</span><span class="n">list</span><span class="w"> </span><span class="n">host2</span>
+<span class="o">[</span><span class="n">R2-route-policy-shangwen-20</span><span class="o">]</span><span class="w"> </span><span class="n">apply</span><span class="w"> </span><span class="n">cost</span><span class="w"> </span><span class="mi">100</span>
+<span class="o">[</span><span class="n">R2-route-policy-shangwen-20</span><span class="o">]</span><span class="w"> </span><span class="n">apply</span><span class="w"> </span><span class="n">cost</span><span class="o">-</span><span class="n">type</span><span class="w"> </span><span class="n">type</span><span class="o">-</span><span class="mi">1</span>
+
+<span class="err">#</span><span class="w"> </span><span class="n">注意</span><span class="err">：</span><span class="mf">192.168.12.0</span><span class="o">/</span><span class="mi">24</span><span class="n">没有匹配任何node</span><span class="err">，</span><span class="n">被默认拒绝</span>
+
+<span class="o">[</span><span class="n">R2</span><span class="o">]</span><span class="w"> </span><span class="n">ospf</span><span class="w"> </span><span class="mi">1</span>
+<span class="o">[</span><span class="n">R2-ospf-1</span><span class="o">]</span><span class="w"> </span><span class="n">import</span><span class="o">-</span><span class="n">route</span><span class="w"> </span><span class="n">rip</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="n">allow</span><span class="o">-</span><span class="n">direct</span><span class="w"> </span><span class="n">route</span><span class="o">-</span><span class="n">policy</span><span class="w"> </span><span class="n">shangwen</span>
+</code></pre></div>
+
+<p><strong>调用位置</strong>：<code>route-policy</code> 通常在<strong>路由引入时调用</strong>（除BGP外）。</p>
+<blockquote>
+<p>📌 一句话总结：Route-Policy不仅可允许/拒绝路由，还能修改属性（cost/type/tag/preference），通过if-match匹配条件、apply执行动作，路由策略默认拒绝所有未匹配条目，通常在路由引入时调用。</p>
+</blockquote>
+<h2>六、双点双向重分布</h2>
+<blockquote>
+<p><strong>场景</strong>：两个协议（如RIP和OSPF/ISIS）之间，在<strong>两台边界路由器</strong>上相互引入路由，形成"双点双向"。</p>
+</blockquote>
+<h3>1. 双点双向重分布引发的问题</h3>
+<h4>① 次优路径问题</h4>
+<p><strong>规律</strong>：<strong>谁弱谁次优</strong>（协议优先级数值大的容易产生次优）。</p>
+<p><strong>OSPF + RIP场景</strong>：</p>
+<ul>
+<li>OSPF优先级为10（内部）或150（外部），RIP优先级为100</li>
+<li>当RIP路由被引入OSPF后，OSPF的外部路由优先级为150（不如RIP的100优），可能出现次优路径</li>
+</ul>
+<p><strong>解决方案</strong>：调整OSPF内部/外部优先级，防止次优路径。（思科/锐捷默认OSPF优先级都是110，问题更明显）</p>
+<h4>② 环路问题</h4>
+<p><strong>形成条件</strong>：在出现次优路径的基础上，原本为RIP的路由被重新重分布回RIP，且<strong>开销值比原来的更好</strong>，导致RIP路由表中形成环路。</p>
+<h3>2. 解决方案——Tag（路由标记）</h3>
+<p><strong>核心思想</strong>：为路由打上<strong>Tag标记</strong>，识别路由的来源，防止路由被重分布回源协议。</p>
+<p><strong>规划</strong>：</p>
+<ul>
+<li>从RIP进入ISIS的路由 → 打Tag <code>100</code>（标记为"来自RIP"）</li>
+<li>从ISIS进入RIP的路由 → 打Tag <code>200</code>（标记为"来自ISIS"）</li>
+<li>在将RIP路由引入ISIS时，<strong>拒绝Tag为100的路由</strong>（防止从RIP来的路由再回到ISIS）</li>
+<li>在将ISIS路由引入RIP时，<strong>拒绝Tag为200的路由</strong>（防止从ISIS来的路由再回到RIP）</li>
+</ul>
+<p><strong>配置示例</strong>：</p>
+<p>bash</p>
+<div class="highlight"><pre><span></span><code><span class="err">#</span><span class="w"> </span><span class="o">==========</span><span class="w"> </span><span class="n">边界路由器R4</span><span class="w"> </span><span class="o">==========</span>
+
+<span class="err">#</span><span class="w"> </span><span class="n">定义Route</span><span class="o">-</span><span class="n">Policy</span><span class="err">：</span><span class="n">ISIS</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="n">RIP</span><span class="err">（</span><span class="n">从ISIS引入RIP时调用</span><span class="err">）</span>
+<span class="o">[</span><span class="n">R4</span><span class="o">]</span><span class="w"> </span><span class="n">route</span><span class="o">-</span><span class="n">policy</span><span class="w"> </span><span class="n">itr</span><span class="w"> </span><span class="k">deny</span><span class="w"> </span><span class="n">node</span><span class="w"> </span><span class="mi">10</span>
+<span class="o">[</span><span class="n">R4-route-policy-itr-10</span><span class="o">]</span><span class="w"> </span><span class="k">if</span><span class="o">-</span><span class="k">match</span><span class="w"> </span><span class="n">tag</span><span class="w"> </span><span class="mi">100</span><span class="w">                    </span><span class="err">#</span><span class="w"> </span><span class="n">拒绝Tag</span><span class="o">=</span><span class="mi">100</span><span class="err">（</span><span class="n">来自RIP的路由</span><span class="err">，</span><span class="n">防止环回</span><span class="err">）</span>
+
+<span class="o">[</span><span class="n">R4</span><span class="o">]</span><span class="w"> </span><span class="n">route</span><span class="o">-</span><span class="n">policy</span><span class="w"> </span><span class="n">itr</span><span class="w"> </span><span class="n">permit</span><span class="w"> </span><span class="n">node</span><span class="w"> </span><span class="mi">20</span>
+<span class="o">[</span><span class="n">R4-route-policy-itr-20</span><span class="o">]</span><span class="w"> </span><span class="n">apply</span><span class="w"> </span><span class="n">tag</span><span class="w"> </span><span class="mi">200</span><span class="w">                       </span><span class="err">#</span><span class="w"> </span><span class="n">打上Tag</span><span class="w"> </span><span class="mi">200</span><span class="n">标记</span>
+
+<span class="o">[</span><span class="n">R4</span><span class="o">]</span><span class="w"> </span><span class="n">rip</span><span class="w"> </span><span class="mi">1</span>
+<span class="o">[</span><span class="n">R4-rip-1</span><span class="o">]</span><span class="w"> </span><span class="n">import</span><span class="o">-</span><span class="n">route</span><span class="w"> </span><span class="n">isis</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="n">route</span><span class="o">-</span><span class="n">policy</span><span class="w"> </span><span class="n">itr</span>
+
+<span class="err">#</span><span class="w"> </span><span class="n">定义Route</span><span class="o">-</span><span class="n">Policy</span><span class="err">：</span><span class="n">RIP</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="n">ISIS</span><span class="err">（</span><span class="n">从RIP引入ISIS时调用</span><span class="err">）</span>
+<span class="o">[</span><span class="n">R4</span><span class="o">]</span><span class="w"> </span><span class="n">route</span><span class="o">-</span><span class="n">policy</span><span class="w"> </span><span class="n">rti</span><span class="w"> </span><span class="k">deny</span><span class="w"> </span><span class="n">node</span><span class="w"> </span><span class="mi">10</span>
+<span class="o">[</span><span class="n">R4-route-policy-rti-10</span><span class="o">]</span><span class="w"> </span><span class="k">if</span><span class="o">-</span><span class="k">match</span><span class="w"> </span><span class="n">tag</span><span class="w"> </span><span class="mi">200</span><span class="w">                    </span><span class="err">#</span><span class="w"> </span><span class="n">拒绝Tag</span><span class="o">=</span><span class="mi">200</span><span class="err">（</span><span class="n">来自ISIS的路由</span><span class="err">，</span><span class="n">防止环回</span><span class="err">）</span>
+
+<span class="o">[</span><span class="n">R4</span><span class="o">]</span><span class="w"> </span><span class="n">route</span><span class="o">-</span><span class="n">policy</span><span class="w"> </span><span class="n">rti</span><span class="w"> </span><span class="n">permit</span><span class="w"> </span><span class="n">node</span><span class="w"> </span><span class="mi">20</span>
+<span class="o">[</span><span class="n">R4-route-policy-rti-20</span><span class="o">]</span><span class="w"> </span><span class="n">apply</span><span class="w"> </span><span class="n">tag</span><span class="w"> </span><span class="mi">100</span><span class="w">                       </span><span class="err">#</span><span class="w"> </span><span class="n">打上Tag</span><span class="w"> </span><span class="mi">100</span><span class="n">标记</span>
+
+<span class="o">[</span><span class="n">R4</span><span class="o">]</span><span class="w"> </span><span class="n">isis</span><span class="w"> </span><span class="mi">1</span>
+<span class="o">[</span><span class="n">R4-isis-1</span><span class="o">]</span><span class="w"> </span><span class="n">address</span><span class="o">-</span><span class="n">family</span><span class="w"> </span><span class="n">ipv4</span>
+<span class="o">[</span><span class="n">R4-isis-1-ipv4</span><span class="o">]</span><span class="w"> </span><span class="n">import</span><span class="o">-</span><span class="n">route</span><span class="w"> </span><span class="n">rip</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="n">route</span><span class="o">-</span><span class="n">policy</span><span class="w"> </span><span class="n">rti</span>
+</code></pre></div>
+
+<p>bash</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># ========== 边界路由器R5（类似配置） ==========</span>
+
+<span class="p">[</span><span class="n">R5</span><span class="p">]</span><span class="w"> </span><span class="n">acl</span><span class="w"> </span><span class="n">basic</span><span class="w"> </span><span class="mi">2000</span>
+<span class="p">[</span><span class="n">R5</span><span class="o">-</span><span class="n">acl</span><span class="o">-</span><span class="n">ipv4</span><span class="o">-</span><span class="n">basic</span><span class="o">-</span><span class="mi">2000</span><span class="p">]</span><span class="w"> </span><span class="n">rule</span><span class="w"> </span><span class="n">deny</span><span class="w"> </span><span class="n">source</span><span class="w"> </span><span class="mf">10.1.1.1</span><span class="w"> </span><span class="mf">0.0.0.0</span>
+<span class="p">[</span><span class="n">R5</span><span class="o">-</span><span class="n">acl</span><span class="o">-</span><span class="n">ipv4</span><span class="o">-</span><span class="n">basic</span><span class="o">-</span><span class="mi">2000</span><span class="p">]</span><span class="w"> </span><span class="n">rule</span><span class="w"> </span><span class="n">permit</span><span class="w"> </span><span class="n">source</span><span class="w"> </span><span class="nb">any</span>
+
+<span class="p">[</span><span class="n">R5</span><span class="p">]</span><span class="w"> </span><span class="n">isis</span><span class="w"> </span><span class="mi">1</span>
+<span class="p">[</span><span class="n">R5</span><span class="o">-</span><span class="n">isis</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="n">address</span><span class="o">-</span><span class="n">family</span><span class="w"> </span><span class="n">ipv4</span>
+<span class="p">[</span><span class="n">R5</span><span class="o">-</span><span class="n">isis</span><span class="o">-</span><span class="mi">1</span><span class="o">-</span><span class="n">ipv4</span><span class="p">]</span><span class="w"> </span><span class="nb">filter</span><span class="o">-</span><span class="n">policy</span><span class="w"> </span><span class="mi">2000</span><span class="w"> </span><span class="kn">import</span><span class="w">                    </span><span class="c1"># 在ISIS中过滤路由</span>
+</code></pre></div>
+
+<h3>3. 调整协议优先级（配合Route-Policy）</h3>
+<p>bash</p>
+<div class="highlight"><pre><span></span><code><span class="o">[</span><span class="n">R5</span><span class="o">]</span><span class="w"> </span><span class="n">route</span><span class="o">-</span><span class="n">policy</span><span class="w"> </span><span class="n">youxianji</span><span class="w"> </span><span class="n">permit</span><span class="w"> </span><span class="n">node</span><span class="w"> </span><span class="mi">10</span>
+<span class="o">[</span><span class="n">R5-route-policy-youxianji-10</span><span class="o">]</span><span class="w"> </span><span class="k">if</span><span class="o">-</span><span class="k">match</span><span class="w"> </span><span class="n">tag</span><span class="w"> </span><span class="mi">100</span>
+<span class="o">[</span><span class="n">R5-route-policy-youxianji-10</span><span class="o">]</span><span class="w"> </span><span class="n">apply</span><span class="w"> </span><span class="n">preference</span><span class="w"> </span><span class="mi">120</span>
+
+<span class="o">[</span><span class="n">R5</span><span class="o">]</span><span class="w"> </span><span class="n">isis</span><span class="w"> </span><span class="mi">1</span>
+<span class="o">[</span><span class="n">R5-isis-1</span><span class="o">]</span><span class="w"> </span><span class="n">address</span><span class="o">-</span><span class="n">family</span><span class="w"> </span><span class="n">ipv4</span>
+<span class="o">[</span><span class="n">R5-isis-1-ipv4</span><span class="o">]</span><span class="w"> </span><span class="n">preference</span><span class="w"> </span><span class="n">route</span><span class="o">-</span><span class="n">policy</span><span class="w"> </span><span class="n">youxianji</span>
+</code></pre></div>
+
+<blockquote>
+<p>📌 一句话总结：双点双向重分布会产生次优路径（谁弱谁次优，调优先级可缓解）和环路（路由被重分布回源协议且开销更优）；解决方案是使用Tag标记路由来源，在重分布时拒绝带有本协议Tag的路由，配合Route-Policy实现防环。</p>
+</blockquote>
+<h2>七、双点双向重分布防环完整配置模板</h2>
+<p>bash</p>
+<div class="highlight"><pre><span></span><code><span class="err">#</span><span class="w"> </span><span class="o">==========</span><span class="w"> </span><span class="n">边界路由器A</span><span class="w"> </span><span class="o">==========</span>
+
+<span class="err">#</span><span class="w"> </span><span class="mf">1.</span><span class="w"> </span><span class="n">定义Tag规划</span>
+<span class="err">#</span><span class="w">    </span><span class="n">从RIP进入ISIS</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="n">tag</span><span class="w"> </span><span class="mi">100</span>
+<span class="err">#</span><span class="w">    </span><span class="n">从ISIS进入RIP</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="n">tag</span><span class="w"> </span><span class="mi">200</span>
+
+<span class="err">#</span><span class="w"> </span><span class="mf">2.</span><span class="w"> </span><span class="n">RIP</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="n">ISIS</span><span class="w"> </span><span class="n">方向</span>
+<span class="o">[</span><span class="n">R4</span><span class="o">]</span><span class="w"> </span><span class="n">route</span><span class="o">-</span><span class="n">policy</span><span class="w"> </span><span class="n">rti</span><span class="w"> </span><span class="k">deny</span><span class="w"> </span><span class="n">node</span><span class="w"> </span><span class="mi">10</span>
+<span class="o">[</span><span class="n">R4-route-policy-rti-10</span><span class="o">]</span><span class="w"> </span><span class="k">if</span><span class="o">-</span><span class="k">match</span><span class="w"> </span><span class="n">tag</span><span class="w"> </span><span class="mi">200</span><span class="w">                    </span><span class="err">#</span><span class="w"> </span><span class="n">拒绝来自ISIS的路由</span>
+<span class="o">[</span><span class="n">R4</span><span class="o">]</span><span class="w"> </span><span class="n">route</span><span class="o">-</span><span class="n">policy</span><span class="w"> </span><span class="n">rti</span><span class="w"> </span><span class="n">permit</span><span class="w"> </span><span class="n">node</span><span class="w"> </span><span class="mi">20</span>
+<span class="o">[</span><span class="n">R4-route-policy-rti-20</span><span class="o">]</span><span class="w"> </span><span class="n">apply</span><span class="w"> </span><span class="n">tag</span><span class="w"> </span><span class="mi">100</span><span class="w">                       </span><span class="err">#</span><span class="w"> </span><span class="n">打上RIP来源标记</span>
+
+<span class="o">[</span><span class="n">R4</span><span class="o">]</span><span class="w"> </span><span class="n">isis</span><span class="w"> </span><span class="mi">1</span>
+<span class="o">[</span><span class="n">R4-isis-1</span><span class="o">]</span><span class="w"> </span><span class="n">address</span><span class="o">-</span><span class="n">family</span><span class="w"> </span><span class="n">ipv4</span>
+<span class="o">[</span><span class="n">R4-isis-1-ipv4</span><span class="o">]</span><span class="w"> </span><span class="n">import</span><span class="o">-</span><span class="n">route</span><span class="w"> </span><span class="n">rip</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="n">route</span><span class="o">-</span><span class="n">policy</span><span class="w"> </span><span class="n">rti</span>
+
+<span class="err">#</span><span class="w"> </span><span class="mf">3.</span><span class="w"> </span><span class="n">ISIS</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="n">RIP</span><span class="w"> </span><span class="n">方向</span>
+<span class="o">[</span><span class="n">R4</span><span class="o">]</span><span class="w"> </span><span class="n">route</span><span class="o">-</span><span class="n">policy</span><span class="w"> </span><span class="n">itr</span><span class="w"> </span><span class="k">deny</span><span class="w"> </span><span class="n">node</span><span class="w"> </span><span class="mi">10</span>
+<span class="o">[</span><span class="n">R4-route-policy-itr-10</span><span class="o">]</span><span class="w"> </span><span class="k">if</span><span class="o">-</span><span class="k">match</span><span class="w"> </span><span class="n">tag</span><span class="w"> </span><span class="mi">100</span><span class="w">                    </span><span class="err">#</span><span class="w"> </span><span class="n">拒绝来自RIP的路由</span>
+<span class="o">[</span><span class="n">R4</span><span class="o">]</span><span class="w"> </span><span class="n">route</span><span class="o">-</span><span class="n">policy</span><span class="w"> </span><span class="n">itr</span><span class="w"> </span><span class="n">permit</span><span class="w"> </span><span class="n">node</span><span class="w"> </span><span class="mi">20</span>
+<span class="o">[</span><span class="n">R4-route-policy-itr-20</span><span class="o">]</span><span class="w"> </span><span class="n">apply</span><span class="w"> </span><span class="n">tag</span><span class="w"> </span><span class="mi">200</span><span class="w">                       </span><span class="err">#</span><span class="w"> </span><span class="n">打上ISIS来源标记</span>
+
+<span class="o">[</span><span class="n">R4</span><span class="o">]</span><span class="w"> </span><span class="n">rip</span><span class="w"> </span><span class="mi">1</span>
+<span class="o">[</span><span class="n">R4-rip-1</span><span class="o">]</span><span class="w"> </span><span class="n">import</span><span class="o">-</span><span class="n">route</span><span class="w"> </span><span class="n">isis</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="n">route</span><span class="o">-</span><span class="n">policy</span><span class="w"> </span><span class="n">itr</span>
+
+<span class="err">#</span><span class="w"> </span><span class="o">==========</span><span class="w"> </span><span class="n">边界路由器B</span><span class="err">（</span><span class="n">同样配置</span><span class="err">，</span><span class="n">Tag一致</span><span class="err">）</span><span class="w"> </span><span class="o">==========</span>
+
+<span class="err">#</span><span class="w"> </span><span class="n">两侧边界路由器的Tag规划必须一致</span><span class="err">：</span>
+<span class="err">#</span><span class="w">   </span><span class="n">tag</span><span class="w"> </span><span class="mi">100</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">来自RIP</span><span class="err">（</span><span class="n">在ISIS中识别</span><span class="err">）</span>
+<span class="err">#</span><span class="w">   </span><span class="n">tag</span><span class="w"> </span><span class="mi">200</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">来自ISIS</span><span class="err">（</span><span class="n">在RIP中识别</span><span class="err">）</span>
+</code></pre></div>
+
+<blockquote>
+<p>📌 一句话总结：双点双向重分布防环的关键——两侧边界设备使用统一的Tag规划，在重分布时利用Route-Policy拒绝携带本协议Tag的路由，配合调整协议优先级解决次优路径。</p>
+</blockquote>
+<h1>第十六天</h1>
+<blockquote>
+<p>核心内容：策略路由（PBR）、BGP（边界网关协议）</p>
+</blockquote>
+<h2>一、策略路由（PBR）</h2>
+<h3>1. 策略路由的产生背景</h3>
+<p><strong>传统路由的局限</strong>：传统路由只能<strong>依赖于目标地址</strong>进行数据转发。但在某些特殊场景下，可能需要<strong>依赖于源地址</strong>进行转发（例如：学生走联通出口、老师走电信出口），此时需要<strong>策略路由（PBR）</strong> 实现定向转发。</p>
+<p><strong>策略路由的能力</strong>：可以匹配<strong>源IP、目的IP、报文长度</strong>等多个因素，实现灵活的定向转发。</p>
+<blockquote>
+<p>📌 一句话总结：策略路由可以匹配源IP/目的IP/报文长度等多种因素进行定向转发，解决了传统路由只能依赖目标地址的局限。</p>
+</blockquote>
+<h3>2. 策略路由与路由策略的区别</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">对比项</th>
+<th style="text-align: left;"><strong>策略路由（PBR）</strong></th>
+<th style="text-align: left;"><strong>路由策略（Route-Policy）</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>工作层面</strong></td>
+<td style="text-align: left;"><strong>转发平面</strong>（直接影响数据转发）</td>
+<td style="text-align: left;"><strong>控制平面</strong>（影响路由表生成）</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>生效范围</strong></td>
+<td style="text-align: left;">仅影响<strong>本设备</strong></td>
+<td style="text-align: left;">可以通过路由传递影响<strong>其他设备</strong></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>匹配依据</strong></td>
+<td style="text-align: left;">五元组等多字段</td>
+<td style="text-align: left;">路由属性（前缀、Tag、开销等）</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>动作</strong></td>
+<td style="text-align: left;">指定下一跳、出接口</td>
+<td style="text-align: left;">允许/拒绝、修改属性</td>
+</tr>
+</tbody>
+</table>
+<h3>3. 策略路由的注意事项</h3>
+<ol>
+<li><strong>策略路由如果匹配不到，则走普通路由</strong>（策略路由优先于普通路由，但不覆盖）</li>
+<li>策略路由调用位置一定是<strong>转发平面的入方向</strong>（数据包进入设备时应用）</li>
+<li>策略路由<strong>只能影响到本设备</strong>（如果通过控制平面改开销是可以传递到其他设备的）</li>
+</ol>
+<blockquote>
+<p>📌 一句话总结：PBR工作于转发平面，匹配不到则走普通路由，只能影响本设备且调用在入方向；Route-Policy工作于控制平面，可影响其他设备。</p>
+</blockquote>
+<h3>4. 两种需求的不同实现方式</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">需求</th>
+<th style="text-align: left;">控制平面方案</th>
+<th style="text-align: left;">转发平面方案</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>XX拒绝访问YY</strong></td>
+<td style="text-align: left;">过滤路由（学习不到YY的路由）</td>
+<td style="text-align: left;">ACL实现访问控制</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>XX走特定路径访问YY</strong></td>
+<td style="text-align: left;">Route-Policy调整OSPF开销</td>
+<td style="text-align: left;"><strong>PBR策略路由</strong></td>
+</tr>
+</tbody>
+</table>
+<h3>5. PBR配置命令</h3>
+<p>bash</p>
+<div class="highlight"><pre><span></span><code><span class="err">#</span><span class="w"> </span><span class="mf">1.</span><span class="w"> </span><span class="n">定义ACL匹配流量</span>
+<span class="o">[</span><span class="n">R1</span><span class="o">]</span><span class="w"> </span><span class="n">acl</span><span class="w"> </span><span class="n">advanced</span><span class="w"> </span><span class="mi">3000</span>
+<span class="o">[</span><span class="n">R1-acl-ipv4-adv-3000</span><span class="o">]</span><span class="w"> </span><span class="k">rule</span><span class="w"> </span><span class="n">permit</span><span class="w"> </span><span class="n">ip</span><span class="w"> </span><span class="n">source</span><span class="w"> </span><span class="mf">192.168.1.6</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="n">destination</span><span class="w"> </span><span class="mf">10.4.4.4</span><span class="w"> </span><span class="mi">0</span>
+
+<span class="err">#</span><span class="w"> </span><span class="mf">2.</span><span class="w"> </span><span class="n">创建策略路由</span>
+<span class="o">[</span><span class="n">R1</span><span class="o">]</span><span class="w"> </span><span class="n">policy</span><span class="o">-</span><span class="n">based</span><span class="o">-</span><span class="n">route</span><span class="w"> </span><span class="n">shangwen</span><span class="w"> </span><span class="n">permit</span><span class="w"> </span><span class="n">node</span><span class="w"> </span><span class="mi">10</span>
+<span class="o">[</span><span class="n">R1-pbr-shangwen-10</span><span class="o">]</span><span class="w"> </span><span class="k">if</span><span class="o">-</span><span class="k">match</span><span class="w"> </span><span class="n">acl</span><span class="w"> </span><span class="mi">3000</span>
+<span class="o">[</span><span class="n">R1-pbr-shangwen-10</span><span class="o">]</span><span class="w"> </span><span class="n">apply</span><span class="w"> </span><span class="k">next</span><span class="o">-</span><span class="n">hop</span><span class="w"> </span><span class="mf">192.168.12.2</span>
+
+<span class="err">#</span><span class="w"> </span><span class="mf">3.</span><span class="w"> </span><span class="n">在接口入方向调用</span>
+<span class="o">[</span><span class="n">R1</span><span class="o">]</span><span class="w"> </span><span class="n">interface</span><span class="w"> </span><span class="n">GigabitEthernet</span><span class="w"> </span><span class="mi">0</span><span class="o">/</span><span class="mi">0</span>
+<span class="o">[</span><span class="n">R1-GigabitEthernet0/0</span><span class="o">]</span><span class="w"> </span><span class="n">ip</span><span class="w"> </span><span class="n">policy</span><span class="o">-</span><span class="n">based</span><span class="o">-</span><span class="n">route</span><span class="w"> </span><span class="n">shangwen</span>
+</code></pre></div>
+
+<p><strong>apply next-hop 与 apply default-next-hop 的区别</strong>：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">动作</th>
+<th style="text-align: left;">执行顺序</th>
+<th style="text-align: left;">效果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>apply next-hop</code></td>
+<td style="text-align: left;"><strong>先看PBR，再看普通路由</strong></td>
+<td style="text-align: left;">强制指定下一跳</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>apply default-next-hop</code></td>
+<td style="text-align: left;"><strong>先看普通路由，再看PBR</strong></td>
+<td style="text-align: left;">相当于默认路由，只有普通路由没有匹配时才使用</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>📌 一句话总结：PBR配置分三步——ACL匹配流量、Route-Policy定义动作（apply next-hop强制转发/default-next-hop做默认网关）、接口入方向调用；apply next-hop优先于普通路由，apply default-next-hop则相反。</p>
+</blockquote>
+<h2>二、BGP（边界网关协议）</h2>
+<h3>1. BGP概述</h3>
+<blockquote>
+<p><strong>全称</strong>：Border Gateway Protocol（边界网关协议）
+<strong>作用</strong>：用于<strong>AS之间</strong>实现通信的外部网关协议（EGP）。</p>
+</blockquote>
+<p><strong>BGP的五大特点</strong>：</p>
+<ol>
+<li>作为<strong>外部网关协议</strong>，只传递路由信息，相比OSPF<strong>安全性较高</strong>。</li>
+<li>基于 <strong>TCP 179端口</strong>，更新可靠，且<strong>可以跨设备建立邻居</strong>。</li>
+<li>是唯一支持<strong>超大型网络</strong>的协议，可支持<strong>万条以上</strong>的路由。</li>
+<li>支持<strong>丰富的路径属性</strong>，实现灵活的选路。</li>
+<li>采用<strong>增量更新</strong>（只发送变化的路由），节省带宽。</li>
+</ol>
+<blockquote>
+<p>📌 一句话总结：BGP是AS间的外部网关协议，基于TCP 179端口可靠传输，支持超大型网络、丰富路径属性和增量更新。</p>
+</blockquote>
+<h3>2. BGP邻居类型</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">邻居类型</th>
+<th style="text-align: left;">含义</th>
+<th style="text-align: left;">所在AS</th>
+<th style="text-align: left;">建立方式</th>
+<th style="text-align: left;">默认TTL</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>EBGP邻居</strong></td>
+<td style="text-align: left;">AS之间的邻居</td>
+<td style="text-align: left;"><strong>不同AS</strong></td>
+<td style="text-align: left;">通常采用<strong>直连接口</strong>建立</td>
+<td style="text-align: left;"><strong>1</strong>（可修改）</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>IBGP邻居</strong></td>
+<td style="text-align: left;">AS内的邻居</td>
+<td style="text-align: left;"><strong>相同AS</strong></td>
+<td style="text-align: left;">通常采用<strong>Loopback接口</strong>建立（可跨设备）</td>
+<td style="text-align: left;">255</td>
+</tr>
+</tbody>
+</table>
+<h4>① EBGP邻居配置（直连接口）</h4>
+<p>bash</p>
+<div class="highlight"><pre><span></span><code><span class="o">[</span><span class="n">R1</span><span class="o">]</span><span class="w"> </span><span class="n">bgp</span><span class="w"> </span><span class="mi">100</span><span class="w">                                    </span><span class="err">#</span><span class="w"> </span><span class="n">AS号为100</span>
+<span class="o">[</span><span class="n">R1-bgp-default</span><span class="o">]</span><span class="w"> </span><span class="n">peer</span><span class="w"> </span><span class="mf">192.168.12.2</span><span class="w"> </span><span class="k">as</span><span class="o">-</span><span class="n">number</span><span class="w"> </span><span class="mi">200</span><span class="w">   </span><span class="err">#</span><span class="w"> </span><span class="n">对端AS为200</span>
+<span class="o">[</span><span class="n">R1-bgp-default</span><span class="o">]</span><span class="w"> </span><span class="n">address</span><span class="o">-</span><span class="n">family</span><span class="w"> </span><span class="n">ipv4</span>
+<span class="o">[</span><span class="n">R1-bgp-default-ipv4</span><span class="o">]</span><span class="w"> </span><span class="n">peer</span><span class="w"> </span><span class="mf">192.168.12.2</span><span class="w"> </span><span class="n">enable</span><span class="w">   </span><span class="err">#</span><span class="w"> </span><span class="n">华三需手动激活IPv4</span>
+
+<span class="o">[</span><span class="n">R2</span><span class="o">]</span><span class="w"> </span><span class="n">bgp</span><span class="w"> </span><span class="mi">200</span>
+<span class="o">[</span><span class="n">R2-bgp-default</span><span class="o">]</span><span class="w"> </span><span class="n">peer</span><span class="w"> </span><span class="mf">192.168.12.1</span><span class="w"> </span><span class="k">as</span><span class="o">-</span><span class="n">number</span><span class="w"> </span><span class="mi">100</span>
+<span class="o">[</span><span class="n">R2-bgp-default</span><span class="o">]</span><span class="w"> </span><span class="n">address</span><span class="o">-</span><span class="n">family</span><span class="w"> </span><span class="n">ipv4</span>
+<span class="o">[</span><span class="n">R2-bgp-default-ipv4</span><span class="o">]</span><span class="w"> </span><span class="n">peer</span><span class="w"> </span><span class="mf">192.168.12.1</span><span class="w"> </span><span class="n">enable</span>
+</code></pre></div>
+
+<h4>② IBGP邻居配置（Loopback接口）</h4>
+<p>bash</p>
+<div class="highlight"><pre><span></span><code><span class="o">[</span><span class="n">R2</span><span class="o">]</span><span class="w"> </span><span class="n">bgp</span><span class="w"> </span><span class="mi">200</span>
+<span class="o">[</span><span class="n">R2-bgp-default</span><span class="o">]</span><span class="w"> </span><span class="n">peer</span><span class="w"> </span><span class="mf">10.4.4.4</span><span class="w"> </span><span class="k">as</span><span class="o">-</span><span class="n">number</span><span class="w"> </span><span class="mi">200</span>
+<span class="o">[</span><span class="n">R2-bgp-default</span><span class="o">]</span><span class="w"> </span><span class="n">peer</span><span class="w"> </span><span class="mf">10.4.4.4</span><span class="w"> </span><span class="k">connect</span><span class="o">-</span><span class="n">interface</span><span class="w"> </span><span class="n">LoopBack</span><span class="w"> </span><span class="mi">0</span><span class="w">   </span><span class="err">#</span><span class="w"> </span><span class="n">强制源地址为Loopback</span>
+<span class="o">[</span><span class="n">R2-bgp-default</span><span class="o">]</span><span class="w"> </span><span class="n">address</span><span class="o">-</span><span class="n">family</span><span class="w"> </span><span class="n">ipv4</span>
+<span class="o">[</span><span class="n">R2-bgp-default-ipv4</span><span class="o">]</span><span class="w"> </span><span class="n">peer</span><span class="w"> </span><span class="mf">10.4.4.4</span><span class="w"> </span><span class="n">enable</span>
+
+<span class="o">[</span><span class="n">R4</span><span class="o">]</span><span class="w"> </span><span class="n">bgp</span><span class="w"> </span><span class="mi">200</span>
+<span class="o">[</span><span class="n">R4-bgp-default</span><span class="o">]</span><span class="w"> </span><span class="n">peer</span><span class="w"> </span><span class="mf">10.2.2.2</span><span class="w"> </span><span class="k">as</span><span class="o">-</span><span class="n">number</span><span class="w"> </span><span class="mi">200</span>
+<span class="o">[</span><span class="n">R4-bgp-default</span><span class="o">]</span><span class="w"> </span><span class="n">address</span><span class="o">-</span><span class="n">family</span><span class="w"> </span><span class="n">ipv4</span>
+<span class="o">[</span><span class="n">R4-bgp-default-ipv4</span><span class="o">]</span><span class="w"> </span><span class="n">peer</span><span class="w"> </span><span class="mf">10.2.2.2</span><span class="w"> </span><span class="n">enable</span>
+</code></pre></div>
+
+<blockquote>
+<p><strong>关键点</strong>：使用Loopback建立IBGP邻居时，<strong>需强制改变源地址</strong>（connect-interface），双方配置一边即可。</p>
+</blockquote>
+<p>bash</p>
+<div class="highlight"><pre><span></span><code><span class="o">[</span><span class="n">R4</span><span class="o">]</span><span class="w"> </span><span class="n">display</span><span class="w"> </span><span class="n">bgp</span><span class="w"> </span><span class="n">peer</span><span class="w"> </span><span class="n">ipv4</span><span class="w">          </span><span class="err">#</span><span class="w"> </span><span class="n">查看BGP邻居关系</span>
+</code></pre></div>
+
+<blockquote>
+<p>📌 一句话总结：EBGP邻居跨AS通常用直连接口建邻（TTL=1），IBGP邻居同AS通常用Loopback跨设备建邻（需connect-interface强制源地址），华三需在IPv4地址族下手动enable。</p>
+</blockquote>
+<h3>3. BGP邻居状态机</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">状态</th>
+<th style="text-align: left;">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>IDLE</strong></td>
+<td style="text-align: left;">空闲状态，初始状态</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Connect</strong></td>
+<td style="text-align: left;">建立TCP三次握手连接</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>OpenSent</strong></td>
+<td style="text-align: left;">发送Open信息，携带参数（Router-ID、认证、AS号等）</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>OpenConfirm</strong></td>
+<td style="text-align: left;">确认Open信息中的参数</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Established</strong></td>
+<td style="text-align: left;">已建立状态，双方认可对方参数，<strong>邻居建立成功</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>特殊状态</strong>：</p>
+<ul>
+<li><strong>Active</strong>：出现错误的状态，说明<strong>TCP三次握手建立失败</strong>。</li>
+</ul>
+<blockquote>
+<p>📌 一句话总结：BGP邻居状态经历IDLE→Connect→OpenSent（协商参数）→OpenConfirm→Established（建立成功），Active表示TCP三次握手失败。</p>
+</blockquote>
+<h3>4. BGP路由发布（两种方式）</h3>
+<h4>方式一：network 宣告</h4>
+<p><strong>特点</strong>：</p>
+<ul>
+<li><strong>不需要直连</strong>，只要本地路由表中存在即可宣告</li>
+<li>宣告时<strong>前缀和掩码必须和本地路由表完全一致</strong></li>
+</ul>
+<p>bash</p>
+<div class="highlight"><pre><span></span><code><span class="o">[</span><span class="n">R1</span><span class="o">]</span><span class="w"> </span><span class="n">bgp</span><span class="w"> </span><span class="mi">100</span>
+<span class="o">[</span><span class="n">R1-bgp-default</span><span class="o">]</span><span class="w"> </span><span class="n">address</span><span class="o">-</span><span class="n">family</span><span class="w"> </span><span class="n">ipv4</span>
+<span class="o">[</span><span class="n">R1-bgp-default-ipv4</span><span class="o">]</span><span class="w"> </span><span class="n">network</span><span class="w"> </span><span class="mf">10.1.1.1</span><span class="w"> </span><span class="mi">32</span>
+</code></pre></div>
+
+<h4>方式二：路由引入（import-route）</h4>
+<p>bash</p>
+<div class="highlight"><pre><span></span><code>[R2-bgp-default-ipv4] import-route ospf 1
+</code></pre></div>
+
+<blockquote>
+<p>📌 一句话总结：BGP发布路由有两种方式——network需本地路由表存在且前缀掩码完全匹配才能宣告，import-route直接引入其他协议路由。</p>
+</blockquote>
+<h3>5. BGP路由传递原则（下一跳行为）</h3>
+<p><strong>原则</strong>：<strong>IBGP邻居之间传递路由时，下一跳不变</strong>。</p>
+<p><strong>问题</strong>：这可能导致下一跳不可达（例如：EBGP传来的路由下一跳在AS外，IBGP邻居无法到达）。</p>
+<p><strong>解决方案</strong>：在IBGP邻居上配置 <code>next-hop-local</code>，将下一跳改为本设备地址。</p>
+<p>bash</p>
+<div class="highlight"><pre><span></span><code><span class="o">[</span><span class="n">R2</span><span class="o">]</span><span class="w"> </span><span class="n">bgp</span><span class="w"> </span><span class="mi">200</span>
+<span class="o">[</span><span class="n">R2-bgp-default</span><span class="o">]</span><span class="w"> </span><span class="n">address</span><span class="o">-</span><span class="n">family</span><span class="w"> </span><span class="n">ipv4</span>
+<span class="o">[</span><span class="n">R2-bgp-default-ipv4</span><span class="o">]</span><span class="w"> </span><span class="n">peer</span><span class="w"> </span><span class="mf">10.4.4.4</span><span class="w"> </span><span class="k">next</span><span class="o">-</span><span class="n">hop</span><span class="o">-</span><span class="k">local</span>
+</code></pre></div>
+
+<blockquote>
+<p>📌 一句话总结：BGP传递路由时IBGP邻居间下一跳默认不变，可能导致下一跳不可达，需用next-hop-local强制修改为本地地址。</p>
+</blockquote>
+<h3>6. BGP防环机制</h3>
+<h4>① IBGP防环：水平分割</h4>
+<p><strong>原则</strong>：IBGP邻居之间只能传递一跳，即从IBGP邻居收到的路由<strong>不会</strong>再传递给另一个IBGP邻居。</p>
+<h4>② EBGP防环：AS-Path</h4>
+<p><strong>原则</strong>：每经过一个AS，AS-Path中<strong>记录当前AS号</strong>。如果收到一条路由，其AS-Path中<strong>存在自身的AS号</strong>，则丢弃该路由。</p>
+<blockquote>
+<p>📌 一句话总结：BGP防环——IBGP靠水平分割（只传一跳），EBGP靠AS-Path记录路径（看到自己AS则丢弃）。</p>
+</blockquote>
+<h3>7. BGP路由黑洞及其解决方案</h3>
+<h4>问题：BGP路由黑洞</h4>
+<p>中间设备（未运行BGP）没有去往目标网络的路由，导致BGP路由无法转发。</p>
+<h4>方案1：同步规则（不推荐）</h4>
+<p>将BGP路由<strong>重分布进入IGP</strong>（如OSPF），让IGP承载BGP路由。</p>
+<p>bash</p>
+<div class="highlight"><pre><span></span><code><span class="o">[</span><span class="n">R2</span><span class="o">]</span><span class="w"> </span><span class="n">ospf</span><span class="w"> </span><span class="mi">1</span>
+<span class="o">[</span><span class="n">R2-ospf-1</span><span class="o">]</span><span class="w"> </span><span class="n">import</span><span class="o">-</span><span class="n">route</span><span class="w"> </span><span class="n">bgp</span>
+</code></pre></div>
+
+<p><strong>不推荐原因</strong>：BGP路由信息量较大，OSPF可能<strong>无法承载</strong>这么多路由。</p>
+<h4>方案2：全互联建立BGP邻居（不推荐）</h4>
+<p>让中间设备通过BGP学习到路由。但由于IBGP水平分割，IBGP邻居只能传递一跳，必须<strong>全互联</strong>建立邻居。设备数量多时，邻居数非常庞大（n(n-1)/2）。</p>
+<p><strong>不推荐原因</strong>：邻居数量太大。</p>
+<h4>方案3：BGP路由反射器（RR，推荐）</h4>
+<p><strong>原理</strong>：打破IBGP水平分割原则，让路由可以传递多跳。</p>
+<p><strong>反射器的关键原则</strong>：</p>
+<ul>
+<li>只需在<strong>反射器（RR）</strong> 上配置，其他设备不知晓反射的存在。</li>
+<li><strong>反射原则</strong>：<strong>只有两端都是非客户端时，路由才不会传递</strong>（即非客户端↔非客户端不反射）。</li>
+<li>经过反射的<strong>所有BGP属性不发生变化</strong>。</li>
+<li>反射器打破水平分割，需<strong>新增防环机制</strong>：</li>
+<li><strong>Originator-ID</strong>：经过反射的路由记录起始路由器的Router-ID，若收到的路由Originator-ID与本地Router-ID一致则丢弃。</li>
+<li><strong>Cluster-List</strong>：经过反射器后记录RR的Cluster-ID，若RR收到路由发现自身Cluster-ID已在列表中则丢弃。</li>
+</ul>
+<p>bash</p>
+<div class="highlight"><pre><span></span><code><span class="o">[</span><span class="n">R3</span><span class="o">]</span><span class="w"> </span><span class="n">bgp</span><span class="w"> </span><span class="mi">200</span>
+<span class="o">[</span><span class="n">R3-bgp-default</span><span class="o">]</span><span class="w"> </span><span class="n">address</span><span class="o">-</span><span class="n">family</span><span class="w"> </span><span class="n">ipv4</span>
+<span class="o">[</span><span class="n">R3-bgp-default-ipv4</span><span class="o">]</span><span class="w"> </span><span class="n">peer</span><span class="w"> </span><span class="mf">10.2.2.2</span><span class="w"> </span><span class="n">reflect</span><span class="o">-</span><span class="n">client</span>
+</code></pre></div>
+
+<p><strong>可靠性</strong>：反射器是单点故障，可配置<strong>两台反射器</strong>做冗余。</p>
+<blockquote>
+<p>📌 一句话总结：路由反射器通过打破IBGP水平分割解决黑洞，只需在RR上配置reflect-client，反射原则是"非客户端↔非客户端不反射"，通过Originator-ID和Cluster-List防环，可配置多台RR避免单点故障。</p>
+</blockquote>
+<h4>方案4：BGP联盟（BGP Confederation）</h4>
+<p><strong>原理</strong>：在AS内部划分多个<strong>子AS</strong>，将原本的IBGP邻居关系变成<strong>变相的EBGP邻居关系</strong>，从而解决水平分割。</p>
+<p><strong>联盟规则</strong>：</p>
+<ul>
+<li>子AS<strong>只在本地AS中生效</strong>，其他AS不会感知。</li>
+<li>联盟内部的联盟EBGP间传递信息<strong>仍按IBGP形式</strong>传递属性（AS-Path除外）。</li>
+<li>联盟内部通过<strong>AS-Path防环</strong>，但子AS不影响路由选举（透明传递）。</li>
+</ul>
+<p><strong>分配原则</strong>：划分多少子AS，两两一组，多余的单独一个AS。</p>
+<p>bash</p>
+<div class="highlight"><pre><span></span><code><span class="err">#</span><span class="w"> </span><span class="n">R2</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">子AS</span><span class="w"> </span><span class="mi">1001</span>
+<span class="o">[</span><span class="n">R2</span><span class="o">]</span><span class="w"> </span><span class="n">bgp</span><span class="w"> </span><span class="mi">1001</span>
+<span class="o">[</span><span class="n">R2-bgp-default</span><span class="o">]</span><span class="w"> </span><span class="n">confederation</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="mi">200</span><span class="w">                    </span><span class="err">#</span><span class="w"> </span><span class="n">联盟ID</span><span class="err">（</span><span class="n">对端感知的AS号</span><span class="err">）</span>
+<span class="o">[</span><span class="n">R2-bgp-default</span><span class="o">]</span><span class="w"> </span><span class="n">confederation</span><span class="w"> </span><span class="n">peer</span><span class="o">-</span><span class="k">as</span><span class="w"> </span><span class="mi">1002</span><span class="w">              </span><span class="err">#</span><span class="w"> </span><span class="n">联盟内对端子AS</span>
+<span class="o">[</span><span class="n">R2-bgp-default</span><span class="o">]</span><span class="w"> </span><span class="n">peer</span><span class="w"> </span><span class="mf">192.168.12.1</span><span class="w"> </span><span class="k">as</span><span class="o">-</span><span class="n">number</span><span class="w"> </span><span class="mi">100</span><span class="w">         </span><span class="err">#</span><span class="w"> </span><span class="n">EBGP</span><span class="err">（</span><span class="n">外部</span><span class="err">）</span>
+<span class="o">[</span><span class="n">R2-bgp-default</span><span class="o">]</span><span class="w"> </span><span class="n">peer</span><span class="w"> </span><span class="mf">10.3.3.3</span><span class="w"> </span><span class="k">as</span><span class="o">-</span><span class="n">number</span><span class="w"> </span><span class="mi">1002</span><span class="w">           </span><span class="err">#</span><span class="w"> </span><span class="n">联盟EBGP</span><span class="err">（</span><span class="n">内部子AS</span><span class="err">）</span>
+<span class="o">[</span><span class="n">R2-bgp-default</span><span class="o">]</span><span class="w"> </span><span class="n">peer</span><span class="w"> </span><span class="mf">10.3.3.3</span><span class="w"> </span><span class="k">connect</span><span class="o">-</span><span class="n">interface</span><span class="w"> </span><span class="n">LoopBack</span><span class="w"> </span><span class="mi">0</span>
+<span class="o">[</span><span class="n">R2-bgp-default</span><span class="o">]</span><span class="w"> </span><span class="n">address</span><span class="o">-</span><span class="n">family</span><span class="w"> </span><span class="n">ipv4</span>
+<span class="o">[</span><span class="n">R2-bgp-default-ipv4</span><span class="o">]</span><span class="w"> </span><span class="n">peer</span><span class="w"> </span><span class="mf">192.168.12.1</span><span class="w"> </span><span class="n">enable</span>
+<span class="o">[</span><span class="n">R2-bgp-default-ipv4</span><span class="o">]</span><span class="w"> </span><span class="n">peer</span><span class="w"> </span><span class="mf">10.3.3.3</span><span class="w"> </span><span class="n">enable</span>
+<span class="o">[</span><span class="n">R2-bgp-default-ipv4</span><span class="o">]</span><span class="w"> </span><span class="n">peer</span><span class="w"> </span><span class="mf">10.3.3.3</span><span class="w"> </span><span class="k">next</span><span class="o">-</span><span class="n">hop</span><span class="o">-</span><span class="k">local</span>
+
+<span class="err">#</span><span class="w"> </span><span class="n">R3</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">子AS</span><span class="w"> </span><span class="mi">1002</span><span class="err">（</span><span class="n">边界</span><span class="err">）</span>
+<span class="o">[</span><span class="n">R3</span><span class="o">]</span><span class="w"> </span><span class="n">bgp</span><span class="w"> </span><span class="mi">1002</span>
+<span class="o">[</span><span class="n">R3-bgp-default</span><span class="o">]</span><span class="w"> </span><span class="n">confederation</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="mi">200</span>
+<span class="o">[</span><span class="n">R3-bgp-default</span><span class="o">]</span><span class="w"> </span><span class="n">confederation</span><span class="w"> </span><span class="n">peer</span><span class="o">-</span><span class="k">as</span><span class="w"> </span><span class="mi">1001</span>
+<span class="o">[</span><span class="n">R3-bgp-default</span><span class="o">]</span><span class="w"> </span><span class="n">peer</span><span class="w"> </span><span class="mf">10.2.2.2</span><span class="w"> </span><span class="k">as</span><span class="o">-</span><span class="n">number</span><span class="w"> </span><span class="mi">1001</span>
+<span class="o">[</span><span class="n">R3-bgp-default</span><span class="o">]</span><span class="w"> </span><span class="n">peer</span><span class="w"> </span><span class="mf">10.2.2.2</span><span class="w"> </span><span class="k">connect</span><span class="o">-</span><span class="n">interface</span><span class="w"> </span><span class="n">LoopBack</span><span class="w"> </span><span class="mi">0</span>
+<span class="o">[</span><span class="n">R3-bgp-default</span><span class="o">]</span><span class="w"> </span><span class="n">peer</span><span class="w"> </span><span class="mf">10.4.4.4</span><span class="w"> </span><span class="k">as</span><span class="o">-</span><span class="n">number</span><span class="w"> </span><span class="mi">1002</span><span class="w">           </span><span class="err">#</span><span class="w"> </span><span class="n">IBGP</span><span class="err">（</span><span class="n">同子AS</span><span class="err">）</span>
+<span class="o">[</span><span class="n">R3-bgp-default</span><span class="o">]</span><span class="w"> </span><span class="n">peer</span><span class="w"> </span><span class="mf">10.4.4.4</span><span class="w"> </span><span class="k">connect</span><span class="o">-</span><span class="n">interface</span><span class="w"> </span><span class="n">LoopBack</span><span class="w"> </span><span class="mi">0</span>
+<span class="o">[</span><span class="n">R3-bgp-default</span><span class="o">]</span><span class="w"> </span><span class="n">address</span><span class="o">-</span><span class="n">family</span><span class="w"> </span><span class="n">ipv4</span>
+<span class="o">[</span><span class="n">R3-bgp-default-ipv4</span><span class="o">]</span><span class="w"> </span><span class="n">peer</span><span class="w"> </span><span class="mf">10.2.2.2</span><span class="w"> </span><span class="n">enable</span>
+<span class="o">[</span><span class="n">R3-bgp-default-ipv4</span><span class="o">]</span><span class="w"> </span><span class="n">peer</span><span class="w"> </span><span class="mf">10.4.4.4</span><span class="w"> </span><span class="n">enable</span>
+
+<span class="err">#</span><span class="w"> </span><span class="n">R4</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">子AS</span><span class="w"> </span><span class="mi">1002</span>
+<span class="o">[</span><span class="n">R4</span><span class="o">]</span><span class="w"> </span><span class="n">bgp</span><span class="w"> </span><span class="mi">1002</span>
+<span class="o">[</span><span class="n">R4-bgp-default</span><span class="o">]</span><span class="w"> </span><span class="n">confederation</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="mi">200</span>
+<span class="o">[</span><span class="n">R4-bgp-default</span><span class="o">]</span><span class="w"> </span><span class="n">confederation</span><span class="w"> </span><span class="n">peer</span><span class="o">-</span><span class="k">as</span><span class="w"> </span><span class="mi">1001</span>
+<span class="o">[</span><span class="n">R4-bgp-default</span><span class="o">]</span><span class="w"> </span><span class="n">peer</span><span class="w"> </span><span class="mf">10.3.3.3</span><span class="w"> </span><span class="k">as</span><span class="o">-</span><span class="n">number</span><span class="w"> </span><span class="mi">1002</span>
+<span class="o">[</span><span class="n">R4-bgp-default</span><span class="o">]</span><span class="w"> </span><span class="n">peer</span><span class="w"> </span><span class="mf">10.3.3.3</span><span class="w"> </span><span class="k">connect</span><span class="o">-</span><span class="n">interface</span><span class="w"> </span><span class="n">LoopBack</span><span class="w"> </span><span class="mi">0</span>
+<span class="o">[</span><span class="n">R4-bgp-default</span><span class="o">]</span><span class="w"> </span><span class="n">address</span><span class="o">-</span><span class="n">family</span><span class="w"> </span><span class="n">ipv4</span>
+<span class="o">[</span><span class="n">R4-bgp-default-ipv4</span><span class="o">]</span><span class="w"> </span><span class="n">peer</span><span class="w"> </span><span class="mf">10.3.3.3</span><span class="w"> </span><span class="n">enable</span>
+</code></pre></div>
+
+<blockquote>
+<p>📌 一句话总结：BGP联盟在AS内划分子AS将IBGP转为联盟EBGP解决水平分割，联盟子AS仅本地生效、透明传递且不影响选路，配置需confederation id（对外AS号）和confederation peer-as（对端子AS）。</p>
+</blockquote>
+<h4>方案5：MPLS（多协议标签交换）</h4>
+<p>R3<strong>不需要配置任何协议</strong>，也<strong>不需要学习到这条路由</strong>，就可以解决黑洞。（MPLS通过标签转发绕过路由查找）</p>
+<blockquote>
+<p>📌 一句话总结：MPLS通过标签转发机制，中间设备无需学习BGP路由也能转发数据，从根本上解决BGP路由黑洞（后续课程详讲）。</p>
+</blockquote>
+<h3>8. 五种黑洞解决方案对比</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">方案</th>
+<th style="text-align: left;">原理</th>
+<th style="text-align: left;">推荐度</th>
+<th style="text-align: left;">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>同步规则</strong></td>
+<td style="text-align: left;">BGP重分布到IGP</td>
+<td style="text-align: left;">❌ 不推荐</td>
+<td style="text-align: left;">OSPF无法承载大量BGP路由</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>全互联</strong></td>
+<td style="text-align: left;">所有设备建立IBGP邻居</td>
+<td style="text-align: left;">❌ 不推荐</td>
+<td style="text-align: left;">邻居数量太大</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>路由反射器</strong></td>
+<td style="text-align: left;">RR打破水平分割</td>
+<td style="text-align: left;">✅ <strong>推荐</strong></td>
+<td style="text-align: left;">配置简单，可做冗余</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>BGP联盟</strong></td>
+<td style="text-align: left;">划分子AS</td>
+<td style="text-align: left;">⚠️ 按需使用</td>
+<td style="text-align: left;">配置复杂，适用于大规模AS</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>MPLS</strong></td>
+<td style="text-align: left;">标签转发</td>
+<td style="text-align: left;">✅ 推荐</td>
+<td style="text-align: left;">无需中间设备学习路由</td>
+</tr>
+</tbody>
+</table>
+<h1>第十七天</h1>
+<blockquote>
+<p>核心内容：BGP路径属性与选路（Preferred-value/Local-preference/AS-Path/Origin/MED）、BGP路由聚合、BGP对等体组、BGP团体属性</p>
+</blockquote>
+<h2>一、BGP路径属性与选路</h2>
+<h3>1. BGP选路概述</h3>
+<p>BGP默认情况下<strong>不进行负载分担</strong>，只选择一条最优路径。BGP通过多种路径属性来控制选路，常用的选路属性按优先级从高到低依次为：</p>
+<ol>
+<li><strong>Preferred-value</strong>（华为私有，本地有效，<strong>最高优先级</strong>）</li>
+<li><strong>Local-preference</strong>（AS内传递，越大越优）</li>
+<li><strong>AS-Path</strong>（越短越优）</li>
+<li><strong>Origin</strong>（i &gt; e &gt; ?）</li>
+<li><strong>MED</strong>（越小越优）</li>
+<li><strong>EBGP优于IBGP</strong>（EBGP路径优先）</li>
+<li><strong>下一跳度量值</strong>（越小越优）</li>
+</ol>
+<blockquote>
+<p><strong>负载分担条件</strong>：前八条选路规则一致时，才能实现负载分担。</p>
+</blockquote>
+<h3>2. Preferred-value（华为私有属性）</h3>
+<p><strong>特点</strong>：</p>
+<ul>
+<li><strong>华为私有属性</strong>，仅本地有效，不会传递给邻居</li>
+<li>值越大越优，<strong>优先级最高</strong></li>
+<li>只能在<strong>入方向</strong>应用</li>
+</ul>
+<h4>① 主备方式配置</h4>
+<p>bash</p>
+<div class="highlight"><pre><span></span><code><span class="o">[</span><span class="n">R4</span><span class="o">]</span><span class="w"> </span><span class="n">bgp</span><span class="w"> </span><span class="mi">200</span>
+<span class="o">[</span><span class="n">R4-bgp-default</span><span class="o">]</span><span class="w"> </span><span class="n">address</span><span class="o">-</span><span class="n">family</span><span class="w"> </span><span class="n">ipv4</span>
+<span class="o">[</span><span class="n">R4-bgp-default-ipv4</span><span class="o">]</span><span class="w"> </span><span class="n">peer</span><span class="w"> </span><span class="mf">10.3.3.3</span><span class="w"> </span><span class="n">preferred</span><span class="o">-</span><span class="k">value</span><span class="w"> </span><span class="mi">100</span>
+<span class="err">#</span><span class="w"> </span><span class="n">从10</span><span class="mf">.3.3.3</span><span class="n">收到的所有路由优先级设为100</span><span class="err">（</span><span class="n">高于默认值0</span><span class="err">），</span><span class="n">走主路径</span>
+</code></pre></div>
+
+<h4>② 负载分担配置（基于源IP匹配不同邻居）</h4>
+<p><strong>需求</strong>：源IP <code>10.1.1.x</code> 走R2，源IP <code>10.1.2.x</code> 走R3。</p>
+<p>bash</p>
+<div class="highlight"><pre><span></span><code><span class="err">#</span><span class="w"> </span><span class="n">定义ACL匹配不同源地址</span>
+<span class="o">[</span><span class="n">R4</span><span class="o">]</span><span class="w"> </span><span class="n">acl</span><span class="w"> </span><span class="n">basic</span><span class="w"> </span><span class="mi">2000</span>
+<span class="o">[</span><span class="n">R4-acl-ipv4-basic-2000</span><span class="o">]</span><span class="w"> </span><span class="k">rule</span><span class="w"> </span><span class="n">permit</span><span class="w"> </span><span class="n">source</span><span class="w"> </span><span class="mf">10.1.1.1</span><span class="w"> </span><span class="mf">0.0.254.255</span>
+<span class="o">[</span><span class="n">R4</span><span class="o">]</span><span class="w"> </span><span class="n">acl</span><span class="w"> </span><span class="n">basic</span><span class="w"> </span><span class="mi">2001</span>
+<span class="o">[</span><span class="n">R4-acl-ipv4-basic-2001</span><span class="o">]</span><span class="w"> </span><span class="k">rule</span><span class="w"> </span><span class="n">permit</span><span class="w"> </span><span class="n">source</span><span class="w"> </span><span class="mf">10.1.2.1</span><span class="w"> </span><span class="mf">0.0.254.255</span>
+
+<span class="err">#</span><span class="w"> </span><span class="n">针对R2邻居的Route</span><span class="o">-</span><span class="n">Policy</span>
+<span class="o">[</span><span class="n">R4</span><span class="o">]</span><span class="w"> </span><span class="n">route</span><span class="o">-</span><span class="n">policy</span><span class="w"> </span><span class="n">R2</span><span class="w"> </span><span class="n">permit</span><span class="w"> </span><span class="n">node</span><span class="w"> </span><span class="mi">10</span>
+<span class="o">[</span><span class="n">R4-route-policy-R2-10</span><span class="o">]</span><span class="w"> </span><span class="k">if</span><span class="o">-</span><span class="k">match</span><span class="w"> </span><span class="n">ip</span><span class="w"> </span><span class="n">address</span><span class="w"> </span><span class="n">acl</span><span class="w"> </span><span class="mi">2001</span>
+<span class="o">[</span><span class="n">R4-route-policy-R2-10</span><span class="o">]</span><span class="w"> </span><span class="n">apply</span><span class="w"> </span><span class="n">preferred</span><span class="o">-</span><span class="k">value</span><span class="w"> </span><span class="mi">10</span>
+<span class="o">[</span><span class="n">R4</span><span class="o">]</span><span class="w"> </span><span class="n">route</span><span class="o">-</span><span class="n">policy</span><span class="w"> </span><span class="n">R2</span><span class="w"> </span><span class="n">permit</span><span class="w"> </span><span class="n">node</span><span class="w"> </span><span class="mi">20</span><span class="w">          </span><span class="err">#</span><span class="w"> </span><span class="n">放行其他所有路由</span>
+
+<span class="err">#</span><span class="w"> </span><span class="n">针对R3邻居的Route</span><span class="o">-</span><span class="n">Policy</span>
+<span class="o">[</span><span class="n">R4</span><span class="o">]</span><span class="w"> </span><span class="n">route</span><span class="o">-</span><span class="n">policy</span><span class="w"> </span><span class="n">R3</span><span class="w"> </span><span class="n">permit</span><span class="w"> </span><span class="n">node</span><span class="w"> </span><span class="mi">10</span>
+<span class="o">[</span><span class="n">R4-route-policy-R3-10</span><span class="o">]</span><span class="w"> </span><span class="k">if</span><span class="o">-</span><span class="k">match</span><span class="w"> </span><span class="n">ip</span><span class="w"> </span><span class="n">address</span><span class="w"> </span><span class="n">acl</span><span class="w"> </span><span class="mi">2000</span>
+<span class="o">[</span><span class="n">R4-route-policy-R3-10</span><span class="o">]</span><span class="w"> </span><span class="n">apply</span><span class="w"> </span><span class="n">preferred</span><span class="o">-</span><span class="k">value</span><span class="w"> </span><span class="mi">10</span>
+<span class="o">[</span><span class="n">R4</span><span class="o">]</span><span class="w"> </span><span class="n">route</span><span class="o">-</span><span class="n">policy</span><span class="w"> </span><span class="n">R3</span><span class="w"> </span><span class="n">permit</span><span class="w"> </span><span class="n">node</span><span class="w"> </span><span class="mi">20</span><span class="w">          </span><span class="err">#</span><span class="w"> </span><span class="n">放行其他所有路由</span>
+
+<span class="err">#</span><span class="w"> </span><span class="n">在BGP中调用</span>
+<span class="o">[</span><span class="n">R4</span><span class="o">]</span><span class="w"> </span><span class="n">bgp</span><span class="w"> </span><span class="mi">200</span>
+<span class="o">[</span><span class="n">R4-bgp-default</span><span class="o">]</span><span class="w"> </span><span class="n">address</span><span class="o">-</span><span class="n">family</span><span class="w"> </span><span class="n">ipv4</span>
+<span class="o">[</span><span class="n">R4-bgp-default-ipv4</span><span class="o">]</span><span class="w"> </span><span class="n">peer</span><span class="w"> </span><span class="mf">10.2.2.2</span><span class="w"> </span><span class="n">route</span><span class="o">-</span><span class="n">policy</span><span class="w"> </span><span class="n">R2</span><span class="w"> </span><span class="n">import</span>
+<span class="o">[</span><span class="n">R4-bgp-default-ipv4</span><span class="o">]</span><span class="w"> </span><span class="n">peer</span><span class="w"> </span><span class="mf">10.3.3.3</span><span class="w"> </span><span class="n">route</span><span class="o">-</span><span class="n">policy</span><span class="w"> </span><span class="n">R3</span><span class="w"> </span><span class="n">import</span>
+</code></pre></div>
+
+<blockquote>
+<p>📌 一句话总结：Preferred-value是华为私有属性且仅本地有效、优先级最高、只在入方向生效；值越大越优，主备方式对邻居整体设置，负载分担方式通过Route-Policy结合ACL对特定路由设置不同值实现多路径分担。</p>
+</blockquote>
+<h3>3. Local-preference（本地优先级）</h3>
+<p><strong>特点</strong>：</p>
+<ul>
+<li>公认必遵属性，在<strong>AS内部传递</strong>，越大越优</li>
+<li>影响<strong>出AS的流量</strong>选路</li>
+<li>可以在<strong>入方向</strong>或<strong>出方向</strong>应用</li>
+</ul>
+<h4>① 主备方式配置</h4>
+<p>bash</p>
+<div class="highlight"><pre><span></span><code><span class="o">[</span><span class="n">R3</span><span class="o">]</span><span class="w"> </span><span class="n">bgp</span><span class="w"> </span><span class="mi">200</span>
+<span class="o">[</span><span class="n">R3-bgp-default</span><span class="o">]</span><span class="w"> </span><span class="n">address</span><span class="o">-</span><span class="n">family</span><span class="w"> </span><span class="n">ipv4</span>
+<span class="o">[</span><span class="n">R3-bgp-default-ipv4</span><span class="o">]</span><span class="w"> </span><span class="k">default</span><span class="w"> </span><span class="k">local</span><span class="o">-</span><span class="n">preference</span><span class="w"> </span><span class="mi">150</span>
+<span class="err">#</span><span class="w"> </span><span class="n">将所有路由的本地优先级设为150</span><span class="err">（</span><span class="n">默认100</span><span class="err">），</span><span class="n">使本设备成为更优出口</span>
+</code></pre></div>
+
+<h4>② 负载分担配置</h4>
+<p>bash</p>
+<div class="highlight"><pre><span></span><code><span class="err">#</span><span class="w"> </span><span class="n">定义ACL</span>
+<span class="o">[</span><span class="n">R2</span><span class="o">]</span><span class="w"> </span><span class="n">acl</span><span class="w"> </span><span class="n">basic</span><span class="w"> </span><span class="mi">2000</span>
+<span class="o">[</span><span class="n">R2-acl-ipv4-basic-2000</span><span class="o">]</span><span class="w"> </span><span class="k">rule</span><span class="w"> </span><span class="n">permit</span><span class="w"> </span><span class="n">source</span><span class="w"> </span><span class="mf">10.1.1.1</span><span class="w"> </span><span class="mf">0.0.254.255</span>
+<span class="o">[</span><span class="n">R2</span><span class="o">]</span><span class="w"> </span><span class="n">acl</span><span class="w"> </span><span class="n">basic</span><span class="w"> </span><span class="mi">2001</span>
+<span class="o">[</span><span class="n">R2-acl-ipv4-basic-2001</span><span class="o">]</span><span class="w"> </span><span class="k">rule</span><span class="w"> </span><span class="n">permit</span><span class="w"> </span><span class="n">source</span><span class="w"> </span><span class="mf">10.1.2.1</span><span class="w"> </span><span class="mf">0.0.254.255</span>
+
+<span class="err">#</span><span class="w"> </span><span class="n">Route</span><span class="o">-</span><span class="n">Policy</span>
+<span class="o">[</span><span class="n">R2</span><span class="o">]</span><span class="w"> </span><span class="n">route</span><span class="o">-</span><span class="n">policy</span><span class="w"> </span><span class="n">lp</span><span class="w"> </span><span class="n">permit</span><span class="w"> </span><span class="n">node</span><span class="w"> </span><span class="mi">10</span>
+<span class="o">[</span><span class="n">R2-route-policy-lp-10</span><span class="o">]</span><span class="w"> </span><span class="k">if</span><span class="o">-</span><span class="k">match</span><span class="w"> </span><span class="n">ip</span><span class="w"> </span><span class="n">address</span><span class="w"> </span><span class="n">acl</span><span class="w"> </span><span class="mi">2000</span>
+<span class="o">[</span><span class="n">R2-route-policy-lp-10</span><span class="o">]</span><span class="w"> </span><span class="n">apply</span><span class="w"> </span><span class="k">local</span><span class="o">-</span><span class="n">preference</span><span class="w"> </span><span class="mi">50</span>
+
+<span class="o">[</span><span class="n">R2</span><span class="o">]</span><span class="w"> </span><span class="n">route</span><span class="o">-</span><span class="n">policy</span><span class="w"> </span><span class="n">lp</span><span class="w"> </span><span class="n">permit</span><span class="w"> </span><span class="n">node</span><span class="w"> </span><span class="mi">20</span>
+<span class="o">[</span><span class="n">R2-route-policy-lp-20</span><span class="o">]</span><span class="w"> </span><span class="k">if</span><span class="o">-</span><span class="k">match</span><span class="w"> </span><span class="n">ip</span><span class="w"> </span><span class="n">address</span><span class="w"> </span><span class="n">acl</span><span class="w"> </span><span class="mi">2001</span>
+<span class="o">[</span><span class="n">R2-route-policy-lp-20</span><span class="o">]</span><span class="w"> </span><span class="n">apply</span><span class="w"> </span><span class="k">local</span><span class="o">-</span><span class="n">preference</span><span class="w"> </span><span class="mi">150</span>
+
+<span class="o">[</span><span class="n">R2</span><span class="o">]</span><span class="w"> </span><span class="n">route</span><span class="o">-</span><span class="n">policy</span><span class="w"> </span><span class="n">lp</span><span class="w"> </span><span class="n">permit</span><span class="w"> </span><span class="n">node</span><span class="w"> </span><span class="mi">30</span><span class="w">           </span><span class="err">#</span><span class="w"> </span><span class="n">放行其他路由</span>
+
+<span class="err">#</span><span class="w"> </span><span class="n">在BGP中调用</span><span class="err">（</span><span class="n">出方向</span><span class="err">）</span>
+<span class="o">[</span><span class="n">R2</span><span class="o">]</span><span class="w"> </span><span class="n">bgp</span><span class="w"> </span><span class="mi">200</span>
+<span class="o">[</span><span class="n">R2-bgp-default</span><span class="o">]</span><span class="w"> </span><span class="n">address</span><span class="o">-</span><span class="n">family</span><span class="w"> </span><span class="n">ipv4</span>
+<span class="o">[</span><span class="n">R2-bgp-default-ipv4</span><span class="o">]</span><span class="w"> </span><span class="n">peer</span><span class="w"> </span><span class="mf">10.4.4.4</span><span class="w"> </span><span class="n">route</span><span class="o">-</span><span class="n">policy</span><span class="w"> </span><span class="n">lp</span><span class="w"> </span><span class="n">export</span>
+</code></pre></div>
+
+<blockquote>
+<p>📌 一句话总结：Local-preference在AS内传递、越大越优，影响出AS流量选路；主备方式用default local-preference全局设值，负载分担方式通过Route-Policy在export方向对不同路由设不同值。</p>
+</blockquote>
+<h3>4. AS-Path（AS路径）</h3>
+<p><strong>特点</strong>：</p>
+<ul>
+<li>公认必遵属性，用于<strong>EBGP防环</strong></li>
+<li>因为还需防环，AS-Path<strong>只增不减</strong></li>
+<li>增加AS时需考虑后续是否会经过该AS，尽量增加<strong>自身AS</strong></li>
+<li>可以影响<strong>进入本AS</strong>的路径（import），也可以影响<strong>离开本AS</strong>的路径（export）</li>
+</ul>
+<p><strong>注意</strong>：修改AS-Path需谨慎，可能影响防环机制。</p>
+<p>bash</p>
+<div class="highlight"><pre><span></span><code><span class="o">[</span><span class="n">R2</span><span class="o">]</span><span class="w"> </span><span class="n">acl</span><span class="w"> </span><span class="n">basic</span><span class="w"> </span><span class="mi">2000</span>
+<span class="o">[</span><span class="n">R2-acl-ipv4-basic-2000</span><span class="o">]</span><span class="w"> </span><span class="k">rule</span><span class="w"> </span><span class="n">permit</span><span class="w"> </span><span class="n">source</span><span class="w"> </span><span class="mf">10.4.3.4</span><span class="w"> </span><span class="mf">0.0.0.0</span>
+
+<span class="o">[</span><span class="n">R2</span><span class="o">]</span><span class="w"> </span><span class="n">route</span><span class="o">-</span><span class="n">policy</span><span class="w"> </span><span class="n">aspath</span><span class="w"> </span><span class="n">permit</span><span class="w"> </span><span class="n">node</span><span class="w"> </span><span class="mi">10</span>
+<span class="o">[</span><span class="n">R2-route-policy-aspath-10</span><span class="o">]</span><span class="w"> </span><span class="k">if</span><span class="o">-</span><span class="k">match</span><span class="w"> </span><span class="n">ip</span><span class="w"> </span><span class="n">address</span><span class="w"> </span><span class="n">acl</span><span class="w"> </span><span class="mi">2000</span>
+<span class="o">[</span><span class="n">R2-route-policy-aspath-10</span><span class="o">]</span><span class="w"> </span><span class="n">apply</span><span class="w"> </span><span class="k">as</span><span class="o">-</span><span class="k">path</span><span class="w"> </span><span class="mi">200</span><span class="w">           </span><span class="err">#</span><span class="w"> </span><span class="n">添加AS</span><span class="w"> </span><span class="mi">200</span><span class="n">到路径中</span>
+
+<span class="o">[</span><span class="n">R2</span><span class="o">]</span><span class="w"> </span><span class="n">route</span><span class="o">-</span><span class="n">policy</span><span class="w"> </span><span class="n">aspath</span><span class="w"> </span><span class="n">permit</span><span class="w"> </span><span class="n">node</span><span class="w"> </span><span class="mi">20</span>
+
+<span class="o">[</span><span class="n">R2</span><span class="o">]</span><span class="w"> </span><span class="n">bgp</span><span class="w"> </span><span class="mi">200</span>
+<span class="o">[</span><span class="n">R2-bgp-default</span><span class="o">]</span><span class="w"> </span><span class="n">address</span><span class="o">-</span><span class="n">family</span><span class="w"> </span><span class="n">ipv4</span>
+<span class="o">[</span><span class="n">R2-bgp-default-ipv4</span><span class="o">]</span><span class="w"> </span><span class="n">peer</span><span class="w"> </span><span class="mf">192.168.12.1</span><span class="w"> </span><span class="n">route</span><span class="o">-</span><span class="n">policy</span><span class="w"> </span><span class="n">aspath</span><span class="w"> </span><span class="n">export</span>
+</code></pre></div>
+
+<blockquote>
+<p>📌 一句话总结：AS-Path是公认必遵属性，用于EBGP防环，值越短越优；修改时只能增加不能减少，在export方向增加自身AS可使路由在其他AS选路中变得不优（路径变长），<strong>不推荐常规使用</strong>。</p>
+</blockquote>
+<h3>5. Origin（起源属性）</h3>
+<p><strong>特点</strong>：</p>
+<ul>
+<li>公认必遵属性</li>
+<li>表示路由的起源方式，优先级顺序：<strong>i（IGP） &gt; e（EGP） &gt; ?（incomplete）</strong></li>
+</ul>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">值</th>
+<th style="text-align: left;">含义</th>
+<th style="text-align: left;">优先级</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>i</strong></td>
+<td style="text-align: left;">通过network宣告</td>
+<td style="text-align: left;"><strong>最高</strong></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>e</strong></td>
+<td style="text-align: left;">通过EGP协议（如BGP早期版本）</td>
+<td style="text-align: left;">次高</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>?</strong></td>
+<td style="text-align: left;">通过import-route引入</td>
+<td style="text-align: left;"><strong>最低</strong></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>📌 一句话总结：Origin是公认必遵属性，优先级顺序为 i &gt; e &gt; ?，network宣告优先级最高，import-route引入优先级最低。</p>
+</blockquote>
+<h3>6. MED（多出口鉴别器）</h3>
+<p><strong>特点</strong>：</p>
+<ul>
+<li>可选非过渡属性</li>
+<li>值越小越优</li>
+<li>当这条路由是<strong>EBGP邻居本地直接发出</strong>的，会<strong>继承本地路由表中的开销值</strong></li>
+<li>传递给EBGP邻居后，用于影响<strong>对方AS进入本AS的流量</strong>选路</li>
+</ul>
+<p><strong>应用场景</strong>：当两个AS之间有多个连接时，通过MED告诉对方从哪个入口进入本AS最优。</p>
+<blockquote>
+<p>📌 一句话总结：MED是可选非过渡属性，值越小越优，用于影响对端AS进入本AS的流量选路；EBGP邻居发出的路由会继承本地路由表中的开销值作为MED。</p>
+</blockquote>
+<h3>7. EBGP优于IBGP</h3>
+<p><strong>特点</strong>：</p>
+<ul>
+<li>思科/锐捷设备：EBGP优先级为20，IBGP优先级为200</li>
+<li>优先选择EBGP路径（经过的AS少，更可靠）</li>
+</ul>
+<blockquote>
+<p>📌 一句话总结：EBGP路径优于IBGP路径（思科/锐捷EBGP 20 vs IBGP 200）。</p>
+</blockquote>
+<h3>8. 优选下一跳度量值低的路径</h3>
+<blockquote>
+<p>📌 一句话总结：到达目标网络，下一跳IGP度量值越低的路径越优，即经过直连或低开销链路的路径优先。</p>
+</blockquote>
+<h3>9. 负载分担条件</h3>
+<p><strong>前提</strong>：前八条选路规则<strong>全部一致</strong>时，才能实现负载分担。</p>
+<p>bash</p>
+<div class="highlight"><pre><span></span><code>[R4-bgp-default-ipv4] balance ibgp 2
+# 开启IBGP负载分担，最大并行路径数为2
+</code></pre></div>
+
+<blockquote>
+<p>📌 一句话总结：BGP默认不负载分担，需要前八条选路规则完全一致时才能通过balance命令开启，负载分担后并行路径数由balance参数控制。</p>
+</blockquote>
+<h2>二、BGP路由聚合</h2>
+<h3>1. 自动汇总（不推荐）</h3>
+<p>bash</p>
+<div class="highlight"><pre><span></span><code><span class="o">[</span><span class="n">R1</span><span class="o">]</span><span class="w"> </span><span class="n">bgp</span><span class="w"> </span><span class="mi">100</span>
+<span class="o">[</span><span class="n">R1-bgp-default</span><span class="o">]</span><span class="w"> </span><span class="n">address</span><span class="o">-</span><span class="n">family</span><span class="w"> </span><span class="n">ipv4</span>
+<span class="o">[</span><span class="n">R1-bgp-default-ipv4</span><span class="o">]</span><span class="w"> </span><span class="n">summary</span><span class="w"> </span><span class="n">automatic</span>
+</code></pre></div>
+
+<p><strong>特点</strong>：</p>
+<ul>
+<li>汇总成<strong>主类掩码</strong>（A类/8、B类/16、C类/24）</li>
+<li><strong>只能汇总引入的路由</strong>（import-route的路由）</li>
+<li><strong>不推荐</strong>（不支持不连续子网，粒度太粗）</li>
+</ul>
+<h3>2. 手工汇总（推荐）</h3>
+<p>bash</p>
+<div class="highlight"><pre><span></span><code><span class="o">[</span><span class="n">R1</span><span class="o">]</span><span class="w"> </span><span class="n">bgp</span><span class="w"> </span><span class="mi">100</span>
+<span class="o">[</span><span class="n">R1-bgp-default</span><span class="o">]</span><span class="w"> </span><span class="n">address</span><span class="o">-</span><span class="n">family</span><span class="w"> </span><span class="n">ipv4</span>
+<span class="o">[</span><span class="n">R1-bgp-default-ipv4</span><span class="o">]</span><span class="w"> </span><span class="k">aggregate</span><span class="w"> </span><span class="mf">10.1.0.0</span><span class="w"> </span><span class="mf">255.255.252.0</span><span class="w"> </span><span class="n">detail</span><span class="o">-</span><span class="n">suppressed</span>
+</code></pre></div>
+
+<p><strong>参数说明</strong>：</p>
+<ul>
+<li><code>detail-suppressed</code>：<strong>抑制明细路由</strong>（只发布汇总路由，不发布明细）</li>
+<li>如果不加此参数，<strong>默认明细路由仍然发布</strong>（汇总+明细同时发布）</li>
+</ul>
+<p><strong>防环机制</strong>：配置聚合后，设备自动生成指向null0的防环路由。</p>
+<blockquote>
+<p>📌 一句话总结：BGP路由聚合推荐手工方式，自动汇总只汇总引入路由且粒度太粗不推荐；手工汇总用aggregate命令，加detail-suppressed可抑制明细路由只发汇总，配置后自动生成null0防环路由。</p>
+</blockquote>
+<h2>三、BGP对等体组（Peer-Group）</h2>
+<p><strong>本质</strong>：BGP配置的<strong>简化工具</strong>，将一组具有相同策略的邻居统一配置，减少重复命令。</p>
+<p>bash</p>
+<div class="highlight"><pre><span></span><code><span class="o">[</span><span class="n">R4</span><span class="o">]</span><span class="w"> </span><span class="n">bgp</span><span class="w"> </span><span class="mi">200</span>
+<span class="o">[</span><span class="n">R4-bgp-default</span><span class="o">]</span><span class="w"> </span><span class="k">group</span><span class="w"> </span><span class="n">shangwen</span><span class="w"> </span><span class="n">internal</span><span class="w">          </span><span class="err">#</span><span class="w"> </span><span class="n">创建IBGP对等体组</span><span class="err">（</span><span class="n">internal</span><span class="err">）</span>
+<span class="o">[</span><span class="n">R4-bgp-default</span><span class="o">]</span><span class="w"> </span><span class="n">peer</span><span class="w"> </span><span class="n">shangwen</span><span class="w"> </span><span class="k">connect</span><span class="o">-</span><span class="n">interface</span><span class="w"> </span><span class="n">LoopBack</span><span class="w"> </span><span class="mi">0</span>
+<span class="o">[</span><span class="n">R4-bgp-default</span><span class="o">]</span><span class="w"> </span><span class="n">peer</span><span class="w"> </span><span class="mf">10.2.2.2</span><span class="w"> </span><span class="k">group</span><span class="w"> </span><span class="n">shangwen</span><span class="w">     </span><span class="err">#</span><span class="w"> </span><span class="n">将邻居加入组</span>
+<span class="o">[</span><span class="n">R4-bgp-default</span><span class="o">]</span><span class="w"> </span><span class="n">peer</span><span class="w"> </span><span class="mf">10.3.3.3</span><span class="w"> </span><span class="k">group</span><span class="w"> </span><span class="n">shangwen</span>
+
+<span class="o">[</span><span class="n">R4-bgp-default</span><span class="o">]</span><span class="w"> </span><span class="n">address</span><span class="o">-</span><span class="n">family</span><span class="w"> </span><span class="n">ipv4</span>
+<span class="o">[</span><span class="n">R4-bgp-default-ipv4</span><span class="o">]</span><span class="w"> </span><span class="n">peer</span><span class="w"> </span><span class="n">shangwen</span><span class="w"> </span><span class="n">enable</span>
+<span class="o">[</span><span class="n">R4-bgp-default-ipv4</span><span class="o">]</span><span class="w"> </span><span class="n">peer</span><span class="w"> </span><span class="n">shangwen</span><span class="w"> </span><span class="n">reflect</span><span class="o">-</span><span class="n">client</span><span class="w">    </span><span class="err">#</span><span class="w"> </span><span class="n">组内统一配置反射器</span>
+</code></pre></div>
+
+<p><strong>对等体组的优势</strong>：</p>
+<ol>
+<li>简化配置（一次配置，多次复用）</li>
+<li>提高配置可读性</li>
+<li>批量修改策略（修改组策略即影响所有成员）</li>
+</ol>
+<blockquote>
+<p>📌 一句话总结：BGP对等体组是配置简化工具，将具有相同策略的邻居统一配置，提高配置效率和可维护性；创建组后对邻居执行的各种策略只需对组配置一次即可。</p>
+</blockquote>
+<h3>EBGP对等体组创建</h3>
+<p>bash</p>
+<div class="highlight"><pre><span></span><code><span class="o">[</span><span class="n">R1</span><span class="o">]</span><span class="w"> </span><span class="n">bgp</span><span class="w"> </span><span class="mi">100</span>
+<span class="o">[</span><span class="n">R1-bgp-default</span><span class="o">]</span><span class="w"> </span><span class="k">group</span><span class="w"> </span><span class="n">shangwen</span><span class="w"> </span><span class="k">external</span><span class="w"> </span><span class="k">as</span><span class="o">-</span><span class="n">number</span><span class="w"> </span><span class="mi">200</span><span class="w">   </span><span class="err">#</span><span class="w"> </span><span class="n">创建EBGP对等体组</span><span class="err">，</span><span class="n">需指定AS</span>
+<span class="o">[</span><span class="n">R1-bgp-default</span><span class="o">]</span><span class="w"> </span><span class="n">peer</span><span class="w"> </span><span class="mf">192.168.12.2</span><span class="w"> </span><span class="k">group</span><span class="w"> </span><span class="n">shangwen</span>
+</code></pre></div>
+
+<h2>四、BGP团体属性（Community）</h2>
+<p><strong>作用</strong>：类似于OSPF/ISIS的Tag，将具有相同特性的路由打上相同的Community值，<strong>便于后续策略的批量调用</strong>。</p>
+<p><strong>默认行为</strong>：BGP默认<strong>不发送</strong>Community属性，需手动开启。</p>
+<h3>配置示例</h3>
+<h4>① R1：为特定路由打上Community标签</h4>
+<p>bash</p>
+<div class="highlight"><pre><span></span><code><span class="o">[</span><span class="n">R1</span><span class="o">]</span><span class="w"> </span><span class="n">acl</span><span class="w"> </span><span class="n">basic</span><span class="w"> </span><span class="mi">2000</span>
+<span class="o">[</span><span class="n">R1-acl-ipv4-basic-2000</span><span class="o">]</span><span class="w"> </span><span class="k">rule</span><span class="w"> </span><span class="n">permit</span><span class="w"> </span><span class="n">source</span><span class="w"> </span><span class="mf">10.1.1.1</span><span class="w"> </span><span class="mf">0.0.0.0</span>
+
+<span class="o">[</span><span class="n">R1</span><span class="o">]</span><span class="w"> </span><span class="n">route</span><span class="o">-</span><span class="n">policy</span><span class="w"> </span><span class="n">comm</span><span class="w"> </span><span class="n">permit</span><span class="w"> </span><span class="n">node</span><span class="w"> </span><span class="mi">10</span>
+<span class="o">[</span><span class="n">R1-route-policy-comm-10</span><span class="o">]</span><span class="w"> </span><span class="k">if</span><span class="o">-</span><span class="k">match</span><span class="w"> </span><span class="n">ip</span><span class="w"> </span><span class="n">address</span><span class="w"> </span><span class="n">acl</span><span class="w"> </span><span class="mi">2000</span>
+<span class="o">[</span><span class="n">R1-route-policy-comm-10</span><span class="o">]</span><span class="w"> </span><span class="n">apply</span><span class="w"> </span><span class="n">community</span><span class="w"> </span><span class="mi">100</span><span class="err">:</span><span class="mi">1</span>
+
+<span class="o">[</span><span class="n">R1</span><span class="o">]</span><span class="w"> </span><span class="n">route</span><span class="o">-</span><span class="n">policy</span><span class="w"> </span><span class="n">comm</span><span class="w"> </span><span class="n">permit</span><span class="w"> </span><span class="n">node</span><span class="w"> </span><span class="mi">20</span><span class="w">              </span><span class="err">#</span><span class="w"> </span><span class="n">放行其他路由</span>
+
+<span class="o">[</span><span class="n">R1</span><span class="o">]</span><span class="w"> </span><span class="n">bgp</span><span class="w"> </span><span class="mi">100</span>
+<span class="o">[</span><span class="n">R1-bgp-default</span><span class="o">]</span><span class="w"> </span><span class="n">address</span><span class="o">-</span><span class="n">family</span><span class="w"> </span><span class="n">ipv4</span>
+<span class="o">[</span><span class="n">R1-bgp-default-ipv4</span><span class="o">]</span><span class="w"> </span><span class="n">peer</span><span class="w"> </span><span class="mf">192.168.13.3</span><span class="w"> </span><span class="n">route</span><span class="o">-</span><span class="n">policy</span><span class="w"> </span><span class="n">comm</span><span class="w"> </span><span class="n">export</span>
+<span class="o">[</span><span class="n">R1-bgp-default-ipv4</span><span class="o">]</span><span class="w"> </span><span class="n">peer</span><span class="w"> </span><span class="mf">192.168.13.3</span><span class="w"> </span><span class="n">advertise</span><span class="o">-</span><span class="n">community</span><span class="w">   </span><span class="err">#</span><span class="w"> </span><span class="n">必须开启</span><span class="err">，</span><span class="n">才能发送Community</span>
+</code></pre></div>
+
+<h4>② R3：根据Community匹配路由并调整Local-preference</h4>
+<p>bash</p>
+<div class="highlight"><pre><span></span><code><span class="o">[</span><span class="n">R3</span><span class="o">]</span><span class="w"> </span><span class="n">ip</span><span class="w"> </span><span class="n">community</span><span class="o">-</span><span class="n">list</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="n">permit</span><span class="w"> </span><span class="mi">100</span><span class="err">:</span><span class="mi">1</span><span class="w">              </span><span class="err">#</span><span class="w"> </span><span class="n">定义Community列表</span>
+
+<span class="o">[</span><span class="n">R3</span><span class="o">]</span><span class="w"> </span><span class="n">route</span><span class="o">-</span><span class="n">policy</span><span class="w"> </span><span class="n">lp</span><span class="w"> </span><span class="n">permit</span><span class="w"> </span><span class="n">node</span><span class="w"> </span><span class="mi">10</span>
+<span class="o">[</span><span class="n">R3-route-policy-lp-10</span><span class="o">]</span><span class="w"> </span><span class="k">if</span><span class="o">-</span><span class="k">match</span><span class="w"> </span><span class="n">community</span><span class="w"> </span><span class="mi">1</span>
+<span class="o">[</span><span class="n">R3-route-policy-lp-10</span><span class="o">]</span><span class="w"> </span><span class="n">apply</span><span class="w"> </span><span class="k">local</span><span class="o">-</span><span class="n">preference</span><span class="w"> </span><span class="mi">150</span>
+
+<span class="o">[</span><span class="n">R3</span><span class="o">]</span><span class="w"> </span><span class="n">route</span><span class="o">-</span><span class="n">policy</span><span class="w"> </span><span class="n">lp</span><span class="w"> </span><span class="n">permit</span><span class="w"> </span><span class="n">node</span><span class="w"> </span><span class="mi">20</span><span class="w">                </span><span class="err">#</span><span class="w"> </span><span class="n">放行其他路由</span>
+
+<span class="o">[</span><span class="n">R3</span><span class="o">]</span><span class="w"> </span><span class="n">bgp</span><span class="w"> </span><span class="mi">200</span>
+<span class="o">[</span><span class="n">R3-bgp-default</span><span class="o">]</span><span class="w"> </span><span class="n">address</span><span class="o">-</span><span class="n">family</span><span class="w"> </span><span class="n">ipv4</span>
+<span class="o">[</span><span class="n">R3-bgp-default-ipv4</span><span class="o">]</span><span class="w"> </span><span class="n">peer</span><span class="w"> </span><span class="mf">10.4.4.4</span><span class="w"> </span><span class="n">route</span><span class="o">-</span><span class="n">policy</span><span class="w"> </span><span class="n">lp</span><span class="w"> </span><span class="n">export</span>
+</code></pre></div>
+
+<p><strong>团体属性优势</strong>：</p>
+<ul>
+<li>跨设备传递路由标签（OSPF/ISIS的Tag仅在区域内有效）</li>
+<li>批量匹配和策略应用（一次定义，多次使用）</li>
+<li>灵活性高（可自定义团体值）</li>
+</ul>
+<blockquote>
+<p>📌 一句话总结：BGP团体属性类似于Tag，为路由打上标签便于批量调用策略，需用advertise-community开启发送，接收端用community-list匹配后执行相应动作，支持跨设备传递。</p>
+</blockquote>
+<h1>第十八天</h1>
+<blockquote>
+<p>核心内容：IPv6过渡技术（手动隧道/自动隧道/6to4隧道）、VPN技术概述、GRE VPN、IPsec VPN（机密性/完整性/真实性）</p>
+</blockquote>
+<h2>一、IPv6过渡技术</h2>
+<h3>1. 手动隧道（IPv6 over IPv4手动隧道）</h3>
+<p><strong>原理</strong>：在IPv4网络上手工指定隧道的源和目的地址，建立点到点的IPv6隧道，用于IPv6孤岛之间的互联。</p>
+<p>bash</p>
+<div class="highlight"><pre><span></span><code><span class="o">[</span><span class="n">R2</span><span class="o">]</span><span class="w"> </span><span class="n">interface</span><span class="w"> </span><span class="n">Tunnel</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="n">mode</span><span class="w"> </span><span class="n">ipv6</span><span class="o">-</span><span class="n">ipv4</span>
+<span class="o">[</span><span class="n">R2-Tunnel0</span><span class="o">]</span><span class="w"> </span><span class="n">source</span><span class="w"> </span><span class="mf">10.2.2.2</span>
+<span class="o">[</span><span class="n">R2-Tunnel0</span><span class="o">]</span><span class="w"> </span><span class="n">destination</span><span class="w"> </span><span class="mf">10.4.4.4</span>
+<span class="o">[</span><span class="n">R2-Tunnel0</span><span class="o">]</span><span class="w"> </span><span class="n">ipv6</span><span class="w"> </span><span class="n">address</span><span class="w"> </span><span class="mi">2001</span><span class="err">:</span><span class="mi">24</span><span class="o">::</span><span class="mi">2</span><span class="o">/</span><span class="mi">64</span>
+<span class="o">[</span><span class="n">R2-Tunnel0</span><span class="o">]</span><span class="w"> </span><span class="n">ospfv3</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="n">area</span><span class="w"> </span><span class="mi">0</span>
+</code></pre></div>
+
+<p><strong>特点</strong>：</p>
+<ul>
+<li>手动指定源地址和目标地址</li>
+<li>支持<strong>组播</strong>，可运行动态路由协议（如OSPFv3）</li>
+<li>每条隧道需要单独配置</li>
+</ul>
+<blockquote>
+<p>📌 一句话总结：IPv6 over IPv4手动隧道需手工指定源和目的地址，支持OSPFv3等组播路由协议，适用于IPv6孤岛间互联。</p>
+</blockquote>
+<h3>2. 自动隧道（6to4隧道）</h3>
+<p><strong>原理</strong>：自动隧道只指定源地址，<strong>目标地址隐藏在目的IPv6地址中</strong>（通过内嵌的IPv4地址自动计算出隧道终点）。不管有多少条隧道，都<strong>只有一个Tunnel接口</strong>。</p>
+<p>bash</p>
+<div class="highlight"><pre><span></span><code><span class="o">[</span><span class="n">R2</span><span class="o">]</span><span class="w"> </span><span class="n">interface</span><span class="w"> </span><span class="n">Tunnel</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="n">mode</span><span class="w"> </span><span class="n">ipv6</span><span class="o">-</span><span class="n">ipv4</span><span class="w"> </span><span class="mi">6</span><span class="n">to4</span>
+<span class="o">[</span><span class="n">R2-Tunnel0</span><span class="o">]</span><span class="w"> </span><span class="n">source</span><span class="w"> </span><span class="mf">10.2.2.2</span>
+<span class="o">[</span><span class="n">R2-Tunnel0</span><span class="o">]</span><span class="w"> </span><span class="n">ipv6</span><span class="w"> </span><span class="n">address</span><span class="w"> </span><span class="mi">2002</span><span class="err">:</span><span class="mi">0</span><span class="nl">a02</span><span class="p">:</span><span class="mi">0202</span><span class="err">:</span><span class="mi">1</span><span class="o">::</span><span class="mi">1</span><span class="o">/</span><span class="mi">64</span>
+<span class="o">[</span><span class="n">R2</span><span class="o">]</span><span class="w"> </span><span class="n">ipv6</span><span class="w"> </span><span class="n">route</span><span class="o">-</span><span class="k">static</span><span class="w"> </span><span class="mi">2002</span><span class="o">::</span><span class="w"> </span><span class="mi">16</span><span class="w"> </span><span class="n">Tunnel</span><span class="w"> </span><span class="mi">0</span>
+</code></pre></div>
+
+<p><strong>6to4地址格式</strong>：<code>2002:IPv4地址:子网::接口ID</code></p>
+<p>例如：源IPv4地址 <code>10.2.2.2</code> → 转换为十六进制 <code>0a02:0202</code> → IPv6地址前缀为 <code>2002:0a02:0202:1::1/64</code></p>
+<p><strong>6to4隧道的重要限制</strong>：</p>
+<ul>
+<li><strong>不能使用OSPFv3</strong>（因为OSPFv3依赖组播，而6to4隧道不支持组播）</li>
+<li>只能使用<strong>静态路由</strong>或<strong>BGP</strong>来传递路由</li>
+</ul>
+<p>bash</p>
+<div class="highlight"><pre><span></span><code><span class="o">[</span><span class="n">R2</span><span class="o">]</span><span class="w"> </span><span class="n">bgp</span><span class="w"> </span><span class="mi">100</span>
+<span class="o">[</span><span class="n">R2-bgp-default</span><span class="o">]</span><span class="w"> </span><span class="n">peer</span><span class="w"> </span><span class="mi">2002</span><span class="err">:</span><span class="nl">a04</span><span class="p">:</span><span class="mi">404</span><span class="err">:</span><span class="mi">1</span><span class="o">::</span><span class="mi">1</span><span class="w"> </span><span class="k">as</span><span class="o">-</span><span class="n">number</span><span class="w"> </span><span class="mi">200</span>
+<span class="o">[</span><span class="n">R2-bgp-default</span><span class="o">]</span><span class="w"> </span><span class="n">address</span><span class="o">-</span><span class="n">family</span><span class="w"> </span><span class="n">ipv6</span>
+<span class="o">[</span><span class="n">R2-bgp-default-ipv6</span><span class="o">]</span><span class="w"> </span><span class="n">peer</span><span class="w"> </span><span class="mi">2002</span><span class="err">:</span><span class="nl">a04</span><span class="p">:</span><span class="mi">404</span><span class="err">:</span><span class="mi">1</span><span class="o">::</span><span class="mi">1</span><span class="w"> </span><span class="n">enable</span>
+<span class="o">[</span><span class="n">R2-bgp-default-ipv6</span><span class="o">]</span><span class="w"> </span><span class="n">import</span><span class="o">-</span><span class="n">route</span><span class="w"> </span><span class="n">ospfv3</span><span class="w"> </span><span class="mi">1</span>
+</code></pre></div>
+
+<p><strong>6to4隧道中的IPv6地址计算</strong>：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">十进制IP</th>
+<th style="text-align: left;">十六进制</th>
+<th style="text-align: left;">嵌入IPv6前缀</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">10.2.2.2</td>
+<td style="text-align: left;">0a02:0202</td>
+<td style="text-align: left;">2002:0a02:0202:...</td>
+</tr>
+<tr>
+<td style="text-align: left;">10.4.4.4</td>
+<td style="text-align: left;">0a04:0404</td>
+<td style="text-align: left;">2002:0a04:0404:...</td>
+</tr>
+</tbody>
+</table>
+<p>bash</p>
+<div class="highlight"><pre><span></span><code><span class="o">[</span><span class="n">R2</span><span class="o">]</span><span class="w"> </span><span class="n">ospfv3</span><span class="w"> </span><span class="mi">1</span>
+<span class="o">[</span><span class="n">R2-ospfv3-1</span><span class="o">]</span><span class="w"> </span><span class="k">default</span><span class="o">-</span><span class="n">route</span><span class="o">-</span><span class="n">advertise</span><span class="w"> </span><span class="n">always</span>
+</code></pre></div>
+
+<blockquote>
+<p>📌 一句话总结：6to4自动隧道只配置源地址（目标地址隐藏在IPv6地址中的IPv4部分），一个隧道接口服务所有目的地，但<strong>不支持OSPFv3</strong>（只能用静态/BGP），适用于没有固定公网IP的场景。</p>
+</blockquote>
+<h3>3. 手动隧道 vs 自动隧道对比</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">对比项</th>
+<th style="text-align: left;">手动隧道</th>
+<th style="text-align: left;">6to4自动隧道</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>配置复杂度</strong></td>
+<td style="text-align: left;">高（每条隧道单独配置）</td>
+<td style="text-align: left;">低（一个接口即可）</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>隧道接口数</strong></td>
+<td style="text-align: left;">N条隧道N个接口</td>
+<td style="text-align: left;">1个接口</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>目标地址</strong></td>
+<td style="text-align: left;">手工指定</td>
+<td style="text-align: left;">隐藏在IPv6地址中自动计算</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>支持路由协议</strong></td>
+<td style="text-align: left;">✅ 支持OSPFv3</td>
+<td style="text-align: left;">❌ 不支持OSPFv3</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>适用场景</strong></td>
+<td style="text-align: left;">固定IP、少量隧道</td>
+<td style="text-align: left;">动态IP、大量隧道</td>
+</tr>
+</tbody>
+</table>
+<h2>二、VPN概述</h2>
+<h3>1. VPN的核心思想</h3>
+<p>VPN的核心是<strong>隧道（Tunnel）</strong>，隧道通过<strong>封装</strong>技术实现。无论哪种VPN，本质都是将数据包封装后在公网上传输。</p>
+<blockquote>
+<p>📌 一句话总结：所有VPN的核心都是隧道技术，通过封装实现私网数据在公网上的安全传输。</p>
+</blockquote>
+<h3>2. VPN分类</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">VPN类型</th>
+<th style="text-align: left;">适用场景</th>
+<th style="text-align: left;">典型技术</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>LAN-LAN VPN</strong></td>
+<td style="text-align: left;">总部和分支机构互联</td>
+<td style="text-align: left;">GRE VPN、IPsec VPN、MPLS VPN</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Client-LAN VPN</strong></td>
+<td style="text-align: left;">在外出差的员工远程接入</td>
+<td style="text-align: left;">SSL VPN</td>
+</tr>
+</tbody>
+</table>
+<h2>三、GRE VPN</h2>
+<blockquote>
+<p><strong>全称</strong>：Generic Routing Encapsulation（通用路由封装）</p>
+</blockquote>
+<h3>1. GRE VPN的特点</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">优点</th>
+<th style="text-align: left;">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">✅ 配置简单</td>
+<td style="text-align: left;">配置命令少，易于部署</td>
+</tr>
+<tr>
+<td style="text-align: left;">✅ 支持组播</td>
+<td style="text-align: left;">可以运行动态路由协议（OSPF、BGP等）</td>
+</tr>
+<tr>
+<td style="text-align: left;">✅ 支持多种协议</td>
+<td style="text-align: left;">可封装IPv4、IPv6等多种网络层协议</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">缺点</th>
+<th style="text-align: left;">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">❌ 点到点</td>
+<td style="text-align: left;">每两个站点之间需要单独配置一条GRE隧道</td>
+</tr>
+<tr>
+<td style="text-align: left;">❌ 不安全</td>
+<td style="text-align: left;"><strong>不提供加密</strong>，数据以明文传输</td>
+</tr>
+<tr>
+<td style="text-align: left;">❌ 固定公网IP</td>
+<td style="text-align: left;">双方必须拥有固定的公网IP地址</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>📌 一句话总结：GRE VPN配置简单、支持组播和多协议，但不提供加密安全性不足，且为点到点模式需要双方有固定公网IP。</p>
+</blockquote>
+<h2>四、IPsec VPN</h2>
+<blockquote>
+<p><strong>全称</strong>：IP Security（IP安全协议）</p>
+</blockquote>
+<h3>1. IPsec的核心目标</h3>
+<p>IPsec VPN能保证数据的三大安全性：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">安全目标</th>
+<th style="text-align: left;">含义</th>
+<th style="text-align: left;">实现技术</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>机密性（Confidentiality）</strong></td>
+<td style="text-align: left;">保证用户数据不被非法获取</td>
+<td style="text-align: left;"><strong>加解密算法</strong></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>完整性（Integrity）</strong></td>
+<td style="text-align: left;">保证用户数据传递完整，不被篡改</td>
+<td style="text-align: left;"><strong>散列算法</strong></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>真实性（Authentication）</strong></td>
+<td style="text-align: left;">确认发送方和接收方的身份</td>
+<td style="text-align: left;"><strong>身份认证</strong></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>📌 一句话总结：IPsec VPN通过加密算法保证机密性、通过散列算法保证完整性、通过身份认证保证真实性。</p>
+</blockquote>
+<h3>2. 机密性——加解密算法</h3>
+<h4>对称加密算法</h4>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">特点</th>
+<th style="text-align: left;">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>原理</strong></td>
+<td style="text-align: left;">发送方和接收方使用<strong>相同的密钥</strong>进行加解密</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>优点</strong></td>
+<td style="text-align: left;">算法简单，加解密速度快，适合大量用户数据</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>缺点</strong></td>
+<td style="text-align: left;">密钥传输安全性得不到保障（密钥如何安全送达对端）</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>常见算法</strong></td>
+<td style="text-align: left;">DES、3DES、AES</td>
+</tr>
+</tbody>
+</table>
+<h4>非对称加密算法</h4>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">特点</th>
+<th style="text-align: left;">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>原理</strong></td>
+<td style="text-align: left;">使用<strong>公钥+私钥</strong>配对。通过对方的<strong>公钥</strong>加密信息，只有对方用其<strong>私钥</strong>能解密</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>优点</strong></td>
+<td style="text-align: left;">安全性高，只有持有私钥的对方才能解密</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>缺点</strong></td>
+<td style="text-align: left;">算法复杂，加解密速度慢，不适合加密大量数据</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>常见算法</strong></td>
+<td style="text-align: left;">RSA、DH</td>
+</tr>
+</tbody>
+</table>
+<h4>IPsec的实际加密方式</h4>
+<p><strong>混合使用两者</strong>：</p>
+<ul>
+<li>使用<strong>对称加密算法</strong>（AES）加密用户数据（因为数据量大，需要快）</li>
+<li>使用<strong>非对称加密算法</strong>（RSA/DH）加密对称算法的<strong>密钥</strong>（因为密钥量小，用非对称保证安全）</li>
+<li>这样既保证了数据加密速度，又保证了密钥传输的安全性</li>
+</ul>
+<blockquote>
+<p>📌 一句话总结：IPsec用对称加密（AES/DES）加密用户数据（速度快），用非对称加密（RSA/DH）加密对称密钥（安全），兼顾性能与安全。</p>
+</blockquote>
+<h3>3. 完整性——散列算法</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">特点</th>
+<th style="text-align: left;">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>原理</strong></td>
+<td style="text-align: left;">通过散列算法计算数据的散列值（Hash值），相同输入有相同输出，<strong>弱碰撞性</strong>（不同输入几乎不可能产生相同输出）</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>作用</strong></td>
+<td style="text-align: left;">接收方重新计算散列值，与发送方带来的散列值对比，一致则说明数据未被篡改</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>注意</strong></td>
+<td style="text-align: left;">计算出的散列值本身也需要<strong>保证不被修改</strong>（通常与加密结合使用）</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>常见算法</strong></td>
+<td style="text-align: left;">MD5、SHA（SHA-1、SHA-256）</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>📌 一句话总结：完整性通过散列算法（MD5/SHA）实现，相同输入产生相同输出、不同输入几乎不会碰撞，但散列值本身需防止被篡改。</p>
+</blockquote>
+<h3>4. 真实性——身份认证</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">认证方式</th>
+<th style="text-align: left;">原理</th>
+<th style="text-align: left;">特点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>公钥认证法</strong></td>
+<td style="text-align: left;">用<strong>自己私钥</strong>加密信息，对方能用<strong>对应公钥</strong>解开 → 身份确认（因为私钥只有自己持有）</td>
+<td style="text-align: left;">安全性高，但计算量大</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>PSK预共享密钥</strong></td>
+<td style="text-align: left;">通信双方<strong>事先约定</strong>一个密钥，认证时双方校验是否一致</td>
+<td style="text-align: left;">配置简单，但不适合大规模部署</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>📌 一句话总结：真实性通过公钥认证（用自己的私钥加密、对方用公钥解密验证）或PSK预共享密钥实现，确认通信双方身份合法。</p>
+</blockquote>
+<h3>5. 非对称加密的两个用途总结</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">用途</th>
+<th style="text-align: left;">用谁的密钥</th>
+<th style="text-align: left;">实现的功能</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>身份认证</strong></td>
+<td style="text-align: left;">用<strong>自己私钥</strong>加密</td>
+<td style="text-align: left;">对方用我的公钥能解开 → 证明是我</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>机密性</strong></td>
+<td style="text-align: left;">用<strong>对方公钥</strong>加密</td>
+<td style="text-align: left;">只有对方用自己私钥能解开 → 确保只有对方能看</td>
+</tr>
+</tbody>
+</table>
+<h1>第十九天</h1>
+<blockquote>
+<p>核心内容：IPsec VPN（体系结构、工作模式、密钥管理、SA/IKE）、IPsec完整配置、IPsec与NAT共存注意事项</p>
+</blockquote>
+<h2>一、IPsec VPN回顾与总结</h2>
+<h3>1. IPsec的优缺点</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">类型</th>
+<th style="text-align: left;">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>优点</strong></td>
+<td style="text-align: left;">✅ <strong>安全性高</strong>（支持加密、完整性、身份认证）</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>缺点1</strong></td>
+<td style="text-align: left;">❌ <strong>配置复杂</strong>（涉及IKE、ACL、Transform-Set、Policy等多个组件）</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>缺点2</strong></td>
+<td style="text-align: left;">❌ <strong>消耗设备资源多，延迟大</strong>（加解密运算消耗CPU）</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>缺点3</strong></td>
+<td style="text-align: left;">❌ <strong>不支持组播，不能配置OSPF</strong>（只能用静态路由或BGP）</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>📌 一句话总结：IPsec安全性高但配置复杂、消耗资源且不支持组播（不能用OSPF）。</p>
+</blockquote>
+<h2>二、IPsec体系结构</h2>
+<h3>1. 安全协议</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">协议</th>
+<th style="text-align: left;">全称</th>
+<th style="text-align: left;">支持的NSA能力</th>
+<th style="text-align: left;">推荐度</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>AH</strong></td>
+<td style="text-align: left;">Authentication Header（认证头）</td>
+<td style="text-align: left;">仅<strong>完整性和真实性</strong>，<strong>不能实现机密性</strong></td>
+<td style="text-align: left;">❌ 不推荐（不加密）</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>ESP</strong></td>
+<td style="text-align: left;">Encapsulating Security Payload（安全封装荷载）</td>
+<td style="text-align: left;"><strong>机密性 + 完整性 + 真实性</strong>全部支持</td>
+<td style="text-align: left;">✅ <strong>推荐</strong></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>📌 一句话总结：AH只认证不加密，ESP同时提供加密+认证+完整性，实际部署推荐ESP。</p>
+</blockquote>
+<h3>2. 工作模式</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">模式</th>
+<th style="text-align: left;">场景</th>
+<th style="text-align: left;">是否新增IP包头</th>
+<th style="text-align: left;">推荐度</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>传输模式</strong></td>
+<td style="text-align: left;">主机到主机之间</td>
+<td style="text-align: left;">❌ 不新增IP包头</td>
+<td style="text-align: left;">适用于端到端通信</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>隧道模式</strong></td>
+<td style="text-align: left;">私网到私网经过公网传输</td>
+<td style="text-align: left;">✅ <strong>新增IP包头</strong>（外层新IP头+内层原IP包）</td>
+<td style="text-align: left;">✅ <strong>推荐</strong>（站点到站点VPN）</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>📌 一句话总结：传输模式不新增IP头适用于主机到主机，隧道模式新增IP头适用于站点到站点VPN（推荐）。</p>
+</blockquote>
+<h3>3. 密钥管理</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">方式</th>
+<th style="text-align: left;">特点</th>
+<th style="text-align: left;">推荐度</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>手工密钥（Manual）</strong></td>
+<td style="text-align: left;">节点多则配置量大，无生命周期，<strong>不安全</strong></td>
+<td style="text-align: left;">❌ 不推荐</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>IKE（互联网密钥交换协议）</strong></td>
+<td style="text-align: left;">配置简单，自动协商密钥，<strong>安全性高</strong></td>
+<td style="text-align: left;">✅ <strong>推荐</strong></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>📌 一句话总结：手工密钥配置繁琐且无生命周期管理不安全，IKE自动协商密钥配置简单安全性高（推荐）。</p>
+</blockquote>
+<h3>4. SA（安全联盟）</h3>
+<blockquote>
+<p><strong>全称</strong>：Security Association（安全联盟）</p>
+</blockquote>
+<p><strong>SA的本质</strong>：通信双方之间的<strong>安全约定</strong>（包括加密算法、认证算法、密钥、SPI等）。这个约定没有特殊要求，只要<strong>双方一致即可</strong>。</p>
+<p><strong>SA的核心特性</strong>：</p>
+<ul>
+<li>SA是<strong>单向</strong>的（每个方向需要一个SA）</li>
+<li>本地的<strong>出方向SA</strong> = 对方的<strong>入方向SA</strong></li>
+<li>对方的<strong>出方向SA</strong> = 本地的<strong>入方向SA</strong></li>
+<li>实际配置中，本地的出和入约定可以一致</li>
+</ul>
+<p><strong>SA的建立方式</strong>：</p>
+<ul>
+<li>手工方式建立</li>
+<li>IKE方式建立（推荐）</li>
+</ul>
+<blockquote>
+<p>📌 一句话总结：SA是通信双方的安全约定，<strong>单向存在</strong>（一出一入成对），只要双方一致即可，推荐通过IKE自动建立。</p>
+</blockquote>
+<h2>三、IKE建立SA流程</h2>
+<blockquote>
+<p><strong>IKE</strong>：Internet Key Exchange（互联网密钥交换协议）</p>
+</blockquote>
+<h3>第一阶段：IKE SA建立（保护二阶段）</h3>
+<p><strong>目的</strong>：为第二阶段建立<strong>安全的通道</strong>（加密二阶段的协商过程）。</p>
+<p><strong>两种模式对比</strong>：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">模式</th>
+<th style="text-align: left;">数据包数量</th>
+<th style="text-align: left;">特点</th>
+<th style="text-align: left;">适用场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>主模式（Main Mode）</strong></td>
+<td style="text-align: left;">6个包</td>
+<td style="text-align: left;">安全性更高，身份信息加密传输</td>
+<td style="text-align: left;">默认模式，推荐使用</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>野蛮模式（Aggressive Mode）</strong></td>
+<td style="text-align: left;">3个包</td>
+<td style="text-align: left;">速度快，但身份信息明文传输</td>
+<td style="text-align: left;">NAT穿透或对端IP不固定时使用</td>
+</tr>
+</tbody>
+</table>
+<p><strong>一阶段完成的三个任务</strong>：</p>
+<ol>
+<li><strong>协商加密参数</strong>（加密算法、散列算法、DH组等）</li>
+<li><strong>进行密钥生成</strong>（通过DH算法生成共享密钥）</li>
+<li><strong>进行身份认证</strong>（PSK预共享密钥或证书认证）</li>
+</ol>
+<h3>第二阶段：IPsec SA建立（产生用户使用的参数）</h3>
+<p><strong>模式</strong>：快速模式（Quick Mode）</p>
+<p><strong>二阶段协商的内容</strong>：</p>
+<ul>
+<li>安全协议（ESP/AH）</li>
+<li>工作模式（传输/隧道）</li>
+<li>加密算法（DES/3DES/AES）</li>
+<li>散列算法（MD5/SHA）</li>
+</ul>
+<blockquote>
+<p>📌 一句话总结：IKE分两阶段建立SA——<strong>一阶段主模式（6包）或野蛮模式（3包）协商加密参数并完成身份认证以保护二阶段，二阶段快速模式产生真正加密用户数据的ESP/AH参数</strong>。</p>
+</blockquote>
+<h2>四、IPsec完整配置命令</h2>
+<h3>1. 第一阶段配置（IKE）</h3>
+<h4>① 创建IKE提议（加密参数）</h4>
+<p>bash</p>
+<div class="highlight"><pre><span></span><code><span class="o">[</span><span class="n">R2</span><span class="o">]</span><span class="w"> </span><span class="n">ike</span><span class="w"> </span><span class="n">proposal</span><span class="w"> </span><span class="mi">1</span>
+<span class="o">[</span><span class="n">R2-ike-proposal-1</span><span class="o">]</span><span class="w"> </span><span class="n">encryption</span><span class="o">-</span><span class="n">algorithm</span><span class="w"> </span><span class="n">aes</span><span class="o">-</span><span class="n">cbc</span><span class="o">-</span><span class="mi">256</span><span class="w">      </span><span class="err">#</span><span class="w"> </span><span class="n">选择加密协议</span><span class="err">（</span><span class="n">对称</span><span class="err">）</span>
+<span class="o">[</span><span class="n">R2-ike-proposal-1</span><span class="o">]</span><span class="w"> </span><span class="n">authentication</span><span class="o">-</span><span class="k">method</span><span class="w"> </span><span class="n">pre</span><span class="o">-</span><span class="n">share</span><span class="w">        </span><span class="err">#</span><span class="w"> </span><span class="n">身份认证采用预共享密钥</span>
+<span class="o">[</span><span class="n">R2-ike-proposal-1</span><span class="o">]</span><span class="w"> </span><span class="n">authentication</span><span class="o">-</span><span class="n">algorithm</span><span class="w"> </span><span class="n">md5</span><span class="w">           </span><span class="err">#</span><span class="w"> </span><span class="n">选择散列算法</span><span class="err">（</span><span class="n">完整性</span><span class="err">）</span>
+<span class="o">[</span><span class="n">R2-ike-proposal-1</span><span class="o">]</span><span class="w"> </span><span class="n">dh</span><span class="w"> </span><span class="n">group14</span><span class="w">                             </span><span class="err">#</span><span class="w"> </span><span class="n">选择非对称加密算法</span><span class="err">（</span><span class="n">密钥交换</span><span class="err">）</span>
+</code></pre></div>
+
+<p><strong>注意</strong>：以上信息都可以不配置，设备存在一个默认的<code>default</code>策略，但需确保<strong>双方取值一致</strong>。</p>
+<h4>② 创建预共享密钥策略（Keychain）</h4>
+<p>bash</p>
+<div class="highlight"><pre><span></span><code><span class="o">[</span><span class="n">R2</span><span class="o">]</span><span class="w"> </span><span class="n">ike</span><span class="w"> </span><span class="n">keychain</span><span class="w"> </span><span class="n">K1</span>
+<span class="o">[</span><span class="n">R2-ike-keychain-K1</span><span class="o">]</span><span class="w"> </span><span class="n">pre</span><span class="o">-</span><span class="n">shared</span><span class="o">-</span><span class="k">key</span><span class="w"> </span><span class="n">address</span><span class="w"> </span><span class="mf">100.1.34.4</span><span class="w"> </span><span class="k">key</span><span class="w"> </span><span class="n">simple</span><span class="w"> </span><span class="n">shangwen</span>
+<span class="err">#</span><span class="w"> </span><span class="n">和100</span><span class="mf">.1.34.4</span><span class="err">（</span><span class="n">对端公网IP</span><span class="err">）</span><span class="n">的共享密钥为shangwen</span>
+</code></pre></div>
+
+<h4>③ 创建IKE Profile（绑定上述信息）</h4>
+<p>bash</p>
+<div class="highlight"><pre><span></span><code><span class="o">[</span><span class="n">R2</span><span class="o">]</span><span class="w"> </span><span class="n">ike</span><span class="w"> </span><span class="n">profile</span><span class="w"> </span><span class="n">yijieduan</span>
+<span class="o">[</span><span class="n">R2-ike-profile-yijieduan</span><span class="o">]</span><span class="w"> </span><span class="n">proposal</span><span class="w"> </span><span class="mi">1</span><span class="w">                     </span><span class="err">#</span><span class="w"> </span><span class="n">强制指定只能用1建议项</span>
+<span class="o">[</span><span class="n">R2-ike-profile-yijieduan</span><span class="o">]</span><span class="w"> </span><span class="n">keychain</span><span class="w"> </span><span class="n">k1</span>
+<span class="o">[</span><span class="n">R2-ike-profile-yijieduan</span><span class="o">]</span><span class="w"> </span><span class="n">exchange</span><span class="o">-</span><span class="n">mode</span><span class="w"> </span><span class="n">main</span><span class="w">             </span><span class="err">#</span><span class="w"> </span><span class="n">主模式</span><span class="err">（</span><span class="n">默认</span><span class="err">，</span><span class="n">可改野蛮</span><span class="err">）</span>
+<span class="o">[</span><span class="n">R2-ike-profile-yijieduan</span><span class="o">]</span><span class="w"> </span><span class="k">match</span><span class="w"> </span><span class="n">remote</span><span class="w"> </span><span class="k">identity</span><span class="w"> </span><span class="n">address</span><span class="w"> </span><span class="mf">100.1.34.4</span>
+</code></pre></div>
+
+<blockquote>
+<p>📌 一句话总结：一阶段配置分三步——创建ike proposal定义加密参数、创建ike keychain设置PSK预共享密钥、创建ike profile绑定前两者并指定对端地址和模式。</p>
+</blockquote>
+<h3>2. 第二阶段配置（IPsec）</h3>
+<h4>① 创建Transform-Set（传输变换集）</h4>
+<p>bash</p>
+<div class="highlight"><pre><span></span><code><span class="o">[</span><span class="n">R2</span><span class="o">]</span><span class="w"> </span><span class="n">ipsec</span><span class="w"> </span><span class="n">transform</span><span class="o">-</span><span class="k">set</span><span class="w"> </span><span class="n">erjieduan</span>
+<span class="o">[</span><span class="n">R2-ipsec-transform-set-erjieduan</span><span class="o">]</span><span class="w"> </span><span class="n">encapsulation</span><span class="o">-</span><span class="n">mode</span><span class="w"> </span><span class="n">tunnel</span><span class="w">    </span><span class="err">#</span><span class="w"> </span><span class="n">隧道模式</span><span class="err">（</span><span class="n">默认</span><span class="err">）</span>
+<span class="o">[</span><span class="n">R2-ipsec-transform-set-erjieduan</span><span class="o">]</span><span class="w"> </span><span class="n">esp</span><span class="w"> </span><span class="n">authentication</span><span class="o">-</span><span class="n">algorithm</span><span class="w"> </span><span class="n">md5</span>
+<span class="o">[</span><span class="n">R2-ipsec-transform-set-erjieduan</span><span class="o">]</span><span class="w"> </span><span class="n">esp</span><span class="w"> </span><span class="n">encryption</span><span class="o">-</span><span class="n">algorithm</span><span class="w"> </span><span class="mi">3</span><span class="n">des</span><span class="o">-</span><span class="n">cbc</span>
+</code></pre></div>
+
+<h4>② 创建ACL匹配感兴趣流（哪些流量走IPsec）</h4>
+<p>bash</p>
+<div class="highlight"><pre><span></span><code><span class="o">[</span><span class="n">R2</span><span class="o">]</span><span class="w"> </span><span class="n">acl</span><span class="w"> </span><span class="n">advanced</span><span class="w"> </span><span class="mi">3000</span>
+<span class="o">[</span><span class="n">R2-acl-ipv4-adv-3000</span><span class="o">]</span><span class="w"> </span><span class="k">rule</span><span class="w"> </span><span class="n">permit</span><span class="w"> </span><span class="n">ip</span><span class="w"> </span><span class="n">source</span><span class="w"> </span><span class="mf">10.1.1.1</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="n">destination</span><span class="w"> </span><span class="mf">10.5.5.5</span><span class="w"> </span><span class="mi">0</span>
+<span class="o">[</span><span class="n">R2-acl-ipv4-adv-3000</span><span class="o">]</span><span class="w"> </span><span class="k">rule</span><span class="w"> </span><span class="n">permit</span><span class="w"> </span><span class="n">ip</span><span class="w"> </span><span class="n">source</span><span class="w"> </span><span class="mf">192.168.12.0</span><span class="w"> </span><span class="mf">0.0.0.255</span><span class="w"> </span><span class="n">destination</span><span class="w"> </span><span class="mf">192.168.45.0</span><span class="w"> </span><span class="mf">0.0.0.255</span>
+</code></pre></div>
+
+<h4>③ 创建IPsec策略</h4>
+<p>bash</p>
+<div class="highlight"><pre><span></span><code><span class="o">[</span><span class="n">R2</span><span class="o">]</span><span class="w"> </span><span class="n">ipsec</span><span class="w"> </span><span class="n">policy</span><span class="w"> </span><span class="n">shangwen</span><span class="w"> </span><span class="mi">5</span><span class="w"> </span><span class="n">isakmp</span>
+<span class="err">#</span><span class="w"> </span><span class="n">建立IPsec策略</span><span class="err">，</span><span class="n">名为shangwen</span><span class="err">，</span><span class="n">序号5</span><span class="err">，</span><span class="n">通过IKE建立</span>
+<span class="o">[</span><span class="n">R2-ipsec-policy-isakmp-shangwen-5</span><span class="o">]</span><span class="w"> </span><span class="n">ike</span><span class="o">-</span><span class="n">profile</span><span class="w"> </span><span class="n">yijieduan</span>
+<span class="o">[</span><span class="n">R2-ipsec-policy-isakmp-shangwen-5</span><span class="o">]</span><span class="w"> </span><span class="n">transform</span><span class="o">-</span><span class="k">set</span><span class="w"> </span><span class="n">erjieduan</span>
+<span class="o">[</span><span class="n">R2-ipsec-policy-isakmp-shangwen-5</span><span class="o">]</span><span class="w"> </span><span class="n">security</span><span class="w"> </span><span class="n">acl</span><span class="w"> </span><span class="mi">3000</span>
+<span class="o">[</span><span class="n">R2-ipsec-policy-isakmp-shangwen-5</span><span class="o">]</span><span class="w"> </span><span class="n">remote</span><span class="o">-</span><span class="n">address</span><span class="w"> </span><span class="mf">100.1.34.4</span>
+</code></pre></div>
+
+<h4>④ 在公网接口调用IPsec策略</h4>
+<p>bash</p>
+<div class="highlight"><pre><span></span><code><span class="o">[</span><span class="n">R2</span><span class="o">]</span><span class="w"> </span><span class="n">interface</span><span class="w"> </span><span class="n">GigabitEthernet</span><span class="w"> </span><span class="mi">0</span><span class="o">/</span><span class="mi">1</span>
+<span class="o">[</span><span class="n">R2-GigabitEthernet0/1</span><span class="o">]</span><span class="w"> </span><span class="n">ipsec</span><span class="w"> </span><span class="n">apply</span><span class="w"> </span><span class="n">policy</span><span class="w"> </span><span class="n">shangwen</span>
+</code></pre></div>
+
+<blockquote>
+<p>📌 一句话总结：二阶段配置分四步——创建ipsec transform-set定义ESP/AH加密和认证参数、创建ACL定义感兴趣流（匹配哪些流量走VPN）、创建ipsec policy绑定profile/transform-set/ACL/对端地址、在公网接口调用policy。</p>
+</blockquote>
+<h2>五、IPsec与NAT共存的关键注意事项</h2>
+<h3>问题描述</h3>
+<p><strong>IPsec和NAT都调用在公网出接口</strong>，但存在执行顺序问题：</p>
+<ul>
+<li><strong>NAT先执行，IPsec后执行</strong></li>
+<li>如果NAT先处理了IPsec的流量，数据包已被转换，IPsec无法正常封装</li>
+</ul>
+<h3>解决方案</h3>
+<p><strong>在NAT的ACL中拒绝掉IPsec的流量</strong>，让IPsec流量先经过IPsec处理，不经过NAT转换。</p>
+<p>bash</p>
+<div class="highlight"><pre><span></span><code><span class="err">#</span><span class="w"> </span><span class="n">创建NAT</span><span class="w"> </span><span class="n">ACL</span><span class="err">，</span><span class="n">拒绝IPsec流量</span>
+<span class="o">[</span><span class="n">R2</span><span class="o">]</span><span class="w"> </span><span class="n">acl</span><span class="w"> </span><span class="n">advanced</span><span class="w"> </span><span class="mi">3001</span>
+<span class="o">[</span><span class="n">R2-acl-ipv4-adv-3001</span><span class="o">]</span><span class="w"> </span><span class="k">rule</span><span class="w"> </span><span class="k">deny</span><span class="w"> </span><span class="n">ip</span><span class="w"> </span><span class="n">source</span><span class="w"> </span><span class="mf">10.1.1.1</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="n">destination</span><span class="w"> </span><span class="mf">10.5.5.5</span><span class="w"> </span><span class="mi">0</span>
+<span class="o">[</span><span class="n">R2-acl-ipv4-adv-3001</span><span class="o">]</span><span class="w"> </span><span class="k">rule</span><span class="w"> </span><span class="k">deny</span><span class="w"> </span><span class="n">ip</span><span class="w"> </span><span class="n">source</span><span class="w"> </span><span class="mf">192.168.12.0</span><span class="w"> </span><span class="mf">0.0.0.255</span><span class="w"> </span><span class="n">destination</span><span class="w"> </span><span class="mf">192.168.45.0</span><span class="w"> </span><span class="mf">0.0.0.255</span>
+
+<span class="err">#</span><span class="w"> </span><span class="n">允许其他需要NAT的流量</span>
+<span class="o">[</span><span class="n">R2-acl-ipv4-adv-3001</span><span class="o">]</span><span class="w"> </span><span class="k">rule</span><span class="w"> </span><span class="n">permit</span><span class="w"> </span><span class="n">ip</span><span class="w"> </span><span class="n">source</span><span class="w"> </span><span class="mf">192.168.12.0</span><span class="w"> </span><span class="mf">0.0.0.255</span>
+<span class="o">[</span><span class="n">R2-acl-ipv4-adv-3001</span><span class="o">]</span><span class="w"> </span><span class="k">rule</span><span class="w"> </span><span class="n">permit</span><span class="w"> </span><span class="n">ip</span><span class="w"> </span><span class="n">source</span><span class="w"> </span><span class="mf">10.1.1.1</span><span class="w"> </span><span class="mf">0.0.0.0</span>
+
+<span class="err">#</span><span class="w"> </span><span class="n">在公网接口调用NAT</span>
+<span class="o">[</span><span class="n">R2</span><span class="o">]</span><span class="w"> </span><span class="n">interface</span><span class="w"> </span><span class="n">GigabitEthernet</span><span class="w"> </span><span class="mi">0</span><span class="o">/</span><span class="mi">1</span>
+<span class="o">[</span><span class="n">R2-GigabitEthernet0/1</span><span class="o">]</span><span class="w"> </span><span class="n">nat</span><span class="w"> </span><span class="n">outbound</span><span class="w"> </span><span class="mi">3001</span>
+</code></pre></div>
+
+<p><strong>执行顺序</strong>：</p>
+<ol>
+<li>流量到达公网接口</li>
+<li>先检查IPsec策略 → 匹配ACL 3000 → 走IPsec隧道（不经过NAT）</li>
+<li>IPsec不匹配 → 检查NAT策略 → 匹配ACL 3001 → 走NAT转换</li>
+</ol>
+<blockquote>
+<p>📌 一句话总结：<strong>IPsec调用位置与NAT同在公网出接口且NAT先执行，必须在NAT的ACL中deny掉IPsec的感兴趣流</strong>，否则IPsec流量会被NAT转换破坏封装导致通信失败。</p>
+</blockquote>
+<h2>六、配置要点速查</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">配置组件</th>
+<th style="text-align: left;">命令</th>
+<th style="text-align: left;">作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">IKE提议</td>
+<td style="text-align: left;"><code>ike proposal 1</code></td>
+<td style="text-align: left;">定义一阶段加密/散列/DH/认证方式</td>
+</tr>
+<tr>
+<td style="text-align: left;">预共享密钥</td>
+<td style="text-align: left;"><code>ike keychain K1</code></td>
+<td style="text-align: left;">设置PSK和对端地址</td>
+</tr>
+<tr>
+<td style="text-align: left;">IKE Profile</td>
+<td style="text-align: left;"><code>ike profile yijieduan</code></td>
+<td style="text-align: left;">绑定proposal/keychain/对端/模式</td>
+</tr>
+<tr>
+<td style="text-align: left;">Transform-Set</td>
+<td style="text-align: left;"><code>ipsec transform-set erjieduan</code></td>
+<td style="text-align: left;">定义二阶段ESP/AH和加密/散列算法</td>
+</tr>
+<tr>
+<td style="text-align: left;">感兴趣流ACL</td>
+<td style="text-align: left;"><code>acl advanced 3000</code></td>
+<td style="text-align: left;">匹配哪些流量走VPN</td>
+</tr>
+<tr>
+<td style="text-align: left;">IPsec Policy</td>
+<td style="text-align: left;"><code>ipsec policy shangwen 5 isakmp</code></td>
+<td style="text-align: left;">绑定profile/transform-set/ACL/对端</td>
+</tr>
+<tr>
+<td style="text-align: left;">接口调用</td>
+<td style="text-align: left;"><code>ipsec apply policy shangwen</code></td>
+<td style="text-align: left;">在公网接口启用IPsec</td>
+</tr>
+<tr>
+<td style="text-align: left;">NAT ACL</td>
+<td style="text-align: left;"><code>acl advanced 3001</code></td>
+<td style="text-align: left;"><strong>必须deny IPsec流量后再permit其他</strong></td>
+</tr>
+</tbody>
+</table>
+<h2>七、完整配置汇总（R2）</h2>
+<p>bash</p>
+<div class="highlight"><pre><span></span><code><span class="err">#</span><span class="w"> </span><span class="o">==========</span><span class="w"> </span><span class="nx">一阶段</span><span class="err">：</span><span class="nx">IKE</span><span class="w"> </span><span class="o">==========</span>
+<span class="err">#</span><span class="w"> </span><span class="mi">1</span><span class="p">.</span><span class="w"> </span><span class="nx">创建IKE提议</span>
+<span class="nx">ike</span><span class="w"> </span><span class="nx">proposal</span><span class="w"> </span><span class="mi">1</span>
+<span class="w"> </span><span class="nx">encryption</span><span class="o">-</span><span class="nx">algorithm</span><span class="w"> </span><span class="nx">aes</span><span class="o">-</span><span class="nx">cbc</span><span class="o">-</span><span class="mi">256</span>
+<span class="w"> </span><span class="nx">authentication</span><span class="o">-</span><span class="nx">method</span><span class="w"> </span><span class="nx">pre</span><span class="o">-</span><span class="nx">share</span>
+<span class="w"> </span><span class="nx">authentication</span><span class="o">-</span><span class="nx">algorithm</span><span class="w"> </span><span class="nx">md5</span>
+<span class="w"> </span><span class="nx">dh</span><span class="w"> </span><span class="nx">group14</span>
+
+<span class="err">#</span><span class="w"> </span><span class="mi">2</span><span class="p">.</span><span class="w"> </span><span class="nx">创建预共享密钥</span>
+<span class="nx">ike</span><span class="w"> </span><span class="nx">keychain</span><span class="w"> </span><span class="nx">K1</span>
+<span class="w"> </span><span class="nx">pre</span><span class="o">-</span><span class="nx">shared</span><span class="o">-</span><span class="nx">key</span><span class="w"> </span><span class="nx">address</span><span class="w"> </span><span class="m m-Double">100.1.34.4</span><span class="w"> </span><span class="nx">key</span><span class="w"> </span><span class="nx">simple</span><span class="w"> </span><span class="nx">shangwen</span>
+
+<span class="err">#</span><span class="w"> </span><span class="mi">3</span><span class="p">.</span><span class="w"> </span><span class="nx">创建IKE</span><span class="w"> </span><span class="nx">Profile</span>
+<span class="nx">ike</span><span class="w"> </span><span class="nx">profile</span><span class="w"> </span><span class="nx">yijieduan</span>
+<span class="w"> </span><span class="nx">proposal</span><span class="w"> </span><span class="mi">1</span>
+<span class="w"> </span><span class="nx">keychain</span><span class="w"> </span><span class="nx">k1</span>
+<span class="w"> </span><span class="nx">exchange</span><span class="o">-</span><span class="nx">mode</span><span class="w"> </span><span class="nx">main</span>
+<span class="w"> </span><span class="k">match</span><span class="w"> </span><span class="nx">remote</span><span class="w"> </span><span class="nx">identity</span><span class="w"> </span><span class="nx">address</span><span class="w"> </span><span class="m m-Double">100.1.34.4</span>
+
+<span class="err">#</span><span class="w"> </span><span class="o">==========</span><span class="w"> </span><span class="nx">二阶段</span><span class="err">：</span><span class="nx">IPsec</span><span class="w"> </span><span class="o">==========</span>
+<span class="err">#</span><span class="w"> </span><span class="mi">4</span><span class="p">.</span><span class="w"> </span><span class="nx">创建Transform</span><span class="o">-</span><span class="nx">Set</span>
+<span class="nx">ipsec</span><span class="w"> </span><span class="nx">transform</span><span class="o">-</span><span class="nx">set</span><span class="w"> </span><span class="nx">erjieduan</span>
+<span class="w"> </span><span class="nx">encapsulation</span><span class="o">-</span><span class="nx">mode</span><span class="w"> </span><span class="nx">tunnel</span>
+<span class="w"> </span><span class="nx">esp</span><span class="w"> </span><span class="nx">authentication</span><span class="o">-</span><span class="nx">algorithm</span><span class="w"> </span><span class="nx">md5</span>
+<span class="w"> </span><span class="nx">esp</span><span class="w"> </span><span class="nx">encryption</span><span class="o">-</span><span class="nx">algorithm</span><span class="w"> </span><span class="mi">3</span><span class="nx">des</span><span class="o">-</span><span class="nx">cbc</span>
+
+<span class="err">#</span><span class="w"> </span><span class="mi">5</span><span class="p">.</span><span class="w"> </span><span class="nx">创建感兴趣流ACL</span>
+<span class="nx">acl</span><span class="w"> </span><span class="nx">advanced</span><span class="w"> </span><span class="mi">3000</span>
+<span class="w"> </span><span class="nx">rule</span><span class="w"> </span><span class="nx">permit</span><span class="w"> </span><span class="nx">ip</span><span class="w"> </span><span class="nx">source</span><span class="w"> </span><span class="m m-Double">10.1.1.1</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="nx">destination</span><span class="w"> </span><span class="m m-Double">10.5.5.5</span><span class="w"> </span><span class="mi">0</span>
+<span class="w"> </span><span class="nx">rule</span><span class="w"> </span><span class="nx">permit</span><span class="w"> </span><span class="nx">ip</span><span class="w"> </span><span class="nx">source</span><span class="w"> </span><span class="m m-Double">192.168.12.0</span><span class="w"> </span><span class="m m-Double">0.0.0.255</span><span class="w"> </span><span class="nx">destination</span><span class="w"> </span><span class="m m-Double">192.168.45.0</span><span class="w"> </span><span class="m m-Double">0.0.0.255</span>
+
+<span class="err">#</span><span class="w"> </span><span class="mi">6</span><span class="p">.</span><span class="w"> </span><span class="nx">创建IPsec</span><span class="w"> </span><span class="nx">Policy</span>
+<span class="nx">ipsec</span><span class="w"> </span><span class="nx">policy</span><span class="w"> </span><span class="nx">shangwen</span><span class="w"> </span><span class="mi">5</span><span class="w"> </span><span class="nx">isakmp</span>
+<span class="w"> </span><span class="nx">ike</span><span class="o">-</span><span class="nx">profile</span><span class="w"> </span><span class="nx">yijieduan</span>
+<span class="w"> </span><span class="nx">transform</span><span class="o">-</span><span class="nx">set</span><span class="w"> </span><span class="nx">erjieduan</span>
+<span class="w"> </span><span class="nx">security</span><span class="w"> </span><span class="nx">acl</span><span class="w"> </span><span class="mi">3000</span>
+<span class="w"> </span><span class="nx">remote</span><span class="o">-</span><span class="nx">address</span><span class="w"> </span><span class="m m-Double">100.1.34.4</span>
+
+<span class="err">#</span><span class="w"> </span><span class="mi">7</span><span class="p">.</span><span class="w"> </span><span class="nx">公网接口调用IPsec</span>
+<span class="kd">interface</span><span class="w"> </span><span class="nx">GigabitEthernet</span><span class="w"> </span><span class="mi">0</span><span class="o">/</span><span class="mi">1</span>
+<span class="w"> </span><span class="nx">ipsec</span><span class="w"> </span><span class="nx">apply</span><span class="w"> </span><span class="nx">policy</span><span class="w"> </span><span class="nx">shangwen</span>
+
+<span class="err">#</span><span class="w"> </span><span class="o">==========</span><span class="w"> </span><span class="nx">NAT</span><span class="err">（</span><span class="nx">与IPsec共存</span><span class="err">）</span><span class="w"> </span><span class="o">==========</span>
+<span class="err">#</span><span class="w"> </span><span class="mi">8</span><span class="p">.</span><span class="w"> </span><span class="nx">创建NAT</span><span class="w"> </span><span class="nx">ACL</span><span class="err">（</span><span class="nx">必须deny</span><span class="w"> </span><span class="nx">IPsec流量</span><span class="err">）</span>
+<span class="nx">acl</span><span class="w"> </span><span class="nx">advanced</span><span class="w"> </span><span class="mi">3001</span>
+<span class="w"> </span><span class="nx">rule</span><span class="w"> </span><span class="nx">deny</span><span class="w"> </span><span class="nx">ip</span><span class="w"> </span><span class="nx">source</span><span class="w"> </span><span class="m m-Double">10.1.1.1</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="nx">destination</span><span class="w"> </span><span class="m m-Double">10.5.5.5</span><span class="w"> </span><span class="mi">0</span>
+<span class="w"> </span><span class="nx">rule</span><span class="w"> </span><span class="nx">deny</span><span class="w"> </span><span class="nx">ip</span><span class="w"> </span><span class="nx">source</span><span class="w"> </span><span class="m m-Double">192.168.12.0</span><span class="w"> </span><span class="m m-Double">0.0.0.255</span><span class="w"> </span><span class="nx">destination</span><span class="w"> </span><span class="m m-Double">192.168.45.0</span><span class="w"> </span><span class="m m-Double">0.0.0.255</span>
+<span class="w"> </span><span class="nx">rule</span><span class="w"> </span><span class="nx">permit</span><span class="w"> </span><span class="nx">ip</span><span class="w"> </span><span class="nx">source</span><span class="w"> </span><span class="m m-Double">192.168.12.0</span><span class="w"> </span><span class="m m-Double">0.0.0.255</span>
+<span class="w"> </span><span class="nx">rule</span><span class="w"> </span><span class="nx">permit</span><span class="w"> </span><span class="nx">ip</span><span class="w"> </span><span class="nx">source</span><span class="w"> </span><span class="m m-Double">10.1.1.1</span><span class="w"> </span><span class="m m-Double">0.0.0.0</span>
+
+<span class="err">#</span><span class="w"> </span><span class="mi">9</span><span class="p">.</span><span class="w"> </span><span class="nx">公网接口调用NAT</span><span class="err">（</span><span class="nx">与IPsec同一接口</span><span class="err">）</span>
+<span class="kd">interface</span><span class="w"> </span><span class="nx">GigabitEthernet</span><span class="w"> </span><span class="mi">0</span><span class="o">/</span><span class="mi">1</span>
+<span class="w"> </span><span class="nx">nat</span><span class="w"> </span><span class="nx">outbound</span><span class="w"> </span><span class="mi">3001</span>
+</code></pre></div>
         </div>
     </article>
 </div>
