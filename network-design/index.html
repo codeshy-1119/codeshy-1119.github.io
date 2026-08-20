@@ -659,6 +659,33 @@ no shutdown
         margin-bottom: 6px;
         line-height: 1.5;
     }
+    #toc-content li.has-children > ul {
+        display: none;
+    }
+    #toc-content li.has-children.expanded > ul {
+        display: block;
+    }
+    #toc-content .toc-disclosure {
+        width: 22px;
+        height: 28px;
+        padding: 0;
+        border: 0;
+        background: transparent;
+        color: #bdd9d0;
+        cursor: pointer;
+        font-size: 0.9rem;
+        line-height: 28px;
+        text-align: center;
+        vertical-align: top;
+    }
+    #toc-content .toc-disclosure:hover {
+        color: #fff;
+    }
+    #toc-content li.has-children > a {
+        display: inline-block;
+        width: calc(100% - 26px);
+        box-sizing: border-box;
+    }
     #toc-content a {
         color: #bdd9d0;
         text-decoration: none;
@@ -701,6 +728,9 @@ no shutdown
         }
         #toc-content a {
             font-size: 0.85rem;
+        }
+        #toc-content .toc-disclosure {
+            width: 20px;
         }
     }
 
@@ -790,7 +820,29 @@ document.addEventListener('DOMContentLoaded', function() {
     var tocContainer = document.getElementById('toc-content');
     tocContainer.appendChild(tocList);
 
-    // ----- 2. 面板展开/收起 -----
+    // ----- 2. 为有子目录的条目添加展开/收起按钮 -----
+    tocContainer.querySelectorAll('li').forEach(function(li) {
+        var childList = li.querySelector(':scope > ul');
+        if (!childList) return;
+
+        li.classList.add('has-children');
+        var link = li.querySelector(':scope > a');
+        var disclosure = document.createElement('button');
+        disclosure.type = 'button';
+        disclosure.className = 'toc-disclosure';
+        disclosure.textContent = '▸';
+        disclosure.setAttribute('aria-expanded', 'false');
+        disclosure.setAttribute('aria-label', '展开子目录');
+        disclosure.addEventListener('click', function() {
+            var expanded = li.classList.toggle('expanded');
+            disclosure.textContent = expanded ? '▾' : '▸';
+            disclosure.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+            disclosure.setAttribute('aria-label', expanded ? '收起子目录' : '展开子目录');
+        });
+        li.insertBefore(disclosure, link);
+    });
+
+    // ----- 3. 面板展开/收起 -----
     var panel = document.getElementById('toc-panel');
     var toggleBtn = document.getElementById('toc-toggle');
     var closeBtn = document.getElementById('toc-close');
@@ -820,7 +872,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // ----- 3. 滚动时高亮当前标题 -----
+    // ----- 4. 滚动时高亮当前标题 -----
     var tocLinks = tocContainer.querySelectorAll('a');
     function setActiveLink() {
         var activeId = null;
@@ -834,6 +886,19 @@ document.addEventListener('DOMContentLoaded', function() {
             link.classList.remove('active');
             if (activeId && link.getAttribute('href') === '#' + activeId) {
                 link.classList.add('active');
+                var parent = link.parentElement;
+                while (parent && parent !== tocContainer) {
+                    if (parent.tagName === 'LI' && parent.classList.contains('has-children')) {
+                        parent.classList.add('expanded');
+                        var button = parent.querySelector(':scope > .toc-disclosure');
+                        if (button) {
+                            button.textContent = '▾';
+                            button.setAttribute('aria-expanded', 'true');
+                            button.setAttribute('aria-label', '收起子目录');
+                        }
+                    }
+                    parent = parent.parentElement;
+                }
             }
         });
     }
