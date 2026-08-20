@@ -11,9 +11,9 @@
 
 <body>
 
-    <!-- ===== 全局随机视频背景 ===== -->
+    <!-- ===== 全局随机动态图片背景 ===== -->
     <div id="global-hero">
-        <video autoplay muted loop playsinline preload="auto" id="bg-video"></video>
+        <img src="https://codeshy-1119.github.io/images/blog.webp" alt="" decoding="async" id="bg-video">
     </div>
 
     <!-- ===== 顶部导航栏（固定） ===== -->
@@ -531,7 +531,7 @@ document.addEventListener('DOMContentLoaded', function() {
             overflow: hidden;
             pointer-events: none;
         }
-        #global-hero video {
+        #global-hero img {
             position: absolute;
             top: 50%;
             left: 50%;
@@ -681,7 +681,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     </style>
 
-    <!-- ===== 随机视频切换脚本 ===== -->
+    <!-- ===== 随机动态图片切换脚本 ===== -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             var currentPath = window.location.pathname.replace(/\/$/, '') || '/';
@@ -696,60 +696,41 @@ document.addEventListener('DOMContentLoaded', function() {
             var video = document.getElementById('bg-video');
             if (!video) return;
 
-            video.autoplay = true;
-            video.muted = true;
-            video.loop = true;
-            video.playsInline = true;
-
-            // 某些浏览器在动态替换视频源后不会可靠执行 loop，结束时手动重播。
-            video.addEventListener('ended', function() {
-                video.currentTime = 0;
-                video.play().catch(function() {
-                    console.log('视频循环播放被浏览器拦截');
-                });
-            });
-
-            var videoList = [
-                '/images/blog.mp4',
-                '/images/blog1.mp4',
-                '/images/blog2.mp4'
+            var imageList = [
+                '/images/blog.webp',
+                '/images/blog1.webp',
+                '/images/blog2.webp'
             ];
 
-            var availableVideos = [];
+            var availableImages = [];
             var checkCount = 0;
-            if (videoList.length === 0) {
-                videoList.push('/images/blog.mp4');
+            if (imageList.length === 0) {
+                imageList.push('/images/blog.webp');
             }
-            videoList.forEach(function(src) {
-                var testVideo = document.createElement('video');
-                testVideo.src = src;
-                testVideo.onloadeddata = function() {
-                    availableVideos.push(src);
+            imageList.forEach(function(src) {
+                var testImage = new Image();
+                testImage.src = src;
+                testImage.onload = function() {
+                    availableImages.push(src);
                     checkCount++;
-                    if (checkCount === videoList.length) {
-                        applyRandomVideo();
+                    if (checkCount === imageList.length) {
+                        applyRandomImage();
                     }
                 };
-                testVideo.onerror = function() {
+                testImage.onerror = function() {
                     checkCount++;
-                    if (checkCount === videoList.length) {
-                        applyRandomVideo();
+                    if (checkCount === imageList.length) {
+                        applyRandomImage();
                     }
                 };
             });
 
-            function applyRandomVideo() {
-                if (availableVideos.length === 0) {
-                    availableVideos = videoList.slice(0, 1);
+            function applyRandomImage() {
+                if (availableImages.length === 0) {
+                    availableImages = imageList.slice(0, 1);
                 }
-                var randomIndex = Math.floor(Math.random() * availableVideos.length);
-                var selected = availableVideos[randomIndex];
-                video.src = selected;
-                video.loop = true;
-                video.load();
-                video.play().catch(function(e) {
-                    console.log('视频自动播放被拦截');
-                });
+                var randomIndex = Math.floor(Math.random() * availableImages.length);
+                document.getElementById('bg-video').src = availableImages[randomIndex];
             }
         });
     </script>
