@@ -200,6 +200,20 @@
             }
         }
 
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                scroll-behavior: auto !important;
+                transition-duration: 0.01ms !important;
+                animation-duration: 0.01ms !important;
+            }
+            #bg-video {
+                display: none;
+            }
+            #global-hero {
+                background: linear-gradient(135deg, #17372e, #2a806f);
+            }
+        }
+
         /* ===== 给页面内容留出顶部空间 ===== */
         body {
             padding-top: 70px !important;
@@ -241,6 +255,15 @@
     <!-- ===== 随机视频切换脚本 ===== -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            var currentPath = window.location.pathname.replace(/\/$/, '') || '/';
+            document.querySelectorAll('.nav-link').forEach(function(link) {
+                var linkPath = new URL(link.href, window.location.origin).pathname.replace(/\/$/, '') || '/';
+                if (linkPath === currentPath || (linkPath === '/categories.html' && currentPath.indexOf('/category/') === 0) || (linkPath === '/tags.html' && currentPath.indexOf('/tag/') === 0) || (linkPath.indexOf('/author/') === 0 && currentPath.indexOf('/author/') === 0)) {
+                    link.classList.add('active');
+                    link.setAttribute('aria-current', 'page');
+                }
+            });
+
             var video = document.getElementById('bg-video');
             if (!video) return;
 

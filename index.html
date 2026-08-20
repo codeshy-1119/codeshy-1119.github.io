@@ -158,17 +158,30 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         var matches = articles.filter(function(item) {
-            return (item.title || '').toLowerCase().includes(query);
+            var searchable = [item.title, item.summary, item.tags].filter(Boolean).join(' ').toLowerCase();
+            return searchable.includes(query);
         }).slice(0, 10);
         if (matches.length > 0) {
-            resultsBox.innerHTML = matches.map(function(item) {
-                return '<a href="' + item.url + '" class="result-item">' +
-                    '<strong>' + item.title + '</strong><br>' +
-                    '<small>' + (item.summary || '').substring(0, 80) + '...</small></a>';
-            }).join('');
+            resultsBox.replaceChildren();
+            matches.forEach(function(item) {
+                var result = document.createElement('a');
+                result.href = item.url;
+                result.className = 'result-item';
+                var title = document.createElement('strong');
+                title.textContent = item.title || '未命名文章';
+                var summary = document.createElement('small');
+                summary.textContent = (item.summary || '暂无摘要').substring(0, 80);
+                result.append(title, document.createElement('br'), summary);
+                resultsBox.appendChild(result);
+            });
             resultsBox.style.display = 'block';
         } else {
-            resultsBox.innerHTML = '<div class="result-item" style="color:#999;">未找到相关文章</div>';
+            resultsBox.replaceChildren();
+            var emptyResult = document.createElement('div');
+            emptyResult.className = 'result-item';
+            emptyResult.style.color = '#999';
+            emptyResult.textContent = '未找到相关文章';
+            resultsBox.appendChild(emptyResult);
             resultsBox.style.display = 'block';
         }
     });
@@ -616,6 +629,20 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
 
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                scroll-behavior: auto !important;
+                transition-duration: 0.01ms !important;
+                animation-duration: 0.01ms !important;
+            }
+            #bg-video {
+                display: none;
+            }
+            #global-hero {
+                background: linear-gradient(135deg, #17372e, #2a806f);
+            }
+        }
+
         /* ===== 给页面内容留出顶部空间 ===== */
         body {
             padding-top: 70px !important;
@@ -657,6 +684,15 @@ document.addEventListener('DOMContentLoaded', function() {
     <!-- ===== 随机视频切换脚本 ===== -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            var currentPath = window.location.pathname.replace(/\/$/, '') || '/';
+            document.querySelectorAll('.nav-link').forEach(function(link) {
+                var linkPath = new URL(link.href, window.location.origin).pathname.replace(/\/$/, '') || '/';
+                if (linkPath === currentPath || (linkPath === '/categories.html' && currentPath.indexOf('/category/') === 0) || (linkPath === '/tags.html' && currentPath.indexOf('/tag/') === 0) || (linkPath.indexOf('/author/') === 0 && currentPath.indexOf('/author/') === 0)) {
+                    link.classList.add('active');
+                    link.setAttribute('aria-current', 'page');
+                }
+            });
+
             var video = document.getElementById('bg-video');
             if (!video) return;
 

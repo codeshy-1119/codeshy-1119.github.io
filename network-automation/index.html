@@ -129,8 +129,8 @@
 <span class="w"> </span><span class="mf">192.168.56.30</span><span class="w">   </span><span class="mf">192.168.56.31</span>
 </code></pre></div>
 
-<p><img alt="" src="/posts/Network_Automation-desigm/拓扑图.png"></p>
-<p><img alt="" src="/posts/Network_Automation-desigm/连通性.png"></p>
+<p><img alt="网络拓扑图" src="/posts/Network_Automation-desigm/拓扑图.png"></p>
+<p><img alt="网络连通性验证" src="/posts/Network_Automation-desigm/连通性.png"></p>
 <p>每台交换机配置一个管理 VLAN 10，并开启 SSH 服务。</p>
 <hr>
 <h2>📂 项目结构</h2>
@@ -222,7 +222,7 @@
 ✅ 成功连接 5 台设备
 </code></pre></div>
 
-<p><img alt="" src="/posts/Network_Automation-desigm/批量连接功能验证.png"></p>
+<p><img alt="批量连接功能验证" src="/posts/Network_Automation-desigm/批量连接功能验证.png"></p>
 <hr>
 <h2>📋 核心功能二：批量执行任意命令</h2>
 <h3>脚本 <code>scripts/batch_command.py</code></h3>
@@ -319,7 +319,7 @@ Access-SW2_20260716_134848.txt
 📁 备份文件保存在: F:\eNSP网络自动化项目\ensp_auto\reports
 </code></pre></div>
 
-<p><img alt="" src="/posts/Network_Automation-desigm/批量备份结果.png"></p>
+<p><img alt="批量备份结果" src="/posts/Network_Automation-desigm/批量备份结果.png"></p>
 <p><img src="/posts/Network_Automation-desigm/批量备份.png" style="zoom:50%;" /></p>
 <h3>实际应用价值</h3>
 <ul>
@@ -364,7 +364,7 @@ GigabitEthernet0/0/3    UP
 ...
 </code></pre></div>
 
-<p><img alt="" src="/posts/Network_Automation-desigm/巡检报告.png"></p>
+<p><img alt="网络巡检报告" src="/posts/Network_Automation-desigm/巡检报告.png"></p>
 <hr>
 <h2>📊 功能对比：手动 vs 自动化</h2>
 <table>
@@ -1050,6 +1050,20 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
 
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                scroll-behavior: auto !important;
+                transition-duration: 0.01ms !important;
+                animation-duration: 0.01ms !important;
+            }
+            #bg-video {
+                display: none;
+            }
+            #global-hero {
+                background: linear-gradient(135deg, #17372e, #2a806f);
+            }
+        }
+
         /* ===== 给页面内容留出顶部空间 ===== */
         body {
             padding-top: 70px !important;
@@ -1091,6 +1105,15 @@ document.addEventListener('DOMContentLoaded', function() {
     <!-- ===== 随机视频切换脚本 ===== -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            var currentPath = window.location.pathname.replace(/\/$/, '') || '/';
+            document.querySelectorAll('.nav-link').forEach(function(link) {
+                var linkPath = new URL(link.href, window.location.origin).pathname.replace(/\/$/, '') || '/';
+                if (linkPath === currentPath || (linkPath === '/categories.html' && currentPath.indexOf('/category/') === 0) || (linkPath === '/tags.html' && currentPath.indexOf('/tag/') === 0) || (linkPath.indexOf('/author/') === 0 && currentPath.indexOf('/author/') === 0)) {
+                    link.classList.add('active');
+                    link.setAttribute('aria-current', 'page');
+                }
+            });
+
             var video = document.getElementById('bg-video');
             if (!video) return;
 
