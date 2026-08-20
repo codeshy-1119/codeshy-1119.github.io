@@ -2,31 +2,31 @@
   {
     "title": "网络综合设计与仿真实现",
     "url": "/network-design/",
-    "summary": "项目报告",
+    "summary": "《路由与交换技术》课程设计项目，记录企业网络拓扑规划、设备配置、连通性验证与仿真实现。",
     "image": "/posts/network-design/封面.png"
   },
   {
     "title": "My First Post",
     "url": "/fist-blog/",
-    "summary": "Welcome to my blog!",
+    "summary": "使用 Pelican 搭建个人博客的第一篇记录，介绍静态博客的基本结构与发布方式。",
     "image": "/posts/fist-blog/封面.png"
   },
   {
     "title": "物资管理信息系统 - 数据库课程设计完整报告",
     "url": "/database-design/",
-    "summary": "---",
+    "summary": "基于 Python、PyQt5 和 SQL Server 的物资管理信息系统课程设计，包含数据库设计、界面开发与功能实现。",
     "image": "/posts/database-design/封面.png"
   },
   {
     "title": "网络自动化实战：用 Python + ENSP 搭建企业级网络运维系统",
     "url": "/Network_Automation-desigm/",
-    "summary": "",
+    "summary": "使用 Python、Netmiko 和 ENSP 搭建网络自动化实验环境，实现设备批量连接、配置与运维操作。",
     "image": "/posts/Network_Automation-desigm/封面.png"
   },
   {
     "title": "网络培训笔记：从交换到高可用的全栈知识体系",
     "url": "/network_study/",
-    "summary": "",
+    "summary": "从交换基础到路由协议与高可用设计的网络培训笔记，整理常用命令、实验思路和协议要点。",
     "image": "/posts/network_study/封面.png"
   }
 ]
