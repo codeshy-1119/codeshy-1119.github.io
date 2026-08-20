@@ -13,7 +13,7 @@
 
     <!-- ===== 全局随机视频背景 ===== -->
     <div id="global-hero">
-        <video autoplay muted loop playsinline id="bg-video"></video>
+        <video autoplay muted loop playsinline preload="auto" id="bg-video"></video>
     </div>
 
     <!-- ===== 顶部导航栏（固定） ===== -->
@@ -33,27 +33,68 @@
     </nav>
 
     <!-- ===== 页面内容（子模板填充） ===== -->
-<article class="single">
-  <header>
-    <h1 id="tags">Tags</h1>
+<main class="directory-page tags-page">
+  <header class="directory-header">
+    <span class="eyebrow">TOPIC LABELS</span>
+    <h1 id="tags">文章标签</h1>
+    <p>用关键词连接不同主题，发现文章之间的关联。</p>
+    <div class="directory-count">13 个标签</div>
   </header>
-  <div>
-    <ul class="list">          <li><a href="https://codeshy-1119.github.io/tag/ensp.html">ENSP</a> (1)</li>
-          <li><a href="https://codeshy-1119.github.io/tag/fang-zhen.html">仿真</a> (1)</li>
-          <li><a href="https://codeshy-1119.github.io/tag/ke-cheng-she-ji.html">课程设计</a> (1)</li>
-          <li><a href="https://codeshy-1119.github.io/tag/negao-ji-jiao-huan.html">NE，高级交换</a> (1)</li>
-          <li><a href="https://codeshy-1119.github.io/tag/netmiko.html">Netmiko</a> (1)</li>
-          <li><a href="https://codeshy-1119.github.io/tag/pelican.html">pelican</a> (1)</li>
-          <li><a href="https://codeshy-1119.github.io/tag/pyqt5.html">PyQt5</a> (1)</li>
-          <li><a href="https://codeshy-1119.github.io/tag/python.html">Python</a> (3)</li>
-          <li><a href="https://codeshy-1119.github.io/tag/shu-ju-ku.html">数据库</a> (1)</li>
-          <li><a href="https://codeshy-1119.github.io/tag/sql.html">SQL</a> (1)</li>
-          <li><a href="https://codeshy-1119.github.io/tag/wang-luo.html">网络</a> (1)</li>
-          <li><a href="https://codeshy-1119.github.io/tag/wang-luo-zi-dong-hua.html">网络自动化</a> (1)</li>
-          <li><a href="https://codeshy-1119.github.io/tag/yun-wei.html">运维</a> (1)</li>
-    </ul>
+  <div class="tag-cloud">    <a class="tag-pill" href="https://codeshy-1119.github.io/tag/ensp.html">
+      <span># ENSP</span><small>1</small>
+    </a>
+    <a class="tag-pill" href="https://codeshy-1119.github.io/tag/fang-zhen.html">
+      <span># 仿真</span><small>1</small>
+    </a>
+    <a class="tag-pill" href="https://codeshy-1119.github.io/tag/ke-cheng-she-ji.html">
+      <span># 课程设计</span><small>1</small>
+    </a>
+    <a class="tag-pill" href="https://codeshy-1119.github.io/tag/negao-ji-jiao-huan.html">
+      <span># NE，高级交换</span><small>1</small>
+    </a>
+    <a class="tag-pill" href="https://codeshy-1119.github.io/tag/netmiko.html">
+      <span># Netmiko</span><small>1</small>
+    </a>
+    <a class="tag-pill" href="https://codeshy-1119.github.io/tag/pelican.html">
+      <span># pelican</span><small>1</small>
+    </a>
+    <a class="tag-pill" href="https://codeshy-1119.github.io/tag/pyqt5.html">
+      <span># PyQt5</span><small>1</small>
+    </a>
+    <a class="tag-pill" href="https://codeshy-1119.github.io/tag/python.html">
+      <span># Python</span><small>3</small>
+    </a>
+    <a class="tag-pill" href="https://codeshy-1119.github.io/tag/shu-ju-ku.html">
+      <span># 数据库</span><small>1</small>
+    </a>
+    <a class="tag-pill" href="https://codeshy-1119.github.io/tag/sql.html">
+      <span># SQL</span><small>1</small>
+    </a>
+    <a class="tag-pill" href="https://codeshy-1119.github.io/tag/wang-luo.html">
+      <span># 网络</span><small>1</small>
+    </a>
+    <a class="tag-pill" href="https://codeshy-1119.github.io/tag/wang-luo-zi-dong-hua.html">
+      <span># 网络自动化</span><small>1</small>
+    </a>
+    <a class="tag-pill" href="https://codeshy-1119.github.io/tag/yun-wei.html">
+      <span># 运维</span><small>1</small>
+    </a>
   </div>
-</article>
+</main>
+
+<style>
+  .directory-page { max-width: 980px; margin: 8vh auto 80px; padding: 0 24px; position: relative; z-index: 1; }
+  .directory-header { color: #fff; text-align: left; margin-bottom: 32px; text-shadow: 0 2px 10px rgba(0,0,0,.6); }
+  .eyebrow { color: #b9ead8; font-size: .75rem; letter-spacing: .16em; font-weight: 700; }
+  .directory-header h1 { margin: 8px 0 6px; font-size: clamp(2rem, 5vw, 3.2rem); }
+  .directory-header p { margin: 0; opacity: .82; font-size: 1.05rem; }
+  .directory-count { margin-top: 18px; color: #d4f1e6; font-size: .9rem; }
+  .tag-cloud { display: flex; flex-wrap: wrap; gap: 12px; padding: 26px; background: rgba(15,35,29,.55); border: 1px solid rgba(255,255,255,.15); border-radius: 16px; backdrop-filter: blur(10px); }
+  .tag-pill { display: inline-flex; align-items: center; gap: 12px; padding: 11px 15px; color: #19372c; text-decoration: none; background: rgba(255,255,255,.9); border-radius: 8px; transition: transform .2s, background .2s; }
+  .tag-pill:hover { transform: translateY(-2px); background: #fff; }
+  .tag-pill small { min-width: 22px; padding: 2px 6px; color: #fff; text-align: center; background: #2a9d8f; border-radius: 10px; }
+  @media (max-width: 640px) { .directory-page { margin-top: 5vh; padding: 0 16px; } .tag-cloud { padding: 18px; } }
+</style>
 
     <!-- ===== 底部版权信息 ===== -->
     <footer style="text-align:center;padding:20px;background:transparent;color:#fff;text-shadow:0 2px 6px rgba(0,0,0,0.5);position:relative;z-index:1;">
@@ -214,6 +255,19 @@
             var video = document.getElementById('bg-video');
             if (!video) return;
 
+            video.autoplay = true;
+            video.muted = true;
+            video.loop = true;
+            video.playsInline = true;
+
+            // 某些浏览器在动态替换视频源后不会可靠执行 loop，结束时手动重播。
+            video.addEventListener('ended', function() {
+                video.currentTime = 0;
+                video.play().catch(function() {
+                    console.log('视频循环播放被浏览器拦截');
+                });
+            });
+
             var videoList = [
                 '/images/blog.mp4',
                 '/images/blog1.mp4',
@@ -250,6 +304,7 @@
                 var randomIndex = Math.floor(Math.random() * availableVideos.length);
                 var selected = availableVideos[randomIndex];
                 video.src = selected;
+                video.loop = true;
                 video.load();
                 video.play().catch(function(e) {
                     console.log('视频自动播放被拦截');

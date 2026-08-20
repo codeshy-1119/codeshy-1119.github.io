@@ -13,7 +13,7 @@
 
     <!-- ===== 全局随机视频背景 ===== -->
     <div id="global-hero">
-        <video autoplay muted loop playsinline id="bg-video"></video>
+        <video autoplay muted loop playsinline preload="auto" id="bg-video"></video>
     </div>
 
     <!-- ===== 顶部导航栏（固定） ===== -->
@@ -628,6 +628,19 @@ document.addEventListener('DOMContentLoaded', function() {
             var video = document.getElementById('bg-video');
             if (!video) return;
 
+            video.autoplay = true;
+            video.muted = true;
+            video.loop = true;
+            video.playsInline = true;
+
+            // 某些浏览器在动态替换视频源后不会可靠执行 loop，结束时手动重播。
+            video.addEventListener('ended', function() {
+                video.currentTime = 0;
+                video.play().catch(function() {
+                    console.log('视频循环播放被浏览器拦截');
+                });
+            });
+
             var videoList = [
                 '/images/blog.mp4',
                 '/images/blog1.mp4',
@@ -664,6 +677,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 var randomIndex = Math.floor(Math.random() * availableVideos.length);
                 var selected = availableVideos[randomIndex];
                 video.src = selected;
+                video.loop = true;
                 video.load();
                 video.play().catch(function(e) {
                     console.log('视频自动播放被拦截');
