@@ -62,6 +62,25 @@
     </div>
 </div>
 
+<!-- ===== 证书与认证 ===== -->
+<div id="certificates-section">
+    <div class="container">
+        <h2 class="list-title">🏅 证书与认证</h2>
+        <div class="cert-grid">
+            <div class="cert-card">
+                <div class="cert-icon">📜</div>
+                <div class="cert-info">
+                    <h3>HCIP-Datacom</h3>
+                    <p>华为技术认证（Huawei Certified ICT Professional） · 2026</p>
+                    <div class="cert-actions">
+                        <a href="https://codeshy-1119.github.io/certificates/HCIP-Datacom.pdf" target="_blank" rel="noopener" class="cert-btn">查看证书 ↗</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- ===== 该作者的文章列表（左右交替图文卡片） ===== -->
 <div id="article-list">
     <div class="container">
@@ -248,6 +267,77 @@
         color: #555;
         border-top: 1px solid #ddd;
         padding-top: 16px;
+    }
+
+    /* ===== 证书与认证 ===== */
+    #certificates-section {
+        position: relative;
+        z-index: 1;
+        max-width: 1000px;
+        margin: 30px auto 0;
+        padding: 0 20px;
+    }
+    #certificates-section .container {
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+    .cert-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 16px;
+    }
+    .cert-card {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 20px;
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .cert-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 28px rgba(0,0,0,0.18);
+    }
+    .cert-icon {
+        font-size: 2.4rem;
+        flex-shrink: 0;
+    }
+    .cert-info h3 {
+        margin: 0 0 4px;
+        color: #1a3a2a;
+        font-size: 1.15rem;
+    }
+    .cert-info p {
+        margin: 0 0 10px;
+        color: #666;
+        font-size: 0.82rem;
+    }
+    .cert-actions {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+    .cert-btn {
+        display: inline-block;
+        padding: 7px 16px;
+        border-radius: 20px;
+        background: rgba(42, 157, 143, 0.9);
+        color: #fff;
+        font-size: 0.85rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: background 0.2s, transform 0.2s;
+    }
+    .cert-btn:hover {
+        background: rgba(42, 157, 143, 1);
+        transform: scale(1.03);
+    }
+    .cert-empty {
+        color: #888;
+        text-align: center;
+        padding: 20px 0;
     }
 
     /* ===== 文章列表（同首页卡片） ===== */
