@@ -28,5 +28,11 @@
     "url": "/network_study/",
     "summary": "从交换基础到路由协议与高可用设计的网络培训笔记，整理常用命令、实验思路和协议要点。",
     "image": "/posts/network_study/封面.png"
+  },
+  {
+    "title": "译言译行——聋哑人第一人称AI手语翻译眼镜",
+    "url": "/sign-language-glasses/",
+    "summary": "一款佩戴在聋哑人身上的智能眼镜，从第一人称视角实时识别手语并语音播报，让无声世界「开口说话」。本文记录项目的整体设计、硬件方案、数据集构建、模型训练与实时识别实现。",
+    "image": "/posts/sign-language-glasses/封面.png"
   }
 ]

@@ -1,0 +1,1161 @@
+<!DOCTYPE html>
+<html lang="chinese (simplified)">
+<head>
+    <title>才华恒毅的blog</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://codeshy-1119.github.io/theme/css/style.min.css" />
+    <link rel="stylesheet" href="https://codeshy-1119.github.io/theme/css/dark-theme.min.css" />
+    <link rel="stylesheet" href="https://codeshy-1119.github.io/custom.css" />
+</head>
+
+<body>
+
+    <!-- ===== 全局随机动态图片背景 ===== -->
+    <div id="global-hero">
+        <img src="https://codeshy-1119.github.io/images/blog.webp" alt="" decoding="async" id="bg-video">
+    </div>
+
+    <!-- ===== 顶部导航栏（固定） ===== -->
+    <nav id="navbar">
+        <div class="nav-container">
+            <div class="nav-left">
+                <a href="https://codeshy-1119.github.io/" class="nav-brand">才华恒毅的blog</a>
+            </div>
+            <div class="nav-right">
+                <a href="https://codeshy-1119.github.io/" class="nav-link">首页</a>
+                <a href="https://codeshy-1119.github.io/archives.html" class="nav-link">归档</a>
+                <a href="https://codeshy-1119.github.io/categories.html" class="nav-link">分类</a>
+                <a href="https://codeshy-1119.github.io/tags.html" class="nav-link">标签</a>
+                <a href="https://codeshy-1119.github.io/author/cai-hua-heng-yi.html" class="nav-link">关于</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ===== 页面内容（子模板填充） ===== -->
+
+<!-- ===== 目录切换按钮（固定在左侧） ===== -->
+<button id="toc-toggle">📑 目录</button>
+
+<!-- ===== 目录面板（左侧滑出） ===== -->
+<div id="toc-panel">
+    <div id="toc-header">
+        <span>📖 文章目录</span>
+        <button id="toc-close">✕</button>
+    </div>
+    <nav id="toc-content"></nav>
+</div>
+
+<!-- ===== 文章内容（浮在背景上的卡片） ===== -->
+<div id="article-content">
+    <article>
+        <header>
+            <h1 class="article-title">译言译行——聋哑人第一人称AI手语翻译眼镜</h1>
+            <p class="article-meta">
+                周六 14 二月 2026
+                    · <a href="https://codeshy-1119.github.io/category/ji-zhu.html">技术</a>
+                    · Tagged with
+                        <a href="https://codeshy-1119.github.io/tag/shou-yu-shi-bie.html">手语识别</a>,                        <a href="https://codeshy-1119.github.io/tag/ren-gong-zhi-neng.html">人工智能</a>,                        <a href="https://codeshy-1119.github.io/tag/ji-suan-ji-shi-jue.html">计算机视觉</a>,                        <a href="https://codeshy-1119.github.io/tag/tensorflow.html">TensorFlow</a>,                        <a href="https://codeshy-1119.github.io/tag/esp32.html">ESP32</a>,                        <a href="https://codeshy-1119.github.io/tag/shen-du-xue-xi.html">深度学习</a>            </p>
+        </header>
+        <div class="article-body">
+            <h1>译言译行——聋哑人第一人称AI手语翻译眼镜</h1>
+<blockquote>
+<p>让无声世界「开口说话」</p>
+</blockquote>
+<p>你有没有想过，当一个聋哑人在餐厅点餐、在车站问路、在药店买药时，他是怎么和健听人沟通的？</p>
+<p>写纸条、比划、手机打字……这些都太慢、太别扭了。而真正阻碍他们的，不只是听不见，而是<strong>彼此之间没有一座「翻译」的桥</strong>。</p>
+<p>这个项目「<strong>译言译行</strong>」就是想做这座桥：一副佩戴在聋哑人身上的 <strong>AI 手语翻译眼镜</strong>，从佩戴者的<strong>第一人称视角</strong>实时识别他的手语，并立刻<strong>语音播报</strong>出来，让对面的健听人「听懂」他在说什么。</p>
+<hr>
+<h2>一、项目背景</h2>
+<p>我国有数千万聋哑人，手语是他们最主要的沟通方式，但绝大多数健听人并不懂手语。传统手语翻译依赖人工翻译员，成本高、不普及；手机摄像头方案需要手持、对准、等待，使用体验很差。</p>
+<p>现有方案的共同痛点是：<strong>没有一个能解放双手、从用户第一视角连续工作的方案</strong>。而「眼镜」正是最自然的载体——它戴在聋哑人头上，摄像头就是他眼睛的位置，他打手语时，摄像头天然地正对着他自己的手，无需任何手持操作。</p>
+<p>因此我设计了一款<strong>可佩戴的第一人称手语识别眼镜</strong>，并配套完整的「数据采集 → 模型训练 → 实时识别 → 语音播报」技术链路。</p>
+<hr>
+<h2>二、项目简介</h2>
+<p><strong>项目名称：</strong> 译言译行——聋哑人第一人称AI手语翻译眼镜</p>
+<p><strong>核心定位：</strong> 面向聋哑人，从第一人称视角识别手语并语音播报的智能可穿戴设备。</p>
+<p><strong>两种识别视角：</strong></p>
+<table>
+<thead>
+<tr>
+<th>视角</th>
+<th>摄像头位置</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>第一人称（聋哑人视角）</td>
+<td>眼镜上的 ESP32-CAM</td>
+<td>识别聋哑人自己的手语，向健听人播报</td>
+</tr>
+<tr>
+<td>第二人称（对方视角）</td>
+<td>电脑/普通摄像头</td>
+<td>识别对方的手语，向聋哑人展示文字结果</td>
+</tr>
+</tbody>
+</table>
+<p><strong>演示手势（第一版）：</strong></p>
+<ul>
+<li><code>你好</code></li>
+<li><code>早上好</code></li>
+</ul>
+<blockquote>
+<p>说明：当前版本作为技术原型，先跑通「你好 / 早上好」两个高频手势，验证「第一人称识别 + 语音播报」的完整链路；词汇量可以通过采集更多数据、继续训练持续扩充。</p>
+</blockquote>
+<hr>
+<h2>三、系统总体架构</h2>
+<p>整个系统分为<strong>硬件端</strong>和<strong>软件端</strong>两大部分：</p>
+<div class="highlight"><pre><span></span><code>┌─────────────────────────────────────────────────────┐
+│                    聋哑人佩戴者                       │
+│   ┌────────────────────────────────────────────┐     │
+│   │           眼镜硬件（ESP32-CAM）              │     │
+│   │   摄像头朝下对准双手（第一人称视角）          │     │
+│   │   Wi-Fi 视频流  →  http://192.168.4.1:81    │     │
+│   └───────────────────┬────────────────────────┘     │
+└───────────────────────┼─────────────────────────────┘
+                        │  MJPEG 视频流
+                        ▼
+┌─────────────────────────────────────────────────────┐
+│                 PC 端识别程序（Python）               │
+│   ┌────────────┐ ┌────────────┐ ┌───────────────┐   │
+│   │ 帧获取/预处理│→│ MobileNetV2│→│ 分类头/置信度  │   │
+│   │ ROI/肤色检测│ │ 特征提取    │ │ 阈值+去重      │   │
+│   └────────────┘ └────────────┘ └───────────────┘   │
+│                        │                            │
+│                        ▼                            │
+│   ┌────────────────────────────────────────────┐   │
+│   │  结果输出：Windows TTS 语音播报 + 画面叠加  │   │
+│   └────────────────────────────────────────────┘   │
+└─────────────────────────────────────────────────────┘
+</code></pre></div>
+
+<p><strong>整体流程：</strong></p>
+<ol>
+<li>ESP32-CAM 眼镜端通过 Wi-Fi 推流（<code>http://192.168.4.1:81/stream</code>）；</li>
+<li>PC 端读取视频流，进行 ROI 裁剪、肤色检测、动作检测；</li>
+<li>使用 <strong>MobileNet V2 特征提取器（TF Hub 迁移学习）</strong> 提取图像特征；</li>
+<li>送入训练好的<strong>分类模型</strong>（.pb 图）得到手势类别与置信度；</li>
+<li>命中目标手势且置信度达标 → 触发 <strong>Windows SAPI 语音播报</strong>，并在画面上叠加识别结果。</li>
+</ol>
+<hr>
+<h2>四、硬件设计</h2>
+<p>眼镜硬件选用 <strong>ESP32-CAM</strong> 作为核心：</p>
+<table>
+<thead>
+<tr>
+<th>项目</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>主控+摄像头</td>
+<td>ESP32-CAM（OV2640，自带 Wi-Fi）</td>
+</tr>
+<tr>
+<td>安装位置</td>
+<td>固定在眼镜镜腿/镜框前端，镜头朝下对准双手</td>
+</tr>
+<tr>
+<td>视角</td>
+<td>第一人称视角，摄像头即佩戴者眼睛</td>
+</tr>
+<tr>
+<td>推流方式</td>
+<td>板载 MJPEG 视频流：<code>http://192.168.4.1:81/stream</code></td>
+</tr>
+<tr>
+<td>供电</td>
+<td>移动电源/电池供电</td>
+</tr>
+</tbody>
+</table>
+<p><strong>为什么选择 ESP32-CAM：</strong></p>
+<ul>
+<li>体积小、功耗低，适合可穿戴；</li>
+<li>自带 Wi-Fi，通过局域网把视频流推给 PC 处理，把重计算放在电脑端；</li>
+<li>价格便宜，适合原型迭代。</li>
+</ul>
+<blockquote>
+<p>说明：识别模型运行在 PC 端（Windows），ESP32-CAM 只负责采集与推流。后续可以进一步做模型剪枝/量化，把推理下沉到眼镜端或边缘盒子，实现完全离线。</p>
+</blockquote>
+<hr>
+<h2>五、数据集构建</h2>
+<p>手语识别的数据是我自己录的。为了贴近真实佩戴场景，我覆盖了<strong>室内亮光、室内暗光、室外</strong>等不同光照，并用脚本把视频抽成帧。</p>
+<p><strong>数据集规模：</strong></p>
+<table>
+<thead>
+<tr>
+<th>类别</th>
+<th>训练图片（帧）</th>
+<th>补充视频</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>你好（nihao）</td>
+<td>3944 张</td>
+<td>6 个</td>
+</tr>
+<tr>
+<td>早上好（zaoshanghao）</td>
+<td>3758 张</td>
+<td>6 个</td>
+</tr>
+</tbody>
+</table>
+<p><strong>采集与预处理脚本：</strong></p>
+<ul>
+<li><code>video_to_frame_direct.py</code>：视频直接抽帧；</li>
+<li><code>(no_use)video-to-frame.py</code>：早期抽帧脚本（已弃用）；</li>
+<li><code>Split Test and Train.sh</code>：按类别把图片划分到训练/测试目录；</li>
+<li><code>handsegment.py</code>：基于 HSV 色域做肤色分割，辅助定位手部区域。</li>
+</ul>
+<p>抽帧命名形如 <code>nihao_indoor1_frame_0000.jpg</code>，其中 <code>indoor1 / indoor_dark1 / outdoor1</code> 代表不同场景，方便后续按场景分析模型在不同光照下的表现。</p>
+<hr>
+<h2>六、模型训练</h2>
+<h3>1. 迁移学习（MobileNet V2 特征提取）</h3>
+<p>训练基于 TensorFlow 官方的 <code>retrain.py</code> 思路改造：</p>
+<ol>
+<li>用 <strong>TF Hub 的 MobileNet V2 Feature Vector</strong> 作为特征提取器（预计算 bottleneck）；</li>
+<li>在其输出之上训练一个<strong>全连接分类头</strong>；</li>
+<li>输出 <code>final_result:0</code>，标签文件为 <code>*_labels.txt</code>。</li>
+</ol>
+<p>核心流程代码（节选）：</p>
+<div class="highlight"><pre><span></span><code><span class="n">feature_extractor</span> <span class="o">=</span> <span class="n">hub</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">TFHUB_CACHE_DIR</span> <span class="o">+</span> <span class="s2">&quot;/mobilenet-v2-tensorflow2-tf2-preview-feature-vector-v4&quot;</span><span class="p">)</span>
+<span class="n">feat_input</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">placeholder</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="mi">224</span><span class="p">,</span> <span class="mi">224</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="n">feat_output</span> <span class="o">=</span> <span class="n">feature_extractor</span><span class="p">(</span><span class="n">feat_input</span><span class="p">)</span>
+
+<span class="n">od_graph_def</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">GraphDef</span><span class="p">()</span>
+<span class="k">with</span> <span class="n">tf</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">gfile</span><span class="o">.</span><span class="n">GFile</span><span class="p">(</span><span class="s2">&quot;cn_retrained_graph.pb&quot;</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fid</span><span class="p">:</span>
+    <span class="n">od_graph_def</span><span class="o">.</span><span class="n">ParseFromString</span><span class="p">(</span><span class="n">fid</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+    <span class="n">tf</span><span class="o">.</span><span class="n">import_graph_def</span><span class="p">(</span><span class="n">od_graph_def</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+<span class="c1"># 分类模型输入/输出</span>
+<span class="n">input_tensor</span>  <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">get_default_graph</span><span class="p">()</span><span class="o">.</span><span class="n">get_tensor_by_name</span><span class="p">(</span><span class="s1">&#39;BottleneckInput:0&#39;</span><span class="p">)</span>
+<span class="n">output_tensor</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">get_default_graph</span><span class="p">()</span><span class="o">.</span><span class="n">get_tensor_by_name</span><span class="p">(</span><span class="s1">&#39;final_result:0&#39;</span><span class="p">)</span>
+</code></pre></div>
+
+<p>为了加速训练，我对每张图片<strong>预计算 bottleneck 特征</strong>缓存到磁盘（<code>*.bottleneck.txt</code>），避免重复跑特征提取。</p>
+<h3>2. 时序建模（RNN / LSTM）</h3>
+<p>手语是<strong>连续动作</strong>，单帧图像信息有限。项目里还实现了一条 <strong>CNN 特征 + LSTM 时序建模</strong> 的路线（<code>rnn_train.py</code> / <code>rnn_utils.py</code>）：</p>
+<ul>
+<li>先把每帧用 CNN 提取成特征序列；</li>
+<li>按视频窗口组织成 <code>[num_frames, feature_size]</code> 的序列；</li>
+<li>用两层 LSTM（TFLearn）学习手势的时序依赖；</li>
+<li>输出手势类别。</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="n">net</span> <span class="o">=</span> <span class="n">tflearn</span><span class="o">.</span><span class="n">input_data</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">frames</span><span class="p">,</span> <span class="n">input_size</span><span class="p">])</span>
+<span class="n">net</span> <span class="o">=</span> <span class="n">tflearn</span><span class="o">.</span><span class="n">lstm</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="mi">128</span><span class="p">,</span> <span class="n">dropout</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">return_seq</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">net</span> <span class="o">=</span> <span class="n">tflearn</span><span class="o">.</span><span class="n">lstm</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="mi">128</span><span class="p">)</span>
+<span class="n">net</span> <span class="o">=</span> <span class="n">tflearn</span><span class="o">.</span><span class="n">fully_connected</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">num_classes</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">&#39;softmax&#39;</span><span class="p">)</span>
+<span class="n">net</span> <span class="o">=</span> <span class="n">tflearn</span><span class="o">.</span><span class="n">regression</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">optimizer</span><span class="o">=</span><span class="s1">&#39;adam&#39;</span><span class="p">,</span> <span class="n">loss</span><span class="o">=</span><span class="s1">&#39;categorical_crossentropy&#39;</span><span class="p">)</span>
+</code></pre></div>
+
+<h3>3. 训练产出模型</h3>
+<table>
+<thead>
+<tr>
+<th>模型文件</th>
+<th>标签文件</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>cn_retrained_graph.pb</code></td>
+<td><code>cn_retrained_labels.txt</code>（你好/非你好）</td>
+<td>第一人称实时识别</td>
+</tr>
+<tr>
+<td><code>two_gesture_model.pb</code></td>
+<td><code>two_gesture_labels.txt</code>（你好/早上好）</td>
+<td>双手势识别</td>
+</tr>
+<tr>
+<td><code>cn_secondperson_sign_recognizer.pb</code></td>
+<td><code>cn_secondperson_labels.txt</code>（你好/非你好）</td>
+<td>第二人称视角识别</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2>七、实时识别实现</h2>
+<p>实时识别在 <strong>Windows PC</strong> 上运行，主要脚本：</p>
+<ul>
+<li><code>realtime_camera_speech.py</code>：电脑摄像头实时识别 + 语音播报；</li>
+<li><code>test_video_recognition.py</code> / <code>demonstration_camera.py</code>：读取 <strong>ESP32 眼镜视频流</strong> 实时识别；</li>
+<li><code>demonstration_show.py</code> / <code>demonstration_show1.py</code> / <code>demonstration_show2.py</code>：演示用版本；</li>
+<li><code>predict_spatial.py</code>：第二人称视角识别 + 聊天式结果展示。</li>
+</ul>
+<h3>1. 识别主流程</h3>
+<div class="highlight"><pre><span></span><code>读取视频帧
+   │
+   ├─ ROI 裁剪（聚焦手部区域）
+   ├─ 肤色/动作检测（HSV + 帧差）
+   │
+   ▼
+每隔 N 帧：MobileNetV2 提取特征 → 分类 → softmax 置信度
+   │
+   ▼
+命中目标手势 且 置信度 ≥ 阈值 且 非锁定状态
+   │
+   ▼
+异步触发 Windows TTS 语音播报 + 画面叠加识别结果
+   │
+   ▼
+进入「动作锁定」防重复触发
+</code></pre></div>
+
+<h3>2. 关键设计点</h3>
+<p><strong>① 动作检测与防误触发</strong></p>
+<ul>
+<li>用<strong>帧差法</strong>判断手部是否在动，无动作时不推理，省算力；</li>
+<li>手部进入 ROI 判断 + <strong>HSV 肤色检测</strong>过滤无关物体；</li>
+<li>要求<strong>连续多帧</strong>检测到手才触发（<code>HAND_STABLE_FRAMES</code>）；</li>
+<li>设置<strong>触发间隔</strong>（如 <code>TRIGGER_INTERVAL = 2.5~3s</code>），同一动作不重复播报。</li>
+</ul>
+<p><strong>② 动作锁定（防重复识别）</strong></p>
+<p>识别成功后进入锁定状态，<code>ACTION_LOCK_DURATION</code>（如 0.8~1.5s）内不再识别，避免一次手势播报多遍：</p>
+<div class="highlight"><pre><span></span><code><span class="k">if</span> <span class="n">action_locked</span> <span class="ow">and</span> <span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">action_lock_timer</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">ACTION_LOCK_DURATION</span><span class="p">:</span>
+    <span class="n">action_locked</span> <span class="o">=</span> <span class="kc">False</span>   <span class="c1"># 超时解锁，可识别下一个动作</span>
+</code></pre></div>
+
+<p><strong>③ 置信度阈值</strong></p>
+<p>不同手势使用不同阈值（如「你好」50%、「早上好」20%），降低误报。</p>
+<p><strong>④ 帧率与性能优化</strong></p>
+<ul>
+<li><strong>多线程推理</strong>：后台线程负责 <code>特征提取 + 分类</code>，主线程只管取帧显示；</li>
+<li><strong>队列只保留最新帧</strong>（<code>maxsize=1</code>），丢弃积压帧，保证实时性；</li>
+<li><strong>每隔 N 帧处理一次</strong>（<code>PROCESS_EVERY_N_FRAMES</code>）；</li>
+<li>强制 <strong>CPU 推理</strong>（<code>CUDA_VISIBLE_DEVICES=-1</code>）+ 限制线程数，避免卡顿；</li>
+<li>推理缓存清理（<code>CACHE_CLEAR_TIMES</code>）解决视频流延迟。</li>
+</ul>
+<p><strong>⑤ 语音播报</strong></p>
+<p>基于 Windows SAPI（<code>win32com.client.Dispatch("SAPI.SpVoice")</code>），用<strong>异步线程 + 锁</strong>播报，不阻塞主循环：</p>
+<div class="highlight"><pre><span></span><code><span class="n">speech_engine</span> <span class="o">=</span> <span class="n">win32com</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">Dispatch</span><span class="p">(</span><span class="s2">&quot;SAPI.SpVoice&quot;</span><span class="p">)</span>
+<span class="n">speech_engine</span><span class="o">.</span><span class="n">Rate</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">speech_engine</span><span class="o">.</span><span class="n">Volume</span> <span class="o">=</span> <span class="mi">100</span>
+
+<span class="k">def</span> <span class="nf">speak_async</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">speech_engine</span><span class="o">.</span><span class="n">Speak</span><span class="p">(</span><span class="n">text</span><span class="p">),</span> <span class="n">daemon</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+</code></pre></div>
+
+<p><strong>⑥ 中文显示</strong></p>
+<p>OpenCV 原生不支持中文，画面叠加用 <strong>PIL + simhei.ttf（黑体）</strong> 绘制中文结果：</p>
+<div class="highlight"><pre><span></span><code><span class="n">font</span> <span class="o">=</span> <span class="n">ImageFont</span><span class="o">.</span><span class="n">truetype</span><span class="p">(</span><span class="s2">&quot;simhei.ttf&quot;</span><span class="p">,</span> <span class="mi">30</span><span class="p">)</span>
+<span class="n">frame_pil</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">fromarray</span><span class="p">(</span><span class="n">cv2</span><span class="o">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">COLOR_BGR2RGB</span><span class="p">))</span>
+<span class="n">ImageDraw</span><span class="o">.</span><span class="n">Draw</span><span class="p">(</span><span class="n">frame_pil</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">((</span><span class="mi">20</span><span class="p">,</span> <span class="mi">20</span><span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;识别到：</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">font</span><span class="o">=</span><span class="n">font</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+</code></pre></div>
+
+<hr>
+<h2>八、界面与演示</h2>
+<h3>1. 实时识别窗口</h3>
+<p><code>realtime_camera_speech.py</code> 在画面上实时显示状态：</p>
+<ul>
+<li><code>等待手部进入ROI...</code>（橙色）</li>
+<li><code>识别中...</code>（绿色）</li>
+<li><code>语音输出中...</code>（红色）</li>
+<li><code>动作锁定中...</code>（蓝色）</li>
+</ul>
+<p>识别到目标手势时，绿色文字叠加显示「第 N 个：你好（xx.x%）」并语音播报。</p>
+<h3>2. 第二人称聊天界面</h3>
+<p><code>predict_spatial.py</code> 把画面做成<strong>左右分栏</strong>：左侧摄像头画面，右侧「识别结果记录」聊天式气泡列表（微信气泡样式），每条记录带时间戳：</p>
+<div class="highlight"><pre><span></span><code>┌───────────────────────────┬──────────────────────────┐
+│     摄像头画面（640）       │   识别结果记录（640）      │
+│                           │  ┌────────────────────┐  │
+│                           │  │ 系统提示            │  │
+│                           │  └────────────────────┘  │
+│                           │  ┌────────────────────┐  │
+│                           │  │ 14:32:05 你好        │  │
+│                           │  └────────────────────┘  │
+└───────────────────────────┴──────────────────────────┘
+</code></pre></div>
+
+<h3>3. 移动端 App 原型</h3>
+<p>项目内还包含两个 HTML 原型：</p>
+<ul>
+<li><code>主界面.html</code>：移动端 App 首页（品牌 Logo、设备状态、功能入口）；</li>
+<li><code>摄像界面.html</code>：相机识别页（取景框 + 识别结果 + 语音开关）。</li>
+</ul>
+<p>用于后续把识别能力封装成手机 App 的界面预演。</p>
+<hr>
+<h2>九、踩坑与优化记录</h2>
+<p>整个开发过程踩了不少坑，也总结了一些经验：</p>
+<table>
+<thead>
+<tr>
+<th>问题</th>
+<th>解决方案</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>TF 2.x 与 TF 1.x 代码兼容</td>
+<td>统一使用 <code>tf.compat.v1</code> + <code>disable_v2_behavior()</code> / <code>disable_eager_execution()</code></td>
+</tr>
+<tr>
+<td>中文路径导致 TF Hub 缓存失败</td>
+<td>设置 <code>TFHUB_CACHE_DIR</code> 指向无中文的路径（如 <code>E:\...\tfhub_cache</code>）</td>
+</tr>
+<tr>
+<td>模型在线下载慢/失败</td>
+<td>预下载模型到本地 <code>tfhub_cache</code>，代码改为本地加载</td>
+</tr>
+<tr>
+<td>摄像头反复误触发</td>
+<td>ROI 缩小 + HSV 肤色过滤 + 连续帧确认 + 触发间隔 + 动作锁定</td>
+</tr>
+<tr>
+<td>视频流延迟、帧率低</td>
+<td>多线程推理 + 只保留最新帧 + 每 N 帧处理 + 强制 CPU</td>
+</tr>
+<tr>
+<td>语音播报卡主流程</td>
+<td>异步线程 + <code>threading.Lock</code> 串行播报</td>
+</tr>
+<tr>
+<td>OpenCV 中文乱码</td>
+<td>改用 PIL + 中文字体（simhei.ttf / msyh.ttc）绘制</td>
+</tr>
+<tr>
+<td>默认音频设备不对导致无声</td>
+<td>启动时检查当前音频输出设备并给出提示</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2>十、项目结构</h2>
+<div class="highlight"><pre><span></span><code><span class="n">sign</span><span class="o">-</span><span class="n">language</span><span class="o">-</span><span class="n">gesture</span><span class="o">-</span><span class="n">recognition</span><span class="o">/</span>
+<span class="err">├──</span><span class="w"> </span><span class="n">realtime_camera_speech</span><span class="o">.</span><span class="n">py</span><span class="w">      </span><span class="err">#</span><span class="w"> </span><span class="err">电脑摄像头实时识别</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="err">语音播报</span>
+<span class="err">├──</span><span class="w"> </span><span class="n">test_video_recognition</span><span class="o">.</span><span class="n">py</span><span class="w">      </span><span class="err">#</span><span class="w"> </span><span class="n">ESP32</span><span class="w"> </span><span class="err">眼镜视频流识别（多线程优化版）</span>
+<span class="err">├──</span><span class="w"> </span><span class="n">demonstration_camera</span><span class="o">.</span><span class="n">py</span><span class="w">        </span><span class="err">#</span><span class="w"> </span><span class="n">ESP32</span><span class="w"> </span><span class="err">视频流识别（双手势）</span>
+<span class="err">├──</span><span class="w"> </span><span class="n">demonstration_show</span><span class="o">*.</span><span class="n">py</span><span class="w">         </span><span class="err">#</span><span class="w"> </span><span class="err">演示版本脚本</span>
+<span class="err">├──</span><span class="w"> </span><span class="n">predict_spatial</span><span class="o">.</span><span class="n">py</span><span class="w">             </span><span class="err">#</span><span class="w"> </span><span class="err">第二人称识别</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="err">聊天式界面</span>
+<span class="err">├──</span><span class="w"> </span><span class="n">handsegment</span><span class="o">.</span><span class="n">py</span><span class="w">                 </span><span class="err">#</span><span class="w"> </span><span class="n">HSV</span><span class="w"> </span><span class="err">肤色分割</span>
+<span class="err">├──</span><span class="w"> </span><span class="n">retrain</span><span class="o">.</span><span class="n">py</span><span class="w">                     </span><span class="err">#</span><span class="w"> </span><span class="err">迁移学习训练脚本（</span><span class="n">MobileNetV2</span><span class="err">）</span>
+<span class="err">├──</span><span class="w"> </span><span class="n">rnn_train</span><span class="o">.</span><span class="n">py</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">rnn_utils</span><span class="o">.</span><span class="n">py</span><span class="w">    </span><span class="err">#</span><span class="w"> </span><span class="n">LSTM</span><span class="w"> </span><span class="err">时序模型训练</span>
+<span class="err">├──</span><span class="w"> </span><span class="n">video_to_frame_direct</span><span class="o">.</span><span class="n">py</span><span class="w">       </span><span class="err">#</span><span class="w"> </span><span class="err">视频抽帧</span>
+<span class="err">├──</span><span class="w"> </span><span class="n">Split</span><span class="w"> </span><span class="n">Test</span><span class="w"> </span><span class="n">and</span><span class="w"> </span><span class="n">Train</span><span class="o">.</span><span class="n">sh</span><span class="w">        </span><span class="err">#</span><span class="w"> </span><span class="err">数据划分脚本</span>
+<span class="err">├──</span><span class="w"> </span><span class="n">train_images</span><span class="o">/</span><span class="w">                  </span><span class="err">#</span><span class="w"> </span><span class="err">训练图片（</span><span class="n">nihao</span><span class="o">/</span><span class="n">zaoshanghao</span><span class="err">）</span>
+<span class="err">├──</span><span class="w"> </span><span class="n">second_train_videos</span><span class="o">/</span><span class="w">           </span><span class="err">#</span><span class="w"> </span><span class="err">补充训练视频</span>
+<span class="err">├──</span><span class="w"> </span><span class="n">bottlenecks_two_gesture</span><span class="o">/</span><span class="w">       </span><span class="err">#</span><span class="w"> </span><span class="err">预计算特征缓存</span>
+<span class="err">├──</span><span class="w"> </span><span class="n">tfhub_cache</span><span class="o">/</span><span class="w">                   </span><span class="err">#</span><span class="w"> </span><span class="err">本地缓存的</span><span class="w"> </span><span class="n">MobileNetV2</span><span class="w"> </span><span class="err">特征提取器</span>
+<span class="err">├──</span><span class="w"> </span><span class="o">*.</span><span class="n">pb</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="o">*</span><span class="n">_labels</span><span class="o">.</span><span class="n">txt</span><span class="w">            </span><span class="err">#</span><span class="w"> </span><span class="err">训练产出的模型与标签</span>
+<span class="err">├──</span><span class="w"> </span><span class="err">主界面</span><span class="o">.</span><span class="n">html</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="err">摄像界面</span><span class="o">.</span><span class="n">html</span><span class="w">     </span><span class="err">#</span><span class="w"> </span><span class="err">移动端</span><span class="w"> </span><span class="n">App</span><span class="w"> </span><span class="err">原型</span>
+<span class="err">└──</span><span class="w"> </span><span class="err">译言译行——聋哑人第一人称</span><span class="n">AI手语翻译眼镜</span><span class="o">.</span><span class="n">doc</span><span class="w">  </span><span class="err">#</span><span class="w"> </span><span class="err">项目文档</span>
+</code></pre></div>
+
+<hr>
+<h2>总结与展望</h2>
+<p>这个项目用「<strong>眼镜硬件 + 第一人称视角 + 迁移学习 + 语音播报</strong>」的路线，把传统需要手持、对准、等待的手语识别，做成了<strong>解放双手、即打即译</strong>的可穿戴体验，从根源上解决了聋哑人沟通时「对方听不懂」的问题。</p>
+<p><strong>当前成果：</strong></p>
+<ul>
+<li>✅ ESP32-CAM 眼镜硬件原型，第一人称视角推流；</li>
+<li>✅ 自建「你好 / 早上好」数据集（室内亮/暗、室外多场景）；</li>
+<li>✅ MobileNetV2 迁移学习 + LSTM 时序建模双路线；</li>
+<li>✅ 实时识别 + 语音播报 + 画面叠加的完整闭环；</li>
+<li>✅ 第二人称视角识别 + 聊天式界面。</li>
+</ul>
+<p><strong>后续可以做的：</strong></p>
+<ul>
+<li>扩充手语词汇库（更多高频词、常用句）；</li>
+<li>模型量化/剪枝，把推理下沉到眼镜端或边缘盒子，实现完全离线；</li>
+<li>从单帧分类升级为<strong>连续句子级</strong>识别（结合 LSTM 输出端到端序列）；</li>
+<li>接入更自然的交互（骨传导耳机、震动反馈、手机推送）。</li>
+</ul>
+<blockquote>
+<p>无声世界不该被沉默定义。一副小小的眼镜，也许就是他们与世界对话的开始。</p>
+</blockquote>
+        </div>
+    </article>
+</div>
+
+<!-- ===== 右下角返回按钮 ===== -->
+<button id="back-home" onclick="window.location.href='https://codeshy-1119.github.io/'">🏠 返回</button>
+
+<style>
+    /* ===== 全局重置 ===== */
+    html, body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        overflow-y: auto;
+        background: transparent;
+    }
+
+    /* ===== 文章内容（毛玻璃卡片，居中） ===== */
+    #article-content {
+        position: relative;
+        z-index: 1;
+        margin-top: 10vh;
+        margin-bottom: 10vh;
+        max-width: 800px;
+        margin-left: auto;
+        margin-right: auto;
+        padding: 20px;
+    }
+    #article-content article {
+        background: rgba(255, 255, 255, 0.88);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 40px 45px;
+        box-shadow: 0 8px 40px rgba(0,0,0,0.2);
+        color: #222;
+        line-height: 1.8;
+        font-size: 1.05rem;
+    }
+
+    /* ===== 文章标题 ===== */
+    .article-title {
+        font-size: 2.2rem;
+        margin-bottom: 10px;
+        color: #1a3a2a;
+        text-align: left;
+        border-bottom: 3px solid #2a8a5a;
+        padding-bottom: 15px;
+    }
+    .article-meta {
+        font-size: 0.9rem;
+        color: #666;
+        margin-bottom: 25px;
+        text-align: left;
+    }
+    .article-meta a {
+        color: #2a7a5a;
+        text-decoration: none;
+    }
+    .article-meta a:hover {
+        text-decoration: underline;
+    }
+
+    /* ===== 文章正文 ===== */
+    .article-body {
+        text-align: left;
+    }
+    .article-body p {
+        margin-bottom: 1.2em;
+    }
+    .article-body h2, .article-body h3 {
+        margin-top: 1.8em;
+        margin-bottom: 0.6em;
+        color: #1a3a2a;
+    }
+    .article-body img {
+        max-width: 100%;
+        border-radius: 10px;
+        margin: 20px 0;
+        display: block;
+    }
+    .article-body pre, .article-body code {
+        background: #f0f0f0;
+        border-radius: 6px;
+        padding: 2px 6px;
+        font-size: 0.95rem;
+    }
+    .article-body pre {
+        padding: 16px;
+        overflow-x: auto;
+    }
+
+    /* ===== 返回按钮 ===== */
+    #back-home {
+        position: fixed;
+        bottom: 25px;
+        right: 25px;
+        z-index: 10;
+        padding: 14px 22px;
+        background: rgba(42, 157, 143, 0.9);
+        color: #fff;
+        border: none;
+        border-radius: 40px;
+        font-size: 1.1rem;
+        font-weight: bold;
+        cursor: pointer;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        backdrop-filter: blur(4px);
+        transition: background 0.2s, transform 0.2s;
+    }
+    #back-home:hover {
+        background: rgba(42, 157, 143, 1);
+        transform: scale(1.05);
+    }
+    #back-home:active {
+        transform: scale(0.95);
+    }
+
+    /* ============================================================ */
+    /* ===== 目录相关样式 ===== */
+    /* ============================================================ */
+
+    /* ----- 目录切换按钮（固定左侧） ----- */
+    #toc-toggle {
+        position: fixed;
+        left: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 100;
+        padding: 12px 14px;
+        background: rgba(42, 157, 143, 0.85);
+        color: #fff;
+        border: none;
+        border-radius: 30px;
+        font-size: 1.1rem;
+        cursor: pointer;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.25);
+        backdrop-filter: blur(4px);
+        transition: background 0.2s, transform 0.2s;
+        writing-mode: vertical-lr;
+        letter-spacing: 4px;
+        border-radius: 20px;
+    }
+    #toc-toggle:hover {
+        background: rgba(42, 157, 143, 1);
+        transform: translateY(-50%) scale(1.05);
+    }
+
+    /* ----- 目录面板（左侧滑出） ----- */
+    #toc-panel {
+        position: fixed;
+        left: -320px;          /* 默认隐藏 */
+        top: 0;
+        width: 300px;
+        height: 100vh;
+        z-index: 200;
+        background: rgba(20, 30, 25, 0.92);
+        backdrop-filter: blur(12px);
+        box-shadow: 2px 0 30px rgba(0,0,0,0.3);
+        transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        padding: 20px 10px 20px 20px;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        border-right: 1px solid rgba(255,255,255,0.1);
+        overflow: hidden;
+    }
+    #toc-panel.open {
+        left: 0;
+    }
+
+    #toc-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: #e0f0e8;
+        font-size: 1.1rem;
+        font-weight: bold;
+        padding-bottom: 12px;
+        border-bottom: 1px solid rgba(255,255,255,0.15);
+        flex-shrink: 0;
+    }
+    #toc-close {
+        background: none;
+        border: none;
+        color: #ccc;
+        font-size: 1.4rem;
+        cursor: pointer;
+        padding: 0 8px;
+        transition: color 0.2s;
+    }
+    #toc-close:hover {
+        color: #fff;
+    }
+
+    #toc-content {
+        flex: 1;
+        overflow-y: auto;
+        padding-top: 16px;
+        padding-right: 8px;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(255,255,255,0.2) transparent;
+    }
+    #toc-content::-webkit-scrollbar {
+        width: 4px;
+    }
+    #toc-content::-webkit-scrollbar-thumb {
+        background: rgba(255,255,255,0.2);
+        border-radius: 4px;
+    }
+
+    #toc-content ul {
+        list-style: none;
+        padding-left: 0;
+        margin: 0;
+    }
+    #toc-content li {
+        margin-bottom: 6px;
+        line-height: 1.5;
+    }
+    #toc-content li.has-children > ul {
+        display: none;
+    }
+    #toc-content li.has-children.expanded > ul {
+        display: block;
+    }
+    #toc-content .toc-disclosure {
+        width: 22px;
+        height: 28px;
+        padding: 0;
+        border: 0;
+        background: transparent;
+        color: #bdd9d0;
+        cursor: pointer;
+        font-size: 0.9rem;
+        line-height: 28px;
+        text-align: center;
+        vertical-align: top;
+    }
+    #toc-content .toc-disclosure:hover {
+        color: #fff;
+    }
+    #toc-content li.has-children > a {
+        display: inline-block;
+        width: calc(100% - 26px);
+        box-sizing: border-box;
+    }
+    #toc-content a {
+        color: #bdd9d0;
+        text-decoration: none;
+        font-size: 0.92rem;
+        display: block;
+        padding: 4px 10px 4px 6px;
+        border-radius: 6px;
+        transition: background 0.15s, color 0.15s;
+        word-break: break-word;
+    }
+    #toc-content a:hover {
+        background: rgba(255,255,255,0.08);
+        color: #fff;
+    }
+    /* 层级缩进 */
+    #toc-content ul ul {
+        padding-left: 18px;
+    }
+    /* 当前高亮（滚动时） */
+    #toc-content a.active {
+        background: rgba(42, 157, 143, 0.3);
+        color: #7ad0b5;
+        border-left: 3px solid #2a8a5a;
+    }
+
+    /* 移动端适配：窄屏时调整按钮位置和面板宽度 */
+    @media (max-width: 700px) {
+        #toc-toggle {
+            left: 10px;
+            padding: 10px 10px;
+            font-size: 0.9rem;
+            border-radius: 16px;
+        }
+        #toc-panel {
+            width: 260px;
+            left: -280px;
+        }
+        #toc-panel.open {
+            left: 0;
+        }
+        #toc-content a {
+            font-size: 0.85rem;
+        }
+        #toc-content .toc-disclosure {
+            width: 20px;
+        }
+    }
+
+    /* ===== 隐藏原主题侧边栏、footer ===== */
+    .row .col-sm-3,
+    .row .col-md-3,
+    .row .col-lg-3 {
+        display: none !important;
+    }
+    .row .col-sm-9,
+    .row .col-md-9,
+    .row .col-lg-9 {
+        width: 100% !important;
+        max-width: 100% !important;
+        flex: 0 0 100% !important;
+    }
+    footer {
+        display: none !important;
+    }
+</style>
+
+<!-- ===== JavaScript：生成目录 + 交互 ===== -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // ----- 1. 从文章正文提取标题生成目录 -----
+    var articleBody = document.querySelector('.article-body');
+    if (!articleBody) return;
+
+    var headings = articleBody.querySelectorAll('h1, h2, h3, h4, h5, h6');
+    if (headings.length === 0) {
+        document.getElementById('toc-toggle').style.display = 'none';
+        return;
+    }
+
+    var tocList = document.createElement('ul');
+    var stack = [tocList];
+    var parentLevel = 1; // 从 h1 开始
+
+    headings.forEach(function(heading) {
+        var level = parseInt(heading.tagName.charAt(1));
+
+        // 生成锚点 id（如果没有）
+        if (!heading.id) {
+            heading.id = 'toc-' + heading.textContent.trim()
+                .replace(/\s+/g, '-')
+                .replace(/[^a-zA-Z0-9\u4e00-\u9fa5\-]/g, '');
+        }
+
+        // 调整层级栈
+        while (level > parentLevel) {
+            var newList = document.createElement('ul');
+            var lastLi = stack[stack.length-1].lastElementChild;
+            if (lastLi && lastLi.tagName === 'LI') {
+                lastLi.appendChild(newList);
+                stack.push(newList);
+                parentLevel++;
+            } else {
+                var li = document.createElement('li');
+                li.style.listStyle = 'none';
+                stack[stack.length-1].appendChild(li);
+                var subUl = document.createElement('ul');
+                li.appendChild(subUl);
+                stack.push(subUl);
+                parentLevel++;
+            }
+        }
+        while (level < parentLevel) {
+            stack.pop();
+            parentLevel--;
+        }
+
+        var li = document.createElement('li');
+        var a = document.createElement('a');
+        a.href = '#' + heading.id;
+        a.textContent = heading.textContent.trim();
+        a.addEventListener('click', function(e) {
+            e.preventDefault();
+            var target = document.getElementById(this.getAttribute('href').substring(1));
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+        li.appendChild(a);
+        stack[stack.length-1].appendChild(li);
+    });
+
+    var tocContainer = document.getElementById('toc-content');
+    tocContainer.appendChild(tocList);
+
+    // ----- 2. 为有子目录的条目添加展开/收起按钮 -----
+    tocContainer.querySelectorAll('li').forEach(function(li) {
+        var childList = li.querySelector(':scope > ul');
+        if (!childList) return;
+
+        li.classList.add('has-children');
+        var link = li.querySelector(':scope > a');
+        var disclosure = document.createElement('button');
+        disclosure.type = 'button';
+        disclosure.className = 'toc-disclosure';
+        disclosure.textContent = '▸';
+        disclosure.setAttribute('aria-expanded', 'false');
+        disclosure.setAttribute('aria-label', '展开子目录');
+        disclosure.addEventListener('click', function() {
+            var expanded = li.classList.toggle('expanded');
+            disclosure.textContent = expanded ? '▾' : '▸';
+            disclosure.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+            disclosure.setAttribute('aria-label', expanded ? '收起子目录' : '展开子目录');
+        });
+        li.insertBefore(disclosure, link);
+    });
+
+    // ----- 3. 面板展开/收起 -----
+    var panel = document.getElementById('toc-panel');
+    var toggleBtn = document.getElementById('toc-toggle');
+    var closeBtn = document.getElementById('toc-close');
+
+    function openToc() {
+        panel.classList.add('open');
+    }
+    function closeToc() {
+        panel.classList.remove('open');
+    }
+
+    toggleBtn.addEventListener('click', function() {
+        if (panel.classList.contains('open')) {
+            closeToc();
+        } else {
+            openToc();
+        }
+    });
+    closeBtn.addEventListener('click', closeToc);
+
+    document.addEventListener('click', function(e) {
+        if (panel.classList.contains('open')) {
+            var target = e.target;
+            if (!panel.contains(target) && target !== toggleBtn && !toggleBtn.contains(target)) {
+                closeToc();
+            }
+        }
+    });
+
+    // ----- 4. 滚动时高亮当前标题 -----
+    var tocLinks = tocContainer.querySelectorAll('a');
+    function setActiveLink() {
+        var activeId = null;
+        headings.forEach(function(h) {
+            var rect = h.getBoundingClientRect();
+            if (rect.top <= 120) {
+                activeId = h.id;
+            }
+        });
+        tocLinks.forEach(function(link) {
+            link.classList.remove('active');
+            if (activeId && link.getAttribute('href') === '#' + activeId) {
+                link.classList.add('active');
+                var parent = link.parentElement;
+                while (parent && parent !== tocContainer) {
+                    if (parent.tagName === 'LI' && parent.classList.contains('has-children')) {
+                        parent.classList.add('expanded');
+                        var button = parent.querySelector(':scope > .toc-disclosure');
+                        if (button) {
+                            button.textContent = '▾';
+                            button.setAttribute('aria-expanded', 'true');
+                            button.setAttribute('aria-label', '收起子目录');
+                        }
+                    }
+                    parent = parent.parentElement;
+                }
+            }
+        });
+    }
+    window.addEventListener('scroll', setActiveLink);
+    setActiveLink();
+});
+</script>
+
+
+    <!-- ===== 底部版权信息 ===== -->
+    <footer style="text-align:center;padding:20px;background:transparent;color:#fff;text-shadow:0 2px 6px rgba(0,0,0,0.5);position:relative;z-index:1;">
+        <p>&copy; 才华恒毅的blog 2026</p>
+    </footer>
+
+    <style>
+        /* ===== 全局视频背景层 ===== */
+        #global-hero {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        #global-hero img {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            object-fit: cover;
+        }
+
+        /* ===== 导航栏（固定在顶部） ===== */
+        #navbar {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            z-index: 1000 !important;
+            padding: 12px 20px !important;
+            background: rgba(255, 255, 255, 0.15) !important;
+            backdrop-filter: blur(12px) !important;
+            -webkit-backdrop-filter: blur(12px) !important;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.15) !important;
+            box-sizing: border-box !important;
+            transition: background 0.3s !important;
+        }
+        #navbar:hover {
+            background: rgba(255, 255, 255, 0.25) !important;
+        }
+
+        .nav-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px 16px;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+        }
+        .nav-brand {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #fff;
+            text-decoration: none;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.6);
+            letter-spacing: 0.5px;
+        }
+        .nav-brand:hover {
+            color: #d4edda;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 6px 14px;
+            flex-wrap: wrap;
+        }
+        .nav-link {
+            color: rgba(255,255,255,0.85);
+            text-decoration: none;
+            font-size: 0.95rem;
+            padding: 6px 12px;
+            border-radius: 30px;
+            transition: background 0.2s, color 0.2s, transform 0.15s;
+            text-shadow: 0 1px 6px rgba(0,0,0,0.4);
+        }
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+            transform: scale(1.04);
+        }
+        .nav-link.active {
+            background: rgba(255, 255, 255, 0.25);
+            color: #fff;
+        }
+
+        @media (max-width: 640px) {
+            #navbar {
+                padding: 10px 14px !important;
+            }
+            .nav-brand {
+                font-size: 1.05rem;
+            }
+            .nav-link {
+                font-size: 0.8rem;
+                padding: 4px 10px;
+            }
+            .nav-right {
+                gap: 4px 8px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                scroll-behavior: auto !important;
+                transition-duration: 0.01ms !important;
+                animation-duration: 0.01ms !important;
+            }
+            #bg-video {
+                display: none;
+            }
+            #global-hero {
+                background: linear-gradient(135deg, #17372e, #2a806f);
+            }
+        }
+
+        /* ===== 给页面内容留出顶部空间 ===== */
+        body {
+            padding-top: 70px !important;
+            margin: 0 !important;
+            background: transparent !important;
+        }
+
+        /* ===== 确保所有内容层级在视频之上 ===== */
+        #navbar,
+        #header-fixed,
+        #content-drawer,
+        #archives-header,
+        #timeline,
+        #article-content,
+        #author-section,
+        #article-list,
+        #back-home,
+        #toggle-drawer,
+        footer {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ===== 修复右下角所有按钮的固定位置 ===== */
+        #back-home,
+        #toggle-drawer {
+            position: fixed !important;
+            bottom: 25px !important;
+            right: 25px !important;
+            z-index: 100 !important;
+        }
+
+        /* ===== 页面滚动时保持背景稳定 ===== */
+        html, body {
+            overflow-y: auto;
+        }
+    </style>
+
+    <!-- ===== 随机动态图片切换脚本 ===== -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var currentPath = window.location.pathname.replace(/\/$/, '') || '/';
+            document.querySelectorAll('.nav-link').forEach(function(link) {
+                var linkPath = new URL(link.href, window.location.origin).pathname.replace(/\/$/, '') || '/';
+                if (linkPath === currentPath || (linkPath === '/categories.html' && currentPath.indexOf('/category/') === 0) || (linkPath === '/tags.html' && currentPath.indexOf('/tag/') === 0) || (linkPath.indexOf('/author/') === 0 && currentPath.indexOf('/author/') === 0)) {
+                    link.classList.add('active');
+                    link.setAttribute('aria-current', 'page');
+                }
+            });
+
+            var video = document.getElementById('bg-video');
+            if (!video) return;
+
+            var imageList = [
+                '/images/blog.webp',
+                '/images/blog1.webp',
+                '/images/blog2.webp'
+            ];
+
+            var availableImages = [];
+            var checkCount = 0;
+            if (imageList.length === 0) {
+                imageList.push('/images/blog.webp');
+            }
+            imageList.forEach(function(src) {
+                var testImage = new Image();
+                testImage.src = src;
+                testImage.onload = function() {
+                    availableImages.push(src);
+                    checkCount++;
+                    if (checkCount === imageList.length) {
+                        applyRandomImage();
+                    }
+                };
+                testImage.onerror = function() {
+                    checkCount++;
+                    if (checkCount === imageList.length) {
+                        applyRandomImage();
+                    }
+                };
+            });
+
+            function applyRandomImage() {
+                if (availableImages.length === 0) {
+                    availableImages = imageList.slice(0, 1);
+                }
+                var randomIndex = Math.floor(Math.random() * availableImages.length);
+                document.getElementById('bg-video').src = availableImages[randomIndex];
+            }
+        });
+    </script>
+
+</body>
+</html>
