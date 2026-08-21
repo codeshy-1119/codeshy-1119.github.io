@@ -178,12 +178,16 @@
 <li>自带 Wi-Fi，通过局域网把视频流推给 PC 处理，把重计算放在电脑端；</li>
 <li>价格便宜，适合原型迭代。</li>
 </ul>
+<p><img alt="眼镜硬件结构图" src="/posts/sign-language-glasses/硬件结构图.png"></p>
+<p><img alt="传输模块" src="/posts/sign-language-glasses/传输模块.png"></p>
+<p><img alt="供电模块" src="/posts/sign-language-glasses/供电模块.png"></p>
 <blockquote>
 <p>说明：识别模型运行在 PC 端（Windows），ESP32-CAM 只负责采集与推流。后续可以进一步做模型剪枝/量化，把推理下沉到眼镜端或边缘盒子，实现完全离线。</p>
 </blockquote>
 <hr>
 <h2>五、数据集构建</h2>
 <p>手语识别的数据是我自己录的。为了贴近真实佩戴场景，我覆盖了<strong>室内亮光、室内暗光、室外</strong>等不同光照，并用脚本把视频抽成帧。</p>
+<p><img alt="视频分帧与图像数据集构建流程" src="/posts/sign-language-glasses/数据集构建流程.png"></p>
 <p><strong>数据集规模：</strong></p>
 <table>
 <thead>
@@ -206,6 +210,7 @@
 </tr>
 </tbody>
 </table>
+<p><img alt="第一人称手势图像示例" src="/posts/sign-language-glasses/第一人称手势示例.png"></p>
 <p><strong>采集与预处理脚本：</strong></p>
 <ul>
 <li><code>video_to_frame_direct.py</code>：视频直接抽帧；</li>
@@ -223,6 +228,7 @@
 <li>在其输出之上训练一个<strong>全连接分类头</strong>；</li>
 <li>输出 <code>final_result:0</code>，标签文件为 <code>*_labels.txt</code>。</li>
 </ol>
+<p><img alt="基于瓶颈特征预计算的迁移学习训练流程" src="/posts/sign-language-glasses/训练流程图.png"></p>
 <p>核心流程代码（节选）：</p>
 <div class="highlight"><pre><span></span><code><span class="n">feature_extractor</span> <span class="o">=</span> <span class="n">hub</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">TFHUB_CACHE_DIR</span> <span class="o">+</span> <span class="s2">&quot;/mobilenet-v2-tensorflow2-tf2-preview-feature-vector-v4&quot;</span><span class="p">)</span>
 <span class="n">feat_input</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">placeholder</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="mi">224</span><span class="p">,</span> <span class="mi">224</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
@@ -379,6 +385,8 @@
 <li><code>主界面.html</code>：移动端 App 首页（品牌 Logo、设备状态、功能入口）；</li>
 <li><code>摄像界面.html</code>：相机识别页（取景框 + 识别结果 + 语音开关）。</li>
 </ul>
+<p><img alt="软件主界面" src="/posts/sign-language-glasses/软件主界面.png"></p>
+<p><img alt="软件识别界面" src="/posts/sign-language-glasses/软件识别界面.png"></p>
 <p>用于后续把识别能力封装成手机 App 的界面预演。</p>
 <hr>
 <h2>九、踩坑与优化记录</h2>
