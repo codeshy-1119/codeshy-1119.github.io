@@ -55,21 +55,22 @@
                 周六 14 二月 2026
                     · <a href="https://codeshy-1119.github.io/category/ji-zhu.html">技术</a>
                     · Tagged with
-                        <a href="https://codeshy-1119.github.io/tag/shou-yu-shi-bie.html">手语识别</a>,                        <a href="https://codeshy-1119.github.io/tag/ren-gong-zhi-neng.html">人工智能</a>,                        <a href="https://codeshy-1119.github.io/tag/ji-suan-ji-shi-jue.html">计算机视觉</a>,                        <a href="https://codeshy-1119.github.io/tag/tensorflow.html">TensorFlow</a>,                        <a href="https://codeshy-1119.github.io/tag/esp32.html">ESP32</a>,                        <a href="https://codeshy-1119.github.io/tag/shen-du-xue-xi.html">深度学习</a>            </p>
+                        <a href="https://codeshy-1119.github.io/tag/shou-yu-shi-bie.html">手语识别</a>,                        <a href="https://codeshy-1119.github.io/tag/ren-gong-zhi-neng.html">人工智能</a>,                        <a href="https://codeshy-1119.github.io/tag/ji-suan-ji-shi-jue.html">计算机视觉</a>,                        <a href="https://codeshy-1119.github.io/tag/shen-du-xue-xi.html">深度学习</a>,                        <a href="https://codeshy-1119.github.io/tag/tensorflow.html">TensorFlow</a>,                        <a href="https://codeshy-1119.github.io/tag/mediapipe.html">MediaPipe</a>,                        <a href="https://codeshy-1119.github.io/tag/esp32.html">ESP32</a>            </p>
         </header>
         <div class="article-body">
-            <h1>译言译行——聋哑人第一人称AI手语翻译眼镜</h1>
+            <h1>译言译行——聋哑人第一人称AI手语翻译眼镜（MediaPipe 版）</h1>
 <blockquote>
-<p>让无声世界「开口说话」</p>
+<p>让无声世界「开口说话」· V2：基于手部关键点的全新识别方案</p>
 </blockquote>
 <p>你有没有想过，当一个聋哑人在餐厅点餐、在车站问路、在药店买药时，他是怎么和健听人沟通的？</p>
 <p>写纸条、比划、手机打字……这些都太慢、太别扭了。而真正阻碍他们的，不只是听不见，而是<strong>彼此之间没有一座「翻译」的桥</strong>。</p>
 <p>这个项目「<strong>译言译行</strong>」就是想做这座桥：一副佩戴在聋哑人身上的 <strong>AI 手语翻译眼镜</strong>，从佩戴者的<strong>第一人称视角</strong>实时识别他的手语，并立刻<strong>语音播报</strong>出来，让对面的健听人「听懂」他在说什么。</p>
+<p>本文记录的是<strong>第二代（V2）方案</strong>——放弃第一代「整张图片 + CNN」的思路，改用 <strong>MediaPipe 手部关键点</strong>识别。新方案识别率显著更高、模型极小、CPU 就能毫秒级推理，是真正能戴在身上的版本。</p>
 <hr>
 <h2>一、项目背景</h2>
 <p>我国有数千万聋哑人，手语是他们最主要的沟通方式，但绝大多数健听人并不懂手语。传统手语翻译依赖人工翻译员，成本高、不普及；手机摄像头方案需要手持、对准、等待，使用体验很差。</p>
 <p>现有方案的共同痛点是：<strong>没有一个能解放双手、从用户第一视角连续工作的方案</strong>。而「眼镜」正是最自然的载体——它戴在聋哑人头上，摄像头就是他眼睛的位置，他打手语时，摄像头天然地正对着他自己的手，无需任何手持操作。</p>
-<p>因此我设计了一款<strong>可佩戴的第一人称手语识别眼镜</strong>，并配套完整的「数据采集 → 模型训练 → 实时识别 → 语音播报」技术链路。</p>
+<p>因此我设计了一款<strong>可佩戴的第一人称手语识别眼镜</strong>，并配套完整的「数据采集 → 特征提取 → 模型训练 → 实时识别 → 语音播报」技术链路。</p>
 <hr>
 <h2>二、项目简介</h2>
 <p><strong>项目名称：</strong> 译言译行——聋哑人第一人称AI手语翻译眼镜</p>
@@ -96,13 +97,50 @@
 </tr>
 </tbody>
 </table>
-<p><strong>演示手势（第一版）：</strong></p>
+<p><strong>演示手势（V2 已跑通）：</strong></p>
 <ul>
-<li><code>你好</code></li>
-<li><code>早上好</code></li>
+<li><code>你好（nihao）</code></li>
+<li><code>早上好（zaoshanghao）</code></li>
 </ul>
+<p><strong>V2 相比 V1 的核心变化：</strong></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>V1（CNN 图像方案，已废弃）</th>
+<th>V2（MediaPipe 关键点方案，当前）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>输入</td>
+<td>224×224 整张图像 + MobileNet V2</td>
+<td>手部 21 个关键点（63 维特征）</td>
+</tr>
+<tr>
+<td>特征来源</td>
+<td>整图卷积特征（受光照/背景干扰大）</td>
+<td>MediaPipe Hands 手部骨骼关键点（鲁棒）</td>
+</tr>
+<tr>
+<td>分类模型</td>
+<td>较大，需要较多算力</td>
+<td>轻量 MLP，约 2 万参数，CPU 毫秒级</td>
+</tr>
+<tr>
+<td>实时识别</td>
+<td>帧率低、误触发多</td>
+<td>实时流畅、带绿色骨骼可视化</td>
+</tr>
+<tr>
+<td>实测效果</td>
+<td>识别率低</td>
+<td>测试集准确率 <strong>~85%</strong></td>
+</tr>
+</tbody>
+</table>
 <blockquote>
-<p>说明：当前版本作为技术原型，先跑通「你好 / 早上好」两个高频手势，验证「第一人称识别 + 语音播报」的完整链路；词汇量可以通过采集更多数据、继续训练持续扩充。</p>
+<p>说明：V2 作为当前主版本，先跑通「你好 / 早上好」两个高频手势，验证「第一人称关键点识别 + 语音播报」的完整闭环；词汇量可以通过采集更多数据、继续训练持续扩充。</p>
 </blockquote>
 <hr>
 <h2>三、系统总体架构</h2>
@@ -112,33 +150,38 @@
 │   ┌────────────────────────────────────────────┐     │
 │   │           眼镜硬件（ESP32-CAM）              │     │
 │   │   摄像头朝下对准双手（第一人称视角）          │     │
-│   │   Wi-Fi 视频流  →  http://192.168.4.1:81    │     │
+│   │   Wi-Fi 视频流 → http://192.168.4.1:81      │     │
 │   └───────────────────┬────────────────────────┘     │
 └───────────────────────┼─────────────────────────────┘
                         │  MJPEG 视频流
                         ▼
 ┌─────────────────────────────────────────────────────┐
-│                 PC 端识别程序（Python）               │
-│   ┌────────────┐ ┌────────────┐ ┌───────────────┐   │
-│   │ 帧获取/预处理│→│ MobileNetV2│→│ 分类头/置信度  │   │
-│   │ ROI/肤色检测│ │ 特征提取    │ │ 阈值+去重      │   │
-│   └────────────┘ └────────────┘ └───────────────┘   │
+│                PC 端识别程序（Python）                │
+│   ┌───────────┐  ┌───────────────┐  ┌───────────┐   │
+│   │ MediaPipe │→│ 关键点归一化    │→│ MLP 分类    │   │
+│   │ 手部检测   │  │ (相对手腕/尺度) │  │ 模型预测    │   │
+│   └───────────┘  └───────────────┘  └───────────┘   │
 │                        │                            │
 │                        ▼                            │
 │   ┌────────────────────────────────────────────┐   │
-│   │  结果输出：Windows TTS 语音播报 + 画面叠加  │   │
+│   │ 连续帧确认 → Windows TTS 语音播报 + 骨骼可视化 │   │
 │   └────────────────────────────────────────────┘   │
 └─────────────────────────────────────────────────────┘
 </code></pre></div>
 
-<p><strong>整体流程：</strong></p>
-<ol>
-<li>ESP32-CAM 眼镜端通过 Wi-Fi 推流（<code>http://192.168.4.1:81/stream</code>）；</li>
-<li>PC 端读取视频流，进行 ROI 裁剪、肤色检测、动作检测；</li>
-<li>使用 <strong>MobileNet V2 特征提取器（TF Hub 迁移学习）</strong> 提取图像特征；</li>
-<li>送入训练好的<strong>分类模型</strong>（.pb 图）得到手势类别与置信度；</li>
-<li>命中目标手势且置信度达标 → 触发 <strong>Windows SAPI 语音播报</strong>，并在画面上叠加识别结果。</li>
-</ol>
+<p><strong>V2 数据与识别流水线：</strong></p>
+<div class="highlight"><pre><span></span><code>train_images/ 或 second_train_videos/（第一/第二人称采集的原始数据）
+      │  ① collect_landmarks.py  提取手部 21 关键点
+      ▼
+data/landmarks/landmarks_data.npz （关键点数据集，754 样本 × 63 维）
+      │  ② train_landmark_model.py  训练轻量 MLP
+      ▼
+models_mediapipe/landmark_model.h5 + labels.txt（训练好的模型）
+      │  ③ recognize_realtime.py
+      ▼
+摄像头 / ESP32 流 → 实时识别 + 语音播报（绿色骨骼可视化）
+</code></pre></div>
+
 <hr>
 <h2>四、硬件设计</h2>
 <p>眼镜硬件选用 <strong>ESP32-CAM</strong> 作为核心：</p>
@@ -172,23 +215,50 @@
 </tr>
 </tbody>
 </table>
+<p><img alt="眼镜硬件结构图" src="/posts/sign-language-glasses/硬件结构图.png"></p>
+<p><img alt="传输模块" src="/posts/sign-language-glasses/传输模块.png"></p>
+<p><img alt="供电模块" src="/posts/sign-language-glasses/供电模块.png"></p>
 <p><strong>为什么选择 ESP32-CAM：</strong></p>
 <ul>
 <li>体积小、功耗低，适合可穿戴；</li>
 <li>自带 Wi-Fi，通过局域网把视频流推给 PC 处理，把重计算放在电脑端；</li>
 <li>价格便宜，适合原型迭代。</li>
 </ul>
-<p><img alt="眼镜硬件结构图" src="/posts/sign-language-glasses/硬件结构图.png"></p>
-<p><img alt="传输模块" src="/posts/sign-language-glasses/传输模块.png"></p>
-<p><img alt="供电模块" src="/posts/sign-language-glasses/供电模块.png"></p>
+<p><strong>视频源支持（V2）：</strong></p>
+<table>
+<thead>
+<tr>
+<th>视频源</th>
+<th>配置</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>USB 摄像头</td>
+<td><code>CAMERA_INDEX = 0</code></td>
+<td>USB2.0 HD UVC WebCam（电脑自带）</td>
+</tr>
+<tr>
+<td>手机虚拟摄像头</td>
+<td><code>CAMERA_INDEX = 1</code></td>
+<td>一加 Ace 5 手机虚拟摄像头</td>
+</tr>
+<tr>
+<td>ESP32 眼镜流</td>
+<td><code>CAMERA_URL = "http://192.168.4.1:81/stream"</code></td>
+<td>接硬件时在 <code>config.py</code> 中启用</td>
+</tr>
+</tbody>
+</table>
 <blockquote>
-<p>说明：识别模型运行在 PC 端（Windows），ESP32-CAM 只负责采集与推流。后续可以进一步做模型剪枝/量化，把推理下沉到眼镜端或边缘盒子，实现完全离线。</p>
+<p>说明：识别模型运行在 PC 端（Windows），ESP32-CAM 只负责采集与推流。后续可以进一步做模型量化，把推理下沉到眼镜端或边缘盒子（如树莓派），实现完全离线。</p>
 </blockquote>
 <hr>
-<h2>五、数据集构建</h2>
+<h2>五、数据集构建（第一代原始数据）</h2>
 <p>手语识别的数据是我自己录的。为了贴近真实佩戴场景，我覆盖了<strong>室内亮光、室内暗光、室外</strong>等不同光照，并用脚本把视频抽成帧。</p>
 <p><img alt="视频分帧与图像数据集构建流程" src="/posts/sign-language-glasses/数据集构建流程.png"></p>
-<p><strong>数据集规模：</strong></p>
+<p><strong>原始数据集规模：</strong></p>
 <table>
 <thead>
 <tr>
@@ -214,183 +284,369 @@
 <p><strong>采集与预处理脚本：</strong></p>
 <ul>
 <li><code>video_to_frame_direct.py</code>：视频直接抽帧；</li>
-<li><code>(no_use)video-to-frame.py</code>：早期抽帧脚本（已弃用）；</li>
 <li><code>Split Test and Train.sh</code>：按类别把图片划分到训练/测试目录；</li>
-<li><code>handsegment.py</code>：基于 HSV 色域做肤色分割，辅助定位手部区域。</li>
+<li><code>handsegment.py</code>：基于 HSV 色域做肤色分割，辅助定位手部区域（V1 时代）。</li>
 </ul>
-<p>抽帧命名形如 <code>nihao_indoor1_frame_0000.jpg</code>，其中 <code>indoor1 / indoor_dark1 / outdoor1</code> 代表不同场景，方便后续按场景分析模型在不同光照下的表现。</p>
+<p>抽帧命名形如 <code>nihao_indoor1_frame_0000.jpg</code>，其中 <code>indoor1 / indoor_dark1 / outdoor1</code> 代表不同场景，方便后续按场景分析模型在不同光照下的表现。这些第一人称图像正是 V2 提取关键点的主要数据源。</p>
 <hr>
-<h2>六、模型训练</h2>
-<h3>1. 迁移学习（MobileNet V2 特征提取）</h3>
-<p>训练基于 TensorFlow 官方的 <code>retrain.py</code> 思路改造：</p>
-<ol>
-<li>用 <strong>TF Hub 的 MobileNet V2 Feature Vector</strong> 作为特征提取器（预计算 bottleneck）；</li>
-<li>在其输出之上训练一个<strong>全连接分类头</strong>；</li>
-<li>输出 <code>final_result:0</code>，标签文件为 <code>*_labels.txt</code>。</li>
-</ol>
-<p><img alt="基于瓶颈特征预计算的迁移学习训练流程" src="/posts/sign-language-glasses/训练流程图.png"></p>
-<p>核心流程代码（节选）：</p>
-<div class="highlight"><pre><span></span><code><span class="n">feature_extractor</span> <span class="o">=</span> <span class="n">hub</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">TFHUB_CACHE_DIR</span> <span class="o">+</span> <span class="s2">&quot;/mobilenet-v2-tensorflow2-tf2-preview-feature-vector-v4&quot;</span><span class="p">)</span>
-<span class="n">feat_input</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">placeholder</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="mi">224</span><span class="p">,</span> <span class="mi">224</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
-<span class="n">feat_output</span> <span class="o">=</span> <span class="n">feature_extractor</span><span class="p">(</span><span class="n">feat_input</span><span class="p">)</span>
-
-<span class="n">od_graph_def</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">GraphDef</span><span class="p">()</span>
-<span class="k">with</span> <span class="n">tf</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">gfile</span><span class="o">.</span><span class="n">GFile</span><span class="p">(</span><span class="s2">&quot;cn_retrained_graph.pb&quot;</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fid</span><span class="p">:</span>
-    <span class="n">od_graph_def</span><span class="o">.</span><span class="n">ParseFromString</span><span class="p">(</span><span class="n">fid</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
-    <span class="n">tf</span><span class="o">.</span><span class="n">import_graph_def</span><span class="p">(</span><span class="n">od_graph_def</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
-<span class="c1"># 分类模型输入/输出</span>
-<span class="n">input_tensor</span>  <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">get_default_graph</span><span class="p">()</span><span class="o">.</span><span class="n">get_tensor_by_name</span><span class="p">(</span><span class="s1">&#39;BottleneckInput:0&#39;</span><span class="p">)</span>
-<span class="n">output_tensor</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">compat</span><span class="o">.</span><span class="n">v1</span><span class="o">.</span><span class="n">get_default_graph</span><span class="p">()</span><span class="o">.</span><span class="n">get_tensor_by_name</span><span class="p">(</span><span class="s1">&#39;final_result:0&#39;</span><span class="p">)</span>
-</code></pre></div>
-
-<p>为了加速训练，我对每张图片<strong>预计算 bottleneck 特征</strong>缓存到磁盘（<code>*.bottleneck.txt</code>），避免重复跑特征提取。</p>
-<h3>2. 时序建模（RNN / LSTM）</h3>
-<p>手语是<strong>连续动作</strong>，单帧图像信息有限。项目里还实现了一条 <strong>CNN 特征 + LSTM 时序建模</strong> 的路线（<code>rnn_train.py</code> / <code>rnn_utils.py</code>）：</p>
-<ul>
-<li>先把每帧用 CNN 提取成特征序列；</li>
-<li>按视频窗口组织成 <code>[num_frames, feature_size]</code> 的序列；</li>
-<li>用两层 LSTM（TFLearn）学习手势的时序依赖；</li>
-<li>输出手势类别。</li>
-</ul>
-<div class="highlight"><pre><span></span><code><span class="n">net</span> <span class="o">=</span> <span class="n">tflearn</span><span class="o">.</span><span class="n">input_data</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">frames</span><span class="p">,</span> <span class="n">input_size</span><span class="p">])</span>
-<span class="n">net</span> <span class="o">=</span> <span class="n">tflearn</span><span class="o">.</span><span class="n">lstm</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="mi">128</span><span class="p">,</span> <span class="n">dropout</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">return_seq</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">net</span> <span class="o">=</span> <span class="n">tflearn</span><span class="o">.</span><span class="n">lstm</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="mi">128</span><span class="p">)</span>
-<span class="n">net</span> <span class="o">=</span> <span class="n">tflearn</span><span class="o">.</span><span class="n">fully_connected</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">num_classes</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">&#39;softmax&#39;</span><span class="p">)</span>
-<span class="n">net</span> <span class="o">=</span> <span class="n">tflearn</span><span class="o">.</span><span class="n">regression</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="n">optimizer</span><span class="o">=</span><span class="s1">&#39;adam&#39;</span><span class="p">,</span> <span class="n">loss</span><span class="o">=</span><span class="s1">&#39;categorical_crossentropy&#39;</span><span class="p">)</span>
-</code></pre></div>
-
-<h3>3. 训练产出模型</h3>
+<h2>六、关键点数据集构建（V2 核心）</h2>
+<p>V2 的核心思路：<strong>不再用整张图片做特征，而是先让 MediaPipe Hands 把「手」抽成 21 个骨骼关键点，再用关键点训练分类器</strong>。</p>
+<p><code>collect_landmarks.py</code> 支持两种数据源：</p>
 <table>
 <thead>
 <tr>
-<th>模型文件</th>
-<th>标签文件</th>
-<th>用途</th>
+<th>数据源</th>
+<th>目录</th>
+<th>采样策略</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>cn_retrained_graph.pb</code></td>
-<td><code>cn_retrained_labels.txt</code>（你好/非你好）</td>
-<td>第一人称实时识别</td>
+<td>图像数据集</td>
+<td><code>train_images/&lt;类别&gt;/*.jpg</code></td>
+<td>每 N 帧取 1 帧（<code>SAMPLE_EVERY_IMAGES</code>，默认 5，去冗余）</td>
 </tr>
 <tr>
-<td><code>two_gesture_model.pb</code></td>
-<td><code>two_gesture_labels.txt</code>（你好/早上好）</td>
-<td>双手势识别</td>
+<td>视频数据集</td>
+<td><code>second_train_videos/&lt;类别&gt;/*.mp4</code></td>
+<td>每个视频均匀采样（<code>SAMPLES_PER_VIDEO</code>，默认 20 帧）</td>
+</tr>
+</tbody>
+</table>
+<p><strong>提取流程：</strong></p>
+<ol>
+<li>读取图像/视频帧（BGR）；</li>
+<li>交给 MediaPipe Hands（<code>static_image_mode=True</code>，逐帧独立检测，更稳）提取手部关键点；</li>
+<li>对 21 个关键点做<strong>归一化</strong>（下一节详细讲）；</li>
+<li>保存为压缩的 <code>npz</code> 数据集：<code>X (N, 63)</code>、<code>y (N,)</code>、<code>labels</code>。</li>
+</ol>
+<div class="highlight"><pre><span></span><code><span class="c1"># 从图像数据集提取关键点（约 1~3 分钟）</span>
+python<span class="w"> </span>mediapipe_gesture<span class="se">\c</span>ollect_landmarks.py<span class="w"> </span>--source<span class="w"> </span>images
+<span class="c1"># 可选：从视频再采集一份，数据更丰富</span>
+python<span class="w"> </span>mediapipe_gesture<span class="se">\c</span>ollect_landmarks.py<span class="w"> </span>--source<span class="w"> </span>videos
+</code></pre></div>
+
+<p><strong>关键点提取成功率：97%~98%</strong>（多数帧都能稳定检测出手）。</p>
+<p><strong>V2 关键点数据集（实测核对）：</strong></p>
+<table>
+<thead>
+<tr>
+<th>项目</th>
+<th>数值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>总样本数</td>
+<td>754</td>
 </tr>
 <tr>
-<td><code>cn_secondperson_sign_recognizer.pb</code></td>
-<td><code>cn_secondperson_labels.txt</code>（你好/非你好）</td>
-<td>第二人称视角识别</td>
+<td>特征维度</td>
+<td>63（<code>rel_z</code> 模式）</td>
+</tr>
+<tr>
+<td>类别</td>
+<td>nihao / zaoshanghao</td>
+</tr>
+<tr>
+<td>「你好」样本</td>
+<td>388</td>
+</tr>
+<tr>
+<td>「早上好」样本</td>
+<td>366</td>
 </tr>
 </tbody>
 </table>
 <hr>
-<h2>七、实时识别实现</h2>
-<p>实时识别在 <strong>Windows PC</strong> 上运行，主要脚本：</p>
+<h2>七、关键点特征设计</h2>
+<p>MediaPipe Hands 每只手输出 <strong>21 个关键点</strong>，每个点有 $(x, y, z)$ 三个坐标。但<strong>原始坐标不能直接用</strong>，因为：</p>
 <ul>
-<li><code>realtime_camera_speech.py</code>：电脑摄像头实时识别 + 语音播报；</li>
-<li><code>test_video_recognition.py</code> / <code>demonstration_camera.py</code>：读取 <strong>ESP32 眼镜视频流</strong> 实时识别；</li>
-<li><code>demonstration_show.py</code> / <code>demonstration_show1.py</code> / <code>demonstration_show2.py</code>：演示用版本；</li>
-<li><code>predict_spatial.py</code>：第二人称视角识别 + 聊天式结果展示。</li>
+<li>手在画面中的<strong>位置会变</strong>（平移影响）；</li>
+<li>手离摄像头<strong>远近会变</strong>（尺度影响）；</li>
+<li>画面分辨率、摄像头不同也会带来差异。</li>
 </ul>
-<h3>1. 识别主流程</h3>
-<div class="highlight"><pre><span></span><code>读取视频帧
-   │
-   ├─ ROI 裁剪（聚焦手部区域）
-   ├─ 肤色/动作检测（HSV + 帧差）
+<p>因此 <code>landmark_utils.py</code> 里的 <code>normalize_landmarks()</code> 做了两步关键归一化：</p>
+<h3>1. 相对手腕（平移不变）</h3>
+<p>以手腕关键点（index 0）为原点，所有点减去手腕坐标：</p>
+<p>$$
+\mathbf{p}<em _text_wrist="\text{wrist">i' = \mathbf{p}_i - \mathbf{p}</em>, \quad i = 0,1,\dots,20
+$$}</p>
+<p>这样手在画面里怎么移动都不影响特征。</p>
+<h3>2. 尺度归一化（尺度不变）</h3>
+<p>除以「手腕 → 中指根部」的距离 $d$，消除手大小和远近的影响：</p>
+<p>$$
+\mathbf{p}<em _text_middle="\text{middle">i'' = \frac{\mathbf{p}_i'}{d}, \quad d = |\mathbf{p}</em>|
+$$}} - \mathbf{p}_{\text{wrist}</p>
+<h3>3. 可选深度 z</h3>
+<p>MediaPipe 提供了相对深度 $z$，对手势姿态判断有帮助。通过 <code>config.FEAT_MODE</code> 切换：</p>
+<table>
+<thead>
+<tr>
+<th>FEAT_MODE</th>
+<th>维度</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>rel</code></td>
+<td>42 维</td>
+<td>仅 $(dx, dy)$</td>
+</tr>
+<tr>
+<td><code>rel_z</code></td>
+<td>63 维</td>
+<td>$(dx, dy, dz)$，含深度（默认）</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">normalize_landmarks</span><span class="p">(</span><span class="n">lmks</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;rel_z&quot;</span><span class="p">):</span>
+    <span class="n">lmks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">lmks</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">21</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="n">wrist</span> <span class="o">=</span> <span class="n">lmks</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">rel</span> <span class="o">=</span> <span class="n">lmks</span> <span class="o">-</span> <span class="n">wrist</span>                        <span class="c1"># 相对手腕（平移不变）</span>
+    <span class="n">scale</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">lmks</span><span class="p">[</span><span class="mi">9</span><span class="p">]</span> <span class="o">-</span> <span class="n">lmks</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>  <span class="c1"># 手腕→中指根部 距离</span>
+    <span class="k">if</span> <span class="n">scale</span> <span class="o">&lt;</span> <span class="mf">1e-6</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="n">rel</span> <span class="o">=</span> <span class="n">rel</span> <span class="o">/</span> <span class="n">scale</span>                          <span class="c1"># 尺度归一化</span>
+    <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;rel&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">rel</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>             <span class="c1"># 42 维</span>
+    <span class="k">return</span> <span class="n">rel</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>                        <span class="c1"># 63 维（含 z）</span>
+</code></pre></div>
+
+<blockquote>
+<p>一句话总结：先以手腕为原点消除位置影响，再除以「手腕→中指根部」距离消除尺度影响，得到 63 维平移/尺度不变的手部姿态特征。</p>
+</blockquote>
+<hr>
+<h2>八、模型训练（轻量 MLP）</h2>
+<h3>1. 网络结构</h3>
+<p>63 维特征不需要复杂网络，一个<strong>轻量 MLP</strong> 就足够：</p>
+<div class="highlight"><pre><span></span><code><span class="n">model</span> <span class="o">=</span> <span class="n">keras</span><span class="o">.</span><span class="n">Sequential</span><span class="p">([</span>
+    <span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Input</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">input_dim</span><span class="p">,)),</span>      <span class="c1"># 63 维关键点特征</span>
+    <span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s2">&quot;relu&quot;</span><span class="p">),</span>
+    <span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">BatchNormalization</span><span class="p">(),</span>
+    <span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(</span><span class="mf">0.3</span><span class="p">),</span>
+    <span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s2">&quot;relu&quot;</span><span class="p">),</span>
+    <span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(</span><span class="mf">0.3</span><span class="p">),</span>
+    <span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="n">num_classes</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s2">&quot;softmax&quot;</span><span class="p">),</span>
+<span class="p">])</span>
+<span class="n">model</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span>
+    <span class="n">optimizer</span><span class="o">=</span><span class="n">keras</span><span class="o">.</span><span class="n">optimizers</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">learning_rate</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">),</span>
+    <span class="n">loss</span><span class="o">=</span><span class="s2">&quot;sparse_categorical_crossentropy&quot;</span><span class="p">,</span>
+    <span class="n">metrics</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;accuracy&quot;</span><span class="p">],</span>
+<span class="p">)</span>
+</code></pre></div>
+
+<ul>
+<li>两层全连接（128 → 64）+ BatchNorm + Dropout(0.3)</li>
+<li>约 <strong>2 万参数</strong>，CPU 毫秒级推理</li>
+<li>输出类别 softmax</li>
+</ul>
+<h3>2. 数据增强</h3>
+<p>手语视频连续帧高度相似，直接训练容易过拟合。训练时对训练集做了<strong>高斯噪声增强 ×3 倍</strong>，提升鲁棒性：</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">augment</span><span class="p">(</span><span class="n">Xb</span><span class="p">,</span> <span class="n">yb</span><span class="p">,</span> <span class="n">factor</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+    <span class="n">Xs</span><span class="p">,</span> <span class="n">ys</span> <span class="o">=</span> <span class="p">[</span><span class="n">Xb</span><span class="p">],</span> <span class="p">[</span><span class="n">yb</span><span class="p">]</span>
+    <span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">factor</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="n">noise</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.02</span><span class="p">,</span> <span class="n">Xb</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>  <span class="c1"># σ=0.02</span>
+        <span class="n">Xs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Xb</span> <span class="o">+</span> <span class="n">noise</span><span class="p">)</span>
+        <span class="n">ys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">yb</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="n">Xs</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">ys</span><span class="p">)</span>
+</code></pre></div>
+
+<h3>3. 训练设置</h3>
+<table>
+<thead>
+<tr>
+<th>项目</th>
+<th>配置</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>划分</td>
+<td>80% 训练 / 20% 测试，按类别分层（stratify），随机种子 42</td>
+</tr>
+<tr>
+<td>优化器</td>
+<td>Adam（lr=1e-3）</td>
+</tr>
+<tr>
+<td>损失</td>
+<td>稀疏交叉熵（sparse categorical crossentropy）</td>
+</tr>
+<tr>
+<td>训练轮数</td>
+<td>40（交付包 60）</td>
+</tr>
+<tr>
+<td>增强</td>
+<td>高斯噪声 $\mathcal{N}(0, 0.02)$ ×3 倍</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight"><pre><span></span><code>python<span class="w"> </span>mediapipe_gesture<span class="se">\t</span>rain_landmark_model.py<span class="w"> </span>--epochs<span class="w"> </span><span class="m">40</span><span class="w"> </span>--batch_size<span class="w"> </span><span class="m">32</span>
+</code></pre></div>
+
+<h3>4. 实验结果</h3>
+<table>
+<thead>
+<tr>
+<th>指标</th>
+<th>数值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>测试集准确率</td>
+<td><strong>85%</strong></td>
+</tr>
+<tr>
+<td>最高验证准确率</td>
+<td><strong>88.74%</strong></td>
+</tr>
+<tr>
+<td>「你好」精确率 / 召回率</td>
+<td>0.87 / 0.83</td>
+</tr>
+<tr>
+<td>「早上好」精确率 / 召回率</td>
+<td>0.83 / 0.86</td>
+</tr>
+<tr>
+<td>混淆矩阵</td>
+<td><code>[[65 13] [10 63]]</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>混淆矩阵解读：</strong></p>
+<ul>
+<li>实际「你好」的 78 个测试样本中，65 个判对，13 个被误判为「早上好」；</li>
+<li>实际「早上好」的 73 个测试样本中，63 个判对，10 个被误判为「你好」；</li>
+<li>两个手势高度相似（都是手掌开合类动作），13 个「你好」被误判为「早上好」是主要误差来源，也是后续重点优化的方向。</li>
+</ul>
+<h3>5. 训练产物</h3>
+<table>
+<thead>
+<tr>
+<th>文件</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>models_mediapipe/landmark_model.h5</code></td>
+<td>Keras 训练好的模型</td>
+</tr>
+<tr>
+<td><code>models_mediapipe/landmark_model.keras</code></td>
+<td>新版 Keras 格式</td>
+</tr>
+<tr>
+<td><code>models_mediapipe/labels.txt</code></td>
+<td>类别顺序（nihao / zaoshanghao）</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2>九、实时识别实现</h2>
+<p>实时识别入口：<code>mediapipe_gesture/recognize_realtime.py</code>，支持本地摄像头 / 手机虚拟摄像头 / ESP32 眼镜流，识别时实时绘制<strong>绿色骨骼</strong>，命中即语音播报。</p>
+<h3>1. 主循环流程</h3>
+<div class="highlight"><pre><span></span><code>读取一帧 → 镜像翻转（操作更直观）
    │
    ▼
-每隔 N 帧：MobileNetV2 提取特征 → 分类 → softmax 置信度
+MediaPipe Hands 提取手部关键点（流式模式，更快）
    │
    ▼
-命中目标手势 且 置信度 ≥ 阈值 且 非锁定状态
+关键点归一化 → MLP 预测 → softmax 得到「你好/早上好」置信度
    │
    ▼
-异步触发 Windows TTS 语音播报 + 画面叠加识别结果
+置信度 ≥ CONF_THRESHOLD（70%）？→ 是则 countdown+1，否则清零
    │
    ▼
-进入「动作锁定」防重复触发
+连续 CONTINUOUS_FRAMES（3）帧达标 → 触发！
+   │
+   ▼
+异步语音播报 + 进入动作锁定（1.5s 防重复）
+   │
+   ▼
+画面叠加：类别+置信度（绿）/ 状态栏（识别中/锁定中）
 </code></pre></div>
 
 <h3>2. 关键设计点</h3>
-<p><strong>① 动作检测与防误触发</strong></p>
+<p><strong>① 连续帧确认（防误触发）</strong></p>
+<p>单帧命中置信度不算数，必须<strong>连续 3 帧</strong>都超过阈值才触发，显著减少误报：</p>
+<div class="highlight"><pre><span></span><code><span class="k">if</span> <span class="n">conf</span> <span class="o">&gt;=</span> <span class="n">config</span><span class="o">.</span><span class="n">CONF_THRESHOLD</span><span class="p">:</span>
+    <span class="n">countdown</span> <span class="o">+=</span> <span class="mi">1</span>          <span class="c1"># 连续达标帧数 +1</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">countdown</span> <span class="o">=</span> <span class="mi">0</span>           <span class="c1"># 一旦不达标就清零</span>
+<span class="k">if</span> <span class="n">countdown</span> <span class="o">&gt;=</span> <span class="n">config</span><span class="o">.</span><span class="n">CONTINUOUS_FRAMES</span><span class="p">:</span>
+    <span class="c1"># 触发识别</span>
+    <span class="n">speak_async</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
+    <span class="n">action_locked</span> <span class="o">=</span> <span class="kc">True</span>
+</code></pre></div>
+
+<p><strong>② 动作锁定（防重复播报）</strong></p>
+<p>触发一次后锁定 <code>ACTION_LOCK_DURATION</code>（1.5 秒），锁定期间只显示预测不播报，避免同一个手势反复播报：</p>
+<div class="highlight"><pre><span></span><code><span class="k">if</span> <span class="n">action_locked</span> <span class="ow">and</span> <span class="p">(</span><span class="n">now</span> <span class="o">-</span> <span class="n">lock_timer</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">config</span><span class="o">.</span><span class="n">ACTION_LOCK_DURATION</span><span class="p">:</span>
+    <span class="n">action_locked</span> <span class="o">=</span> <span class="kc">False</span>   <span class="c1"># 超时解锁</span>
+</code></pre></div>
+
+<p><strong>③ 语音播报（Windows SAPI + 自动选音）</strong></p>
+<p>用 Windows SAPI 异步播报，不阻塞主循环；并且<strong>自动挑选发音最好的中文语音</strong>（优先 Neural/Online 神经网络语音，如晓晓 Xiaoxiao）：</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">pick_best_voice</span><span class="p">(</span><span class="n">engine</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">score</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+        <span class="n">desc</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">GetDescription</span><span class="p">();</span> <span class="n">s</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">k</span> <span class="ow">in</span> <span class="n">desc</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;Natural&quot;</span><span class="p">,</span> <span class="s2">&quot;Neural&quot;</span><span class="p">,</span> <span class="s2">&quot;Online&quot;</span><span class="p">)):</span> <span class="n">s</span> <span class="o">+=</span> <span class="mi">10</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">k</span> <span class="ow">in</span> <span class="n">desc</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;Xiaoxiao&quot;</span><span class="p">,</span> <span class="s2">&quot;Xiaoyi&quot;</span><span class="p">,</span> <span class="s2">&quot;Yunxi&quot;</span><span class="p">,</span> <span class="s2">&quot;Yunyang&quot;</span><span class="p">)):</span> <span class="n">s</span> <span class="o">+=</span> <span class="mi">5</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">k</span> <span class="ow">in</span> <span class="n">desc</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;Chinese&quot;</span><span class="p">,</span> <span class="s2">&quot;zh-CN&quot;</span><span class="p">,</span> <span class="s2">&quot;中文&quot;</span><span class="p">)):</span> <span class="n">s</span> <span class="o">+=</span> <span class="mi">3</span>
+        <span class="k">return</span> <span class="n">s</span>
+    <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="n">engine</span><span class="o">.</span><span class="n">GetVoices</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="n">score</span><span class="p">)</span>
+</code></pre></div>
+
+<p><strong>④ 手部骨骼可视化</strong></p>
+<p>把 21 个关键点按 MediaPipe 定义的骨架连接（<code>HAND_CONNECTIONS</code>）用<strong>绿色线条</strong>实时画在画面上，直观展示检测到手的效果：</p>
+<div class="highlight"><pre><span></span><code><span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">HAND_CONNECTIONS</span><span class="p">:</span>
+    <span class="n">cv2</span><span class="o">.</span><span class="n">line</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">pts</span><span class="p">[</span><span class="n">a</span><span class="p">],</span> <span class="n">pts</span><span class="p">[</span><span class="n">b</span><span class="p">],</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">px</span><span class="p">,</span> <span class="n">py</span> <span class="ow">in</span> <span class="n">pts</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+    <span class="n">cv2</span><span class="o">.</span><span class="n">circle</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="p">(</span><span class="n">px</span><span class="p">,</span> <span class="n">py</span><span class="p">),</span> <span class="mi">3</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+</code></pre></div>
+
+<p><strong>⑤ 摄像头后端优化</strong></p>
+<p>Windows 下用 <strong>DirectShow 后端</strong>（<code>cv2.CAP_DSHOW</code>）打开摄像头，对 USB/虚拟摄像头更稳定、延迟更低；ESP32 流则用 <code>cv2.CAP_FFMPEG</code>。</p>
+<p><strong>⑥ 交互细节</strong></p>
 <ul>
-<li>用<strong>帧差法</strong>判断手部是否在动，无动作时不推理，省算力；</li>
-<li>手部进入 ROI 判断 + <strong>HSV 肤色检测</strong>过滤无关物体；</li>
-<li>要求<strong>连续多帧</strong>检测到手才触发（<code>HAND_STABLE_FRAMES</code>）；</li>
-<li>设置<strong>触发间隔</strong>（如 <code>TRIGGER_INTERVAL = 2.5~3s</code>），同一动作不重复播报。</li>
+<li>画面<strong>镜像翻转</strong>，操作更直观；</li>
+<li>右上角状态栏：<code>识别中</code>（绿）/ <code>锁定中</code>（红）；</li>
+<li>按 <code>Q</code> 退出，按 <code>R</code> 手动解锁。</li>
 </ul>
-<p><strong>② 动作锁定（防重复识别）</strong></p>
-<p>识别成功后进入锁定状态，<code>ACTION_LOCK_DURATION</code>（如 0.8~1.5s）内不再识别，避免一次手势播报多遍：</p>
-<div class="highlight"><pre><span></span><code><span class="k">if</span> <span class="n">action_locked</span> <span class="ow">and</span> <span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">action_lock_timer</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">ACTION_LOCK_DURATION</span><span class="p">:</span>
-    <span class="n">action_locked</span> <span class="o">=</span> <span class="kc">False</span>   <span class="c1"># 超时解锁，可识别下一个动作</span>
-</code></pre></div>
-
-<p><strong>③ 置信度阈值</strong></p>
-<p>不同手势使用不同阈值（如「你好」50%、「早上好」20%），降低误报。</p>
-<p><strong>④ 帧率与性能优化</strong></p>
-<ul>
-<li><strong>多线程推理</strong>：后台线程负责 <code>特征提取 + 分类</code>，主线程只管取帧显示；</li>
-<li><strong>队列只保留最新帧</strong>（<code>maxsize=1</code>），丢弃积压帧，保证实时性；</li>
-<li><strong>每隔 N 帧处理一次</strong>（<code>PROCESS_EVERY_N_FRAMES</code>）；</li>
-<li>强制 <strong>CPU 推理</strong>（<code>CUDA_VISIBLE_DEVICES=-1</code>）+ 限制线程数，避免卡顿；</li>
-<li>推理缓存清理（<code>CACHE_CLEAR_TIMES</code>）解决视频流延迟。</li>
-</ul>
-<p><strong>⑤ 语音播报</strong></p>
-<p>基于 Windows SAPI（<code>win32com.client.Dispatch("SAPI.SpVoice")</code>），用<strong>异步线程 + 锁</strong>播报，不阻塞主循环：</p>
-<div class="highlight"><pre><span></span><code><span class="n">speech_engine</span> <span class="o">=</span> <span class="n">win32com</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">Dispatch</span><span class="p">(</span><span class="s2">&quot;SAPI.SpVoice&quot;</span><span class="p">)</span>
-<span class="n">speech_engine</span><span class="o">.</span><span class="n">Rate</span> <span class="o">=</span> <span class="mi">1</span>
-<span class="n">speech_engine</span><span class="o">.</span><span class="n">Volume</span> <span class="o">=</span> <span class="mi">100</span>
-
-<span class="k">def</span> <span class="nf">speak_async</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
-    <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">speech_engine</span><span class="o">.</span><span class="n">Speak</span><span class="p">(</span><span class="n">text</span><span class="p">),</span> <span class="n">daemon</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
-</code></pre></div>
-
-<p><strong>⑥ 中文显示</strong></p>
-<p>OpenCV 原生不支持中文，画面叠加用 <strong>PIL + simhei.ttf（黑体）</strong> 绘制中文结果：</p>
-<div class="highlight"><pre><span></span><code><span class="n">font</span> <span class="o">=</span> <span class="n">ImageFont</span><span class="o">.</span><span class="n">truetype</span><span class="p">(</span><span class="s2">&quot;simhei.ttf&quot;</span><span class="p">,</span> <span class="mi">30</span><span class="p">)</span>
-<span class="n">frame_pil</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">fromarray</span><span class="p">(</span><span class="n">cv2</span><span class="o">.</span><span class="n">cvtColor</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">COLOR_BGR2RGB</span><span class="p">))</span>
-<span class="n">ImageDraw</span><span class="o">.</span><span class="n">Draw</span><span class="p">(</span><span class="n">frame_pil</span><span class="p">)</span><span class="o">.</span><span class="n">text</span><span class="p">((</span><span class="mi">20</span><span class="p">,</span> <span class="mi">20</span><span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;识别到：</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">font</span><span class="o">=</span><span class="n">font</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
-</code></pre></div>
-
 <hr>
-<h2>八、界面与演示</h2>
-<h3>1. 实时识别窗口</h3>
-<p><code>realtime_camera_speech.py</code> 在画面上实时显示状态：</p>
-<ul>
-<li><code>等待手部进入ROI...</code>（橙色）</li>
-<li><code>识别中...</code>（绿色）</li>
-<li><code>语音输出中...</code>（红色）</li>
-<li><code>动作锁定中...</code>（蓝色）</li>
-</ul>
-<p>识别到目标手势时，绿色文字叠加显示「第 N 个：你好（xx.x%）」并语音播报。</p>
-<h3>2. 第二人称聊天界面</h3>
-<p><code>predict_spatial.py</code> 把画面做成<strong>左右分栏</strong>：左侧摄像头画面，右侧「识别结果记录」聊天式气泡列表（微信气泡样式），每条记录带时间戳：</p>
-<div class="highlight"><pre><span></span><code>┌───────────────────────────┬──────────────────────────┐
-│     摄像头画面（640）       │   识别结果记录（640）      │
-│                           │  ┌────────────────────┐  │
-│                           │  │ 系统提示            │  │
-│                           │  └────────────────────┘  │
-│                           │  ┌────────────────────┐  │
-│                           │  │ 14:32:05 你好        │  │
-│                           │  └────────────────────┘  │
-└───────────────────────────┴──────────────────────────┘
+<h2>十、环境准备与踩坑记录</h2>
+<p>MediaPipe 方案的环境坑不少，这里完整记录，方便复现。</p>
+<h3>1. numpy 必须 &lt; 2（最关键！）</h3>
+<p><code>mediapipe 0.10.5</code> 和 <code>TensorFlow 2.13</code> 都是按 <strong>numpy 1.x</strong> 编译的，装 numpy 2 会直接崩溃：</p>
+<div class="highlight"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;numpy==1.26.4&quot;</span>
 </code></pre></div>
 
-<h3>3. 移动端 App 原型</h3>
-<p>项目内还包含两个 HTML 原型：</p>
-<ul>
-<li><code>主界面.html</code>：移动端 App 首页（品牌 Logo、设备状态、功能入口）；</li>
-<li><code>摄像界面.html</code>：相机识别页（取景框 + 识别结果 + 语音开关）。</li>
-</ul>
-<p><img alt="软件主界面" src="/posts/sign-language-glasses/软件主界面.png"></p>
-<p><img alt="软件识别界面" src="/posts/sign-language-glasses/软件识别界面.png"></p>
-<p>用于后续把识别能力封装成手机 App 的界面预演。</p>
-<hr>
-<h2>九、踩坑与优化记录</h2>
-<p>整个开发过程踩了不少坑，也总结了一些经验：</p>
+<h3>2. mediapipe 中文路径 bug（Windows）</h3>
+<p>mediapipe 装在 <code>C:\Users\中文用户名\...</code> 这种<strong>含中文的路径</strong>下，初始化会报 <code>FileNotFoundError</code>。这是 mediapipe 在 Windows 上对非 ASCII 路径的已知 bug。</p>
+<p>解决方案：项目内放了一份<strong>纯 ASCII 路径的 mediapipe 副本</strong> <code>vendor/mediapipe</code>，<code>landmark_utils.py</code> 会自动优先从 <code>vendor/</code> 加载：</p>
+<div class="highlight"><pre><span></span><code><span class="n">_VENDOR_DIR</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">项目根</span><span class="p">,</span> <span class="s2">&quot;vendor&quot;</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">_VENDOR_DIR</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="p">:</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">_VENDOR_DIR</span><span class="p">)</span>   <span class="c1"># 优先用 ASCII 路径副本</span>
+</code></pre></div>
+
+<h3>3. 语音依赖</h3>
+<div class="highlight"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span>pywin32
+</code></pre></div>
+
+<h3>4. 控制台中文/emoji 乱码</h3>
+<p>Windows 控制台默认 GBK，打印 emoji 会报错。脚本开头强制 UTF-8：</p>
+<div class="highlight"><pre><span></span><code><span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">,</span> <span class="s2">&quot;reconfigure&quot;</span><span class="p">):</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">reconfigure</span><span class="p">(</span><span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s2">&quot;replace&quot;</span><span class="p">)</span>
+</code></pre></div>
+
+<h3>5. 其他</h3>
 <table>
 <thead>
 <tr>
@@ -400,78 +656,153 @@
 </thead>
 <tbody>
 <tr>
-<td>TF 2.x 与 TF 1.x 代码兼容</td>
-<td>统一使用 <code>tf.compat.v1</code> + <code>disable_v2_behavior()</code> / <code>disable_eager_execution()</code></td>
+<td>必须用系统 Python</td>
+<td>用 <code>C:\Program Files\Python310\python.exe</code>，<strong>不要用 venv</strong>（protobuf 版本不兼容 mediapipe）</td>
 </tr>
 <tr>
-<td>中文路径导致 TF Hub 缓存失败</td>
-<td>设置 <code>TFHUB_CACHE_DIR</code> 指向无中文的路径（如 <code>E:\...\tfhub_cache</code>）</td>
+<td><code>.keras</code> 格式在中文路径 Temp 目录保存失败</td>
+<td>非致命，<code>.h5</code> 已保存即可（代码已做 try/except）</td>
 </tr>
 <tr>
-<td>模型在线下载慢/失败</td>
-<td>预下载模型到本地 <code>tfhub_cache</code>，代码改为本地加载</td>
-</tr>
-<tr>
-<td>摄像头反复误触发</td>
-<td>ROI 缩小 + HSV 肤色过滤 + 连续帧确认 + 触发间隔 + 动作锁定</td>
-</tr>
-<tr>
-<td>视频流延迟、帧率低</td>
-<td>多线程推理 + 只保留最新帧 + 每 N 帧处理 + 强制 CPU</td>
-</tr>
-<tr>
-<td>语音播报卡主流程</td>
-<td>异步线程 + <code>threading.Lock</code> 串行播报</td>
-</tr>
-<tr>
-<td>OpenCV 中文乱码</td>
-<td>改用 PIL + 中文字体（simhei.ttf / msyh.ttc）绘制</td>
-</tr>
-<tr>
-<td>默认音频设备不对导致无声</td>
-<td>启动时检查当前音频输出设备并给出提示</td>
+<td>摄像头无法打开</td>
+<td>先跑 <code>camera_test.py</code> / <code>check_camera.py</code> 枚举设备，<code>pick_camera.py</code> 选择摄像头</td>
 </tr>
 </tbody>
 </table>
 <hr>
-<h2>十、项目结构</h2>
+<h2>十一、界面与演示</h2>
+<h3>1. 一键启动</h3>
+<p>双击 <code>run_recognize.bat</code> 即可启动实时识别（已配置好系统 Python）：</p>
+<div class="highlight"><pre><span></span><code><span class="p">@</span><span class="k">echo</span> off
+chcp 65001 <span class="p">&gt;</span>nul
+<span class="s2">&quot;C:\Program Files\Python310\python.exe&quot;</span> <span class="s2">&quot;</span><span class="nv">%~dp0</span><span class="s2">mediapipe_gesture\recognize_realtime.py&quot;</span>
+</code></pre></div>
+
+<h3>2. 实时识别窗口</h3>
+<p>识别窗口会显示：绿色手部骨骼 + 左上角「类别 置信度%」+ 右上角状态（识别中/锁定中）。手伸进画面做「你好」或「早上好」，识别后立即语音播报。</p>
+<h3>3. 移动端 App 原型</h3>
+<p>项目内 <code>docs/</code> 包含两个 HTML 原型，用于预演后续把识别能力封装成手机 App 的界面：</p>
+<ul>
+<li><code>主界面.html</code>：移动端 App 首页（品牌 Logo、设备状态、功能入口）；</li>
+<li><code>摄像界面.html</code>：相机识别页（取景框 + 识别结果 + 语音开关）。</li>
+</ul>
+<p><img alt="软件主界面" src="/posts/sign-language-glasses/软件主界面.png"></p>
+<p><img alt="软件识别界面" src="/posts/sign-language-glasses/软件识别界面.png"></p>
+<hr>
+<h2>十二、训练交付包（论文复现）</h2>
+<p>项目里单独整理了 <strong><code>deliver_training/</code> 自包含训练包</strong>，面向论文复现，数据、模型、代码、依赖全部打包，拿到就能跑：</p>
+<div class="highlight"><pre><span></span><code>deliver_training/
+├── collect_landmarks.py      # ① 数据采集：从图像/视频提取手部关键点 → npz
+├── train_landmark_model.py   # ② 模型训练：读取 npz → 训练 MLP → 保存模型
+├── landmark_utils.py         # 工具模块：MediaPipe 封装、关键点归一化
+├── config.py                 # 全局配置（路径已指向包内 data/ 和 models/）
+├── requirements.txt          # 依赖清单
+├── data/
+│   └── landmarks_data.npz    # 关键点数据集（754 样本 × 63 维，2 类）
+└── models/
+    ├── landmark_model.h5     # 训练好的模型（240 KB）
+    └── labels.txt            # 类别顺序（nihao / zaoshanghao）
+</code></pre></div>
+
+<p><strong>复现一条命令：</strong></p>
+<div class="highlight"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements.txt
+python<span class="w"> </span>train_landmark_model.py<span class="w"> </span>--epochs<span class="w"> </span><span class="m">60</span><span class="w"> </span>--batch_size<span class="w"> </span><span class="m">32</span>
+</code></pre></div>
+
+<p>交付包 README 还列出了<strong>可做的消融实验</strong>：</p>
+<ul>
+<li><code>FEAT_MODE</code>：<code>rel</code>（42 维）vs <code>rel_z</code>（63 维）对比；</li>
+<li>数据增强有无对比（<code>augment(factor=...)</code>）；</li>
+<li>网络深度对比（1 层 / 2 层 / 3 层）；</li>
+<li>与 SVM / KNN 等经典分类器对比。</li>
+</ul>
+<hr>
+<h2>十三、项目结构（V2）</h2>
 <div class="highlight"><pre><span></span><code><span class="n">sign</span><span class="o">-</span><span class="n">language</span><span class="o">-</span><span class="n">gesture</span><span class="o">-</span><span class="n">recognition</span><span class="o">/</span>
-<span class="err">├──</span><span class="w"> </span><span class="n">realtime_camera_speech</span><span class="o">.</span><span class="n">py</span><span class="w">      </span><span class="err">#</span><span class="w"> </span><span class="err">电脑摄像头实时识别</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="err">语音播报</span>
-<span class="err">├──</span><span class="w"> </span><span class="n">test_video_recognition</span><span class="o">.</span><span class="n">py</span><span class="w">      </span><span class="err">#</span><span class="w"> </span><span class="n">ESP32</span><span class="w"> </span><span class="err">眼镜视频流识别（多线程优化版）</span>
-<span class="err">├──</span><span class="w"> </span><span class="n">demonstration_camera</span><span class="o">.</span><span class="n">py</span><span class="w">        </span><span class="err">#</span><span class="w"> </span><span class="n">ESP32</span><span class="w"> </span><span class="err">视频流识别（双手势）</span>
-<span class="err">├──</span><span class="w"> </span><span class="n">demonstration_show</span><span class="o">*.</span><span class="n">py</span><span class="w">         </span><span class="err">#</span><span class="w"> </span><span class="err">演示版本脚本</span>
-<span class="err">├──</span><span class="w"> </span><span class="n">predict_spatial</span><span class="o">.</span><span class="n">py</span><span class="w">             </span><span class="err">#</span><span class="w"> </span><span class="err">第二人称识别</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="err">聊天式界面</span>
-<span class="err">├──</span><span class="w"> </span><span class="n">handsegment</span><span class="o">.</span><span class="n">py</span><span class="w">                 </span><span class="err">#</span><span class="w"> </span><span class="n">HSV</span><span class="w"> </span><span class="err">肤色分割</span>
-<span class="err">├──</span><span class="w"> </span><span class="n">retrain</span><span class="o">.</span><span class="n">py</span><span class="w">                     </span><span class="err">#</span><span class="w"> </span><span class="err">迁移学习训练脚本（</span><span class="n">MobileNetV2</span><span class="err">）</span>
-<span class="err">├──</span><span class="w"> </span><span class="n">rnn_train</span><span class="o">.</span><span class="n">py</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">rnn_utils</span><span class="o">.</span><span class="n">py</span><span class="w">    </span><span class="err">#</span><span class="w"> </span><span class="n">LSTM</span><span class="w"> </span><span class="err">时序模型训练</span>
-<span class="err">├──</span><span class="w"> </span><span class="n">video_to_frame_direct</span><span class="o">.</span><span class="n">py</span><span class="w">       </span><span class="err">#</span><span class="w"> </span><span class="err">视频抽帧</span>
-<span class="err">├──</span><span class="w"> </span><span class="n">Split</span><span class="w"> </span><span class="n">Test</span><span class="w"> </span><span class="n">and</span><span class="w"> </span><span class="n">Train</span><span class="o">.</span><span class="n">sh</span><span class="w">        </span><span class="err">#</span><span class="w"> </span><span class="err">数据划分脚本</span>
-<span class="err">├──</span><span class="w"> </span><span class="n">train_images</span><span class="o">/</span><span class="w">                  </span><span class="err">#</span><span class="w"> </span><span class="err">训练图片（</span><span class="n">nihao</span><span class="o">/</span><span class="n">zaoshanghao</span><span class="err">）</span>
-<span class="err">├──</span><span class="w"> </span><span class="n">second_train_videos</span><span class="o">/</span><span class="w">           </span><span class="err">#</span><span class="w"> </span><span class="err">补充训练视频</span>
-<span class="err">├──</span><span class="w"> </span><span class="n">bottlenecks_two_gesture</span><span class="o">/</span><span class="w">       </span><span class="err">#</span><span class="w"> </span><span class="err">预计算特征缓存</span>
-<span class="err">├──</span><span class="w"> </span><span class="n">tfhub_cache</span><span class="o">/</span><span class="w">                   </span><span class="err">#</span><span class="w"> </span><span class="err">本地缓存的</span><span class="w"> </span><span class="n">MobileNetV2</span><span class="w"> </span><span class="err">特征提取器</span>
-<span class="err">├──</span><span class="w"> </span><span class="o">*.</span><span class="n">pb</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="o">*</span><span class="n">_labels</span><span class="o">.</span><span class="n">txt</span><span class="w">            </span><span class="err">#</span><span class="w"> </span><span class="err">训练产出的模型与标签</span>
-<span class="err">├──</span><span class="w"> </span><span class="err">主界面</span><span class="o">.</span><span class="n">html</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="err">摄像界面</span><span class="o">.</span><span class="n">html</span><span class="w">     </span><span class="err">#</span><span class="w"> </span><span class="err">移动端</span><span class="w"> </span><span class="n">App</span><span class="w"> </span><span class="err">原型</span>
-<span class="err">└──</span><span class="w"> </span><span class="err">译言译行——聋哑人第一人称</span><span class="n">AI手语翻译眼镜</span><span class="o">.</span><span class="n">doc</span><span class="w">  </span><span class="err">#</span><span class="w"> </span><span class="err">项目文档</span>
+<span class="err">├──</span><span class="w"> </span><span class="n">run_recognize</span><span class="o">.</span><span class="n">bat</span><span class="w">            </span><span class="err">#</span><span class="w"> </span><span class="err">✅</span><span class="w"> </span><span class="err">一键启动实时识别（系统</span><span class="w"> </span><span class="n">Python</span><span class="err">）</span>
+<span class="err">├──</span><span class="w"> </span><span class="n">run_camera_test</span><span class="o">.</span><span class="n">bat</span><span class="w">          </span><span class="err">#</span><span class="w"> </span><span class="err">摄像头画面测试</span>
+<span class="err">├──</span><span class="w"> </span><span class="n">mediapipe_gesture</span><span class="o">/</span><span class="w">           </span><span class="err">#</span><span class="w"> </span><span class="err">✅</span><span class="w"> </span><span class="err">新方案核心（</span><span class="n">MediaPipe</span><span class="w"> </span><span class="err">手部关键点）</span>
+<span class="err">│</span><span class="w">   </span><span class="err">├──</span><span class="w"> </span><span class="n">collect_landmarks</span><span class="o">.</span><span class="n">py</span><span class="w">         </span><span class="err">#</span><span class="w"> </span><span class="err">从图像</span><span class="o">/</span><span class="err">视频提取手部</span><span class="w"> </span><span class="mi">21</span><span class="w"> </span><span class="err">关键点数据集</span>
+<span class="err">│</span><span class="w">   </span><span class="err">├──</span><span class="w"> </span><span class="n">train_landmark_model</span><span class="o">.</span><span class="n">py</span><span class="w">      </span><span class="err">#</span><span class="w"> </span><span class="err">训练关键点分类模型（</span><span class="n">MLP</span><span class="err">）</span>
+<span class="err">│</span><span class="w">   </span><span class="err">├──</span><span class="w"> </span><span class="n">recognize_realtime</span><span class="o">.</span><span class="n">py</span><span class="w">        </span><span class="err">#</span><span class="w"> </span><span class="err">实时识别</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="err">语音播报（绿色骨骼可视化）</span>
+<span class="err">│</span><span class="w">   </span><span class="err">├──</span><span class="w"> </span><span class="n">landmark_utils</span><span class="o">.</span><span class="n">py</span><span class="w">            </span><span class="err">#</span><span class="w"> </span><span class="n">MediaPipe</span><span class="w"> </span><span class="err">封装</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="err">关键点归一化</span>
+<span class="err">│</span><span class="w">   </span><span class="err">├──</span><span class="w"> </span><span class="n">config</span><span class="o">.</span><span class="n">py</span><span class="w">                    </span><span class="err">#</span><span class="w"> </span><span class="err">所有参数配置</span>
+<span class="err">│</span><span class="w">   </span><span class="err">├──</span><span class="w"> </span><span class="n">camera_test</span><span class="o">.</span><span class="n">py</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">pick_camera</span><span class="o">.</span><span class="n">py</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">check_camera</span><span class="o">.</span><span class="n">py</span><span class="w">  </span><span class="err">#</span><span class="w"> </span><span class="err">摄像头工具</span>
+<span class="err">│</span><span class="w">   </span><span class="err">└──</span><span class="w"> </span><span class="n">README</span><span class="o">.</span><span class="n">md</span><span class="w">                    </span><span class="err">#</span><span class="w"> </span><span class="err">新方案详细说明</span>
+<span class="err">├──</span><span class="w"> </span><span class="n">models_mediapipe</span><span class="o">/</span><span class="w">           </span><span class="err">#</span><span class="w"> </span><span class="err">新方案训练产物（</span><span class="n">landmark_model</span><span class="o">.</span><span class="n">h5</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">labels</span><span class="o">.</span><span class="n">txt</span><span class="err">）</span>
+<span class="err">├──</span><span class="w"> </span><span class="n">data</span><span class="o">/</span><span class="w">                       </span><span class="err">#</span><span class="w"> </span><span class="err">关键点数据集（</span><span class="n">landmarks</span><span class="o">/</span><span class="n">landmarks_data</span><span class="o">.</span><span class="n">npz</span><span class="err">）</span>
+<span class="err">├──</span><span class="w"> </span><span class="n">vendor</span><span class="o">/</span><span class="n">mediapipe</span><span class="o">/</span><span class="w">           </span><span class="err">#</span><span class="w"> </span><span class="n">mediapipe</span><span class="w"> </span><span class="err">的</span><span class="w"> </span><span class="n">ASCII</span><span class="w"> </span><span class="err">路径副本（规避中文路径</span><span class="w"> </span><span class="n">bug</span><span class="err">）</span>
+<span class="err">├──</span><span class="w"> </span><span class="n">docs</span><span class="o">/</span><span class="w">                       </span><span class="err">#</span><span class="w"> </span><span class="err">演示</span><span class="w"> </span><span class="n">UI</span><span class="err">（主界面</span><span class="o">.</span><span class="n">html</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="err">摄像界面</span><span class="o">.</span><span class="n">html</span><span class="err">）与文档</span>
+<span class="err">├──</span><span class="w"> </span><span class="n">deliver_training</span><span class="o">/</span><span class="w">           </span><span class="err">#</span><span class="w"> </span><span class="err">论文复现交付包（自包含）</span>
+<span class="err">├──</span><span class="w"> </span><span class="n">legacy</span><span class="o">/</span><span class="w">                     </span><span class="err">#</span><span class="w"> </span><span class="err">旧方案（</span><span class="n">V1</span><span class="w"> </span><span class="n">CNN</span><span class="err">）全部保留，可回退</span>
+<span class="err">│</span><span class="w">   </span><span class="err">├──</span><span class="w"> </span><span class="n">code</span><span class="o">/</span><span class="w">                   </span><span class="err">#</span><span class="w">   </span><span class="err">旧识别</span><span class="o">/</span><span class="err">训练脚本（</span><span class="n">realtime_camera_speech</span><span class="err">、</span><span class="n">retrain</span><span class="err">、</span><span class="n">rnn</span><span class="w"> </span><span class="err">等）</span>
+<span class="err">│</span><span class="w">   </span><span class="err">├──</span><span class="w"> </span><span class="n">models</span><span class="o">/</span><span class="w">                 </span><span class="err">#</span><span class="w">   </span><span class="err">旧模型（</span><span class="n">cn_</span><span class="o">*.</span><span class="n">pb</span><span class="err">、</span><span class="n">two_gesture_</span><span class="o">*.</span><span class="n">pb</span><span class="w"> </span><span class="err">等）</span>
+<span class="err">│</span><span class="w">   </span><span class="err">└──</span><span class="w"> </span><span class="n">data</span><span class="o">/</span><span class="w">                   </span><span class="err">#</span><span class="w">   </span><span class="err">旧训练产物（</span><span class="n">tfhub_cache</span><span class="err">、</span><span class="n">training_summaries</span><span class="w"> </span><span class="err">等）</span>
+<span class="err">├──</span><span class="w"> </span><span class="n">backup_pre_mediapipe</span><span class="o">/</span><span class="w">       </span><span class="err">#</span><span class="w"> </span><span class="n">MediaPipe</span><span class="w"> </span><span class="err">改造前的物理备份</span>
+<span class="err">├──</span><span class="w"> </span><span class="n">train_images</span><span class="o">/</span><span class="w">               </span><span class="err">#</span><span class="w"> </span><span class="err">训练图像数据集（</span><span class="n">nihao</span><span class="o">/</span><span class="n">zaoshanghao</span><span class="err">）</span>
+<span class="err">├──</span><span class="w"> </span><span class="n">second_train_videos</span><span class="o">/</span><span class="w">        </span><span class="err">#</span><span class="w"> </span><span class="err">训练视频（可选数据源）</span>
+<span class="err">└──</span><span class="w"> </span><span class="n">venv</span><span class="o">/</span><span class="w">                       </span><span class="err">#</span><span class="w"> </span><span class="err">旧虚拟环境（已无用）</span>
 </code></pre></div>
 
 <hr>
+<h2>十四、旧方案回顾（V1：CNN 图像方案）</h2>
+<p>V1 是「整张图片 + CNN」的思路，虽然跑通了链路，但识别率低、模型大、受光照和背景干扰严重，因此被 V2 取代。旧代码全部保留在 <code>legacy/</code>，git 分支 <code>backup-pre-mediapipe</code>（commit <code>e8401d8</code>）和物理备份 <code>backup_pre_mediapipe/</code> 都可以随时回退。</p>
+<p><strong>V1 技术路线：</strong></p>
+<ol>
+<li><strong>迁移学习</strong>：用 TF Hub 的 MobileNet V2 Feature Vector 提取图像特征，预计算 bottleneck 缓存到磁盘，再训练分类头（<code>retrain.py</code>）；</li>
+<li><strong>时序建模</strong>：CNN 特征 + 两层 LSTM（TFLearn）学习手势时序依赖（<code>rnn_train.py</code> / <code>rnn_utils.py</code>）；</li>
+<li><strong>实时识别</strong>：ROI + 肤色/帧差动作检测 + 多线程推理 + SAPI 语音（<code>realtime_camera_speech.py</code> 等）。</li>
+</ol>
+<p><img alt="基于瓶颈特征预计算的迁移学习训练流程" src="/posts/sign-language-glasses/训练流程图.png"></p>
+<p><strong>V1 训练产物（保留在 legacy/models）：</strong></p>
+<table>
+<thead>
+<tr>
+<th>模型文件</th>
+<th>标签</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>cn_retrained_graph.pb</code></td>
+<td>你好/非你好</td>
+<td>第一人称实时识别</td>
+</tr>
+<tr>
+<td><code>two_gesture_model.pb</code></td>
+<td>你好/早上好</td>
+<td>双手势识别</td>
+</tr>
+<tr>
+<td><code>cn_secondperson_sign_recognizer.pb</code></td>
+<td>你好/非你好</td>
+<td>第二人称视角识别</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>一句话总结 V1→V2：V1 用「整图卷积特征」学手势，既慢又容易受环境干扰；V2 改走「MediaPipe 先抽手部骨骼关键点、再用轻量 MLP 分类」的路线，识别率从“低”提升到测试集 <strong>85%</strong>，并且 CPU 毫秒级、可穿戴。</p>
+</blockquote>
+<hr>
 <h2>总结与展望</h2>
-<p>这个项目用「<strong>眼镜硬件 + 第一人称视角 + 迁移学习 + 语音播报</strong>」的路线，把传统需要手持、对准、等待的手语识别，做成了<strong>解放双手、即打即译</strong>的可穿戴体验，从根源上解决了聋哑人沟通时「对方听不懂」的问题。</p>
-<p><strong>当前成果：</strong></p>
+<p>这个项目用「<strong>眼镜硬件 + 第一人称视角 + MediaPipe 关键点 + 语音播报</strong>」的路线，把传统需要手持、对准、等待的手语识别，做成了<strong>解放双手、即打即译</strong>的可穿戴体验，从根源上解决了聋哑人沟通时「对方听不懂」的问题。</p>
+<p><strong>当前成果（V2）：</strong></p>
 <ul>
 <li>✅ ESP32-CAM 眼镜硬件原型，第一人称视角推流；</li>
-<li>✅ 自建「你好 / 早上好」数据集（室内亮/暗、室外多场景）；</li>
-<li>✅ MobileNetV2 迁移学习 + LSTM 时序建模双路线；</li>
-<li>✅ 实时识别 + 语音播报 + 画面叠加的完整闭环；</li>
-<li>✅ 第二人称视角识别 + 聊天式界面。</li>
+<li>✅ 自建第一人称手势数据集（室内亮/暗、室外多场景，3944+3758 张）；</li>
+<li>✅ MediaPipe 21 关键点 → 63 维归一化特征 → 轻量 MLP（约 2 万参数）；</li>
+<li>✅ 测试集准确率 <strong>85%</strong>，最高验证准确率 88.74%；</li>
+<li>✅ 实时识别 + 绿色骨骼可视化 + 语音播报完整闭环；</li>
+<li>✅ <code>deliver_training/</code> 自包含交付包，可复现训练与消融实验。</li>
 </ul>
 <p><strong>后续可以做的：</strong></p>
 <ul>
-<li>扩充手语词汇库（更多高频词、常用句）；</li>
-<li>模型量化/剪枝，把推理下沉到眼镜端或边缘盒子，实现完全离线；</li>
-<li>从单帧分类升级为<strong>连续句子级</strong>识别（结合 LSTM 输出端到端序列）；</li>
-<li>接入更自然的交互（骨传导耳机、震动反馈、手机推送）。</li>
+<li><strong>动态手势（时序）</strong>：采集时保存关键点序列，改用 LSTM/GRU 或 TFLite 时序模型，识别连续动作；</li>
+<li><strong>左右手</strong>：<code>HAND_MAX_HANDS</code> 已支持多手，可扩展双手同时比划的场景；</li>
+<li><strong>硬件部署</strong>：Keras 模型导出 <strong>TFLite</strong>，部署到树莓派等边缘设备，彻底离线；</li>
+<li><strong>扩充词汇</strong>：采集更多高频词/常用句，提升模型泛化；</li>
+<li><strong>交互升级</strong>：骨传导耳机、震动反馈、手机推送。</li>
 </ul>
 <blockquote>
 <p>无声世界不该被沉默定义。一副小小的眼镜，也许就是他们与世界对话的开始。</p>
