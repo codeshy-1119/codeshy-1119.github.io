@@ -6,12 +6,6 @@
     "image": "/posts/network-design/封面.png"
   },
   {
-    "title": "My First Post",
-    "url": "/fist-blog/",
-    "summary": "使用 Pelican 搭建个人博客的第一篇记录，介绍静态博客的基本结构与发布方式。",
-    "image": "/posts/fist-blog/封面.png"
-  },
-  {
     "title": "物资管理信息系统 - 数据库课程设计完整报告",
     "url": "/database-design/",
     "summary": "基于 Python、PyQt5 和 SQL Server 的物资管理信息系统课程设计，包含数据库设计、界面开发与功能实现。",
